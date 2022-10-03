@@ -96,7 +96,12 @@ public class Estado {
     if(opcion == 1) asignar1(asignacion_clientes, numero_clientes_central);
     
    }
-
+   public boolean move_efectivo(int cliente, int central){
+       Cliente cli = ref_clientes.get(cliente)
+    if(ref_clientes.get(cliente).getTipo() == Cliente.GARANTIZADO && central == -1) return false;
+    if (ref)
+    double capacidad total
+   }
    public void move(int cliente, int central){
    }
 
