@@ -29,6 +29,21 @@ public class Estado {
        int distancia_y = Math.abs(pos_y_central - pos_y_cliente);
        return Math.hypot((double)distancia_x, (double)distancia_y);
    }
+   private static double produccion_central(int central, int[]clientes){
+       double produccion = 0.0;
+       Central cent = ref_centrales.get(central);
+       int tam = clientes.length;
+       for(int i = 0; i < tam; ++i){
+           if(clientes[i]== central){
+               Cliente cli = ref_clientes.get(i);
+               double distancia = distancia_euclidiana(cli,cent);
+               double porcentaje = VEnergia.getPerdida(distancia);
+       
+               produccion += cli.getConsumo()/(1-porcentaje);
+           }
+       }
+       return produccion;
+   }
    
    private static void asignar1(int[] clientes, int[] numero_clientes_central){
        Random rand = new Random();
@@ -97,10 +112,17 @@ public class Estado {
     
    }
    public boolean move_efectivo(int cliente, int central){
-       Cliente cli = ref_clientes.get(cliente)
-    if(ref_clientes.get(cliente).getTipo() == Cliente.GARANTIZADO && central == -1) return false;
-    if (ref)
-    double capacidad total
+       Cliente cli = ref_clientes.get(cliente);
+       if(cli.getContrato() == Cliente.GARANTIZADO && central == -1) return false;
+       if (asignacion_clientes[cliente]== central) return false;
+       
+       double capacidad_total = produccion_central(central, asignacion_clientes);
+       
+       Central cent = ref_centrales.get(central);
+       double distancia = distancia_euclidiana(cli, cent);
+       double porcentaje = VEnergia.getPerdida(distancia);
+       double produccion  = cli.getConsumo()/(1-porcentaje);
+       return capacidad_total + produccion <= cent.getProduccion();
    }
    public void move(int cliente, int central){
    }
