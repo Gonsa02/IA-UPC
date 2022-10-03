@@ -131,7 +131,7 @@ public class Estado {
        for (int i = 0; i < ref_centrales.size(); ++i) {
            Central c = ref_centrales.get(i);
            try {
-           if (central_activa(i)) dinero -= VEnergia.getCosteMarcha(c.getTipo());
+           if (central_activa(i)) dinero -=  VEnergia.getCosteProduccionMW(c.getTipo())*c.getProduccion() +VEnergia.getCosteMarcha(c.getTipo());
            else dinero -= VEnergia.getCosteParada(c.getTipo());
            } catch(Exception err) {
                System.out.println("Error calculando el coste de las centrales");
