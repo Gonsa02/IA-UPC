@@ -86,6 +86,64 @@ public class Estado {
             }
         }
    }
+   
+   private static void asignar2(int[] clientes, int[] numero_clientes_central) {
+       Random rand = new Random();
+       int tam = clientes.length;
+       double[] producciones_aseguradas = new double[ref_centrales.size()];
+     
+       for (int cliente = 0; cliente < tam; ++cliente) {
+           // Elegimos la central que va escoger [0, ref_centrales.size())
+           Cliente cli = ref_clientes.get(cliente);
+           
+           if (cli.getTipo() == Cliente.GARANTIZADO) {
+               int indice_random = rand.nextInt(ref_centrales.size());
+               boolean buena_asignacion = false;
+               while (!buena_asignacion) {
+                Central cent = ref_centrales.get(indice_random);
+        
+                double eucli_dist = distancia_euclidiana(cli, cent);
+                //calculamos la produccion 
+                double necesidad_cliente = cli.getConsumo();
+                double porcentaje = VEnergia.getPerdida(eucli_dist);
+                necesidad_cliente = necesidad_cliente/(1-porcentaje);
+                if(producciones_aseguradas[indice_random] + necesidad_cliente <= cent.getProduccion()){
+                  clientes[cliente] = indice_random;
+                  ++numero_clientes_central[indice_random];
+                  producciones_aseguradas[indice_random]  = producciones_aseguradas[indice_random] + necesidad_cliente;
+                  buena_asignacion = true;
+                }
+                
+                else indice_random = rand.nextInt(ref_centrales.size());
+                }
+            }
+        }
+    //hacemos la asignacion de los no asegurados
+    for(int cliente = 0; cliente < tam; ++cliente){
+           //elegimos la central que va escoger [0 hasta num.centrales-1]
+           Cliente cli = ref_clientes.get(cliente);
+           if(cli.getTipo() == Cliente.NOGARANTIZADO){
+               int indice_random = rand.nextInt(ref_centrales.size());
+               
+                Central cent = ref_centrales.get(indice_random);
+        
+                double eucli_dist = distancia_euclidiana(cli, cent);
+                //calculamos la produccion 
+                double necesidad_cliente = cli.getConsumo();
+                double porcentaje = VEnergia.getPerdida(eucli_dist);
+                necesidad_cliente = necesidad_cliente/(1-porcentaje);
+                if(producciones_aseguradas[indice_random] + necesidad_cliente <= cent.getProduccion()){
+                  clientes[cliente] = indice_random;
+                  ++numero_clientes_central[indice_random];
+                  producciones_aseguradas[indice_random]  = producciones_aseguradas[indice_random] + necesidad_cliente;
+                 
+                }
+                
+                else clientes[cliente] = -1;
+                
+            }
+        }
+   }
 
    public Estado(Centrales centrales, Clientes clientes ,int opcion){
     asignacion_clientes = new int[clientes.size()];
@@ -93,7 +151,8 @@ public class Estado {
     ref_centrales = centrales;
     ref_clientes = clientes;
     dinero = 0;
-    if(opcion == 1) asignar1(asignacion_clientes, numero_clientes_central);
+    if (opcion == 1) asignar1(asignacion_clientes, numero_clientes_central);
+    else if (opcion == 2) asignar2(asignacion_clientes, numero_clientes_central);
     
    }
 
