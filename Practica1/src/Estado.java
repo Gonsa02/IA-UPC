@@ -126,7 +126,7 @@ public class Estado {
   
 
    
-   public double calcular_coste_centrales() {
+   private double calcular_coste_centrales() {
        double money = 0;
        for (int i = 0; i < ref_centrales.size(); ++i) {
            Central c = ref_centrales.get(i);
@@ -140,11 +140,11 @@ public class Estado {
        return money;
    }
    
-   public boolean central_activa(int id_central) {
+   private boolean central_activa(int id_central) {
        return numero_clientes_central[id_central] > 0;
    }
    
-   public void parar_central(int id_central) {
+   private void parar_central(int id_central) {
        Central c = ref_centrales.get(id_central);
        try {
            dinero += VEnergia.getCosteProduccionMW(c.getTipo())*c.getProduccion() + VEnergia.getCosteMarcha(c.getTipo());
@@ -154,7 +154,7 @@ public class Estado {
        }
    }
    
-      public void activar_central(int id_central) {
+      private void activar_central(int id_central) {
        Central c = ref_centrales.get(id_central);
        try {
        dinero -= VEnergia.getCosteProduccionMW(c.getTipo())*c.getProduccion() + VEnergia.getCosteMarcha(c.getTipo());
