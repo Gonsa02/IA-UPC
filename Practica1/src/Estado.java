@@ -13,13 +13,24 @@ import IA.Energia.VEnergia;
  *
  * @author jeremy
  */
-public class Asignacion {
+public class Estado {
    private int[] asignacion_clientes;
-   private double[] megavatios_hechos;
+   private int[] numero_clientes_central;
+   private int dinero;
    private static Centrales ref_centrales;
    private static Clientes ref_clientes;
    
-   private static void asignar1(int[] clientes, double[] megavatios_hechos){
+   private static double distancia_euclidiana(Cliente cl, Central c) {
+       int pos_x_central = c.getCoordX();
+       int pos_y_central = c.getCoordY();
+       int pos_x_cliente = cl.getCoordX();
+       int pos_y_cliente = cl.getCoordY();
+       int distancia_x = Math.abs(pos_x_central - pos_x_cliente);
+       int distancia_y = Math.abs(pos_y_central - pos_y_cliente);
+       return Math.hypot((double)distancia_x, (double)distancia_y);
+   }
+   
+   private static void asignar1(int[] clientes, int[] numero_clientes_central){
        Random rand = new Random();
        int tam = clientes.length;
        double[] producciones_aseguradas = new double[ref_centrales.size()];
@@ -33,21 +44,14 @@ public class Asignacion {
                while (!buena_asignacion){
                 Central cent = ref_centrales.get(indice_random);
         
-                //hacemos el calculo de la distancia euclidiana
-                int pos_x_central = cent.getCoordX();
-                int pos_x_cliente = cli.getCoordX();
-                int pos_y_central = cent.getCoordY();
-                int pos_y_cliente = cli.getCoordY();
-                int distancia_x = Math.abs(pos_x_central- pos_x_cliente);
-                int distancia_y = Math.abs(pos_y_central - pos_y_cliente);
-                double eucli_dist = Math.hypot((double)distancia_x, (double)distancia_y);
+                double eucli_dist = distancia_euclidiana(cli, cent);
                 //calculamos la produccion 
                 double necesidad_cliente = cli.getConsumo();
                 double porcentaje = VEnergia.getPerdida(eucli_dist);
                 necesidad_cliente = necesidad_cliente/(1-porcentaje);
                 if(producciones_aseguradas[indice_random] + necesidad_cliente <= cent.getProduccion()){
                   clientes[cliente] = indice_random;
-                  megavatios_hechos[cliente] = necesidad_cliente;
+                  ++numero_clientes_central[indice_random];
                   producciones_aseguradas[indice_random]  = producciones_aseguradas[indice_random] + necesidad_cliente;
                   buena_asignacion = true;
                 }
@@ -65,21 +69,14 @@ public class Asignacion {
                
                 Central cent = ref_centrales.get(indice_random);
         
-                //hacemos el calculo de la distancia euclidiana
-                int pos_x_central = cent.getCoordX();
-                int pos_x_cliente = cli.getCoordX();
-                int pos_y_central = cent.getCoordY();
-                int pos_y_cliente = cli.getCoordY();
-                int distancia_x = Math.abs(pos_x_central- pos_x_cliente);
-                int distancia_y = Math.abs(pos_y_central - pos_y_cliente);
-                double eucli_dist = Math.hypot((double)distancia_x, (double)distancia_y);
+                double eucli_dist = distancia_euclidiana(cli, cent);
                 //calculamos la produccion 
                 double necesidad_cliente = cli.getConsumo();
                 double porcentaje = VEnergia.getPerdida(eucli_dist);
                 necesidad_cliente = necesidad_cliente/(1-porcentaje);
                 if(producciones_aseguradas[indice_random] + necesidad_cliente <= cent.getProduccion()){
                   clientes[cliente] = indice_random;
-                  megavatios_hechos[cliente] = necesidad_cliente;
+                  ++numero_clientes_central[indice_random];
                   producciones_aseguradas[indice_random]  = producciones_aseguradas[indice_random] + necesidad_cliente;
                  
                 }
@@ -89,15 +86,20 @@ public class Asignacion {
             }
         }
    }
-   public Asignacion(Centrales centrales, Clientes clientes ,int opcion){
+
+   public Estado(Centrales centrales, Clientes clientes ,int opcion){
     asignacion_clientes = new int[clientes.size()];
-    megavatios_hechos = new double[clientes.size()];
+    numero_clientes_central = new int[centrales.size()];
     ref_centrales = centrales;
     ref_clientes = clientes;
-    if(opcion == 1) asignar1(asignacion_clientes, megavatios_hechos);
+    dinero = 0;
+    if(opcion == 1) asignar1(asignacion_clientes, numero_clientes_central);
     
    }
-   public void move(int cliente, int central){}
+
+   public void move(int cliente, int central){
+   }
+
    public void swap(int cliente1, int cliente2){}
    
 }
