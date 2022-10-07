@@ -21,7 +21,8 @@ public class main {
         try{
            Centrales mycentrales = new Centrales(vector, 1234);
            Central a = mycentrales.get(4);
-           System.out.print(a.getCoordX());
+           System.out.println(a.getProduccion() );
+           System.out.println(a.getTipo());
         } 
         catch(Exception e){
         System.out.println("errror");
