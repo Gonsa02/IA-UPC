@@ -7,10 +7,10 @@ import IA.Energia.Centrales;
 import IA.Energia.Cliente;
 import IA.Energia.Clientes;
 import java.util.Random;
-import java.lang.Math;
 import java.util.Arrays;
 import IA.Energia.VEnergia;
 import java.util.Collections;
+import java.util.List;
 /**
  *
  * @author jeremy
