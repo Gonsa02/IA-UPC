@@ -10,6 +10,7 @@ import java.util.Random;
 import java.lang.Math;
 import java.util.Arrays;
 import IA.Energia.VEnergia;
+import java.util.Collections;
 /**
  *
  * @author jeremy
@@ -50,8 +51,8 @@ public class Estado {
    		int l = distancias_manhattan.binarySearch(dist_cli);
    		int r = l + 1;
    		int count = 0;
-   		int n = distancias_manhattan.size();
-   		int sol = new int[k];
+   		int n = distancias_manhattan.length;
+   		int sol[] = new int[k];
    		
    		while (l >= 0 && r < n && count < k) {
    			if (dist_cli - distancias_manhattan[l] < dist_cli - distancias_manhattan[r])
@@ -73,18 +74,18 @@ public class Estado {
    		return sol;
    	}
    	
-   	private static boolean centralValida(int indice, Cliente cli) {
+   	private boolean centralValida(int indice, Cliente cli) {
    		Central cent = ref_centrales.get(indice);
-        
+        double produccion_cent = produccion_central(indice, asignacion_clientes);
         double eucli_dist = distancia_euclidiana(cli, cent);
         // Calculamos la producción 
         double necesidad_cliente = cli.getConsumo();
         double porcentaje = VEnergia.getPerdida(eucli_dist);
         necesidad_cliente = necesidad_cliente/(1-porcentaje);
-        return producciones_aseguradas[indice] + necesidad_cliente <= cent.getProduccion();
+        return produccion_cent + necesidad_cliente <= cent.getProduccion();
     }
    
-   private static void asignar1(int[] clientes, int[] numero_clientes_central){
+   private void asignar1(int[] clientes, int[] numero_clientes_central){
        Random rand = new Random();
        int tam = clientes.length;
        double[] producciones_aseguradas = new double[ref_centrales.size()];
@@ -97,7 +98,7 @@ public class Estado {
                int indice_random = rand.nextInt(ref_centrales.size());
                boolean buena_asignacion = false;
                while (!buena_asignacion) {
-               		if (centralValida(indice_random, cli) {
+               		if (centralValida(indice_random, cli)) {
                 		clientes[cliente] = indice_random;
                   		++numero_clientes_central[indice_random];
                   		producciones_aseguradas[indice_random]  = producciones_aseguradas[indice_random] + cli.getConsumo();
@@ -114,7 +115,7 @@ public class Estado {
         	Cliente cli = ref_clientes.get(cliente);
         	if (cli.getContrato() == Cliente.NOGARANTIZADO) {
         		int indice_random = rand.nextInt(ref_centrales.size());
-            	if (centralValida(indice_random, cli) {
+            	if (centralValida(indice_random, cli)) {
             		clientes[cliente] = indice_random;
               	  ++numero_clientes_central[indice_random];
               	  producciones_aseguradas[indice_random]  = producciones_aseguradas[indice_random] + cli.getConsumo();
@@ -124,7 +125,7 @@ public class Estado {
     	}
 	}
    
-   private static void asignar2(int[] clientes, int[] numero_clientes_central) {
+   private void asignar2(int[] clientes, int[] numero_clientes_central) {
    		Random rand = new Random();
    		int tam = clientes.length;
    		double[] producciones_aseguradas = new double[ref_centrales.size()];
@@ -149,7 +150,7 @@ public class Estado {
                	// Obtenemos las k centrales más cercanas a cli
                	int[] centrales_mas_cercanas = getNCentrales(k, dist_cli, distancias_manhattan);
                
-               	for (int indice = 0; indice < centrales_mas_cercanas.size() && !buena_asignacion; ++indice) {
+               	for (int indice = 0; indice < centrales_mas_cercanas.length && !buena_asignacion; ++indice) {
                		int ind = centrales_mas_cercanas[indice];
                		if (centralValida(ind, cli)) {
                			clientes[cliente] = ind;
@@ -162,7 +163,7 @@ public class Estado {
                	// Si no hemos podido asignar alguna de las k centrales más cercanas a cli entonces le asignamos una central aleatoriamente
                	int indice_random = rand.nextInt(ref_centrales.size());
                	while (!buena_asignacion) {
-                	if (centralValida(indice_random, cli) {
+                	if (centralValida(indice_random, cli)) {
                   		clientes[cliente] = indice_random;
                   		++numero_clientes_central[indice_random];
                   		producciones_aseguradas[indice_random]  = producciones_aseguradas[indice_random] + cli.getConsumo();
@@ -181,7 +182,7 @@ public class Estado {
            	if (cli.getContrato() == Cliente.NOGARANTIZADO) {
            		int dist_cli = cli.getCoordX() + cli.getCoordY();
            		int[] centrales_mas_cercanas = getNCentrales(k, dist_cli, distancias_manhattan);
-               	int indice_random = rand.nextInt(distancias_manhattan.size());
+               	int indice_random = rand.nextInt(distancias_manhattan.length);
                	int ind = centrales_mas_cercanas[indice_random];
                	// Primero miramos de asignar aleatoriamente una de las k centrales más cercanas que tiene cli
                	if (centralValida(ind, cli)) {
