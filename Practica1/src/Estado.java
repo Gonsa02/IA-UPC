@@ -124,7 +124,6 @@ public class Estado {
    private void asignar2(int[] clientes) {
    		Random rand = new Random();
    		int tam = clientes.length;
-   		double[] producciones_aseguradas = new double[ref_centrales.size()];
    		int k = 5;
        	
        	// Hacemos un vector con las distancias
