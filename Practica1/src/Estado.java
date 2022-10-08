@@ -74,8 +74,8 @@ public class Estado {
    		return sol;
    	}
    	
-   	private boolean centralValida(int indice, Cliente cli) {
-   		Central cent = ref_centrales.get(indice);
+    private boolean centralValida(int indice, Cliente cli) {
+        Central cent = ref_centrales.get(indice);
         double produccion_cent = produccion_central(indice, asignacion_clientes);
         double eucli_dist = distancia_euclidiana(cli, cent);
         // Calculamos la producción 
@@ -85,10 +85,10 @@ public class Estado {
         return produccion_cent + necesidad_cliente <= cent.getProduccion();
     }
    
-   private void asignar1(int[] clientes, int[] numero_clientes_central){
+   private void asignar1(int[] clientes){
        Random rand = new Random();
        int tam = clientes.length;
-       double[] producciones_aseguradas = new double[ref_centrales.size()];
+       
        
        // Primero asignamos centrales a los clientes asegurados
        for (int cliente = 0; cliente < tam; ++cliente) {
@@ -99,9 +99,7 @@ public class Estado {
                boolean buena_asignacion = false;
                while (!buena_asignacion) {
                		if (centralValida(indice_random, cli)) {
-                		clientes[cliente] = indice_random;
-                  		++numero_clientes_central[indice_random];
-                  		producciones_aseguradas[indice_random]  = producciones_aseguradas[indice_random] + cli.getConsumo();
+                		asignar_cliente_a_central(cliente, indice_random);
                   		buena_asignacion = true;
                 	}
                 	else indice_random = rand.nextInt(ref_centrales.size());
@@ -116,9 +114,7 @@ public class Estado {
         	if (cli.getContrato() == Cliente.NOGARANTIZADO) {
         		int indice_random = rand.nextInt(ref_centrales.size());
             	if (centralValida(indice_random, cli)) {
-            		clientes[cliente] = indice_random;
-              	  ++numero_clientes_central[indice_random];
-              	  producciones_aseguradas[indice_random]  = producciones_aseguradas[indice_random] + cli.getConsumo();
+                        asignar_cliente_a_central(cliente, indice_random);
            		}
            		else clientes[cliente] = -1;
         	}
@@ -138,7 +134,7 @@ public class Estado {
        		distancias_manhattan[i] = cent.getCoordX() + cent.getCoordY();
        	}
        	// Ordenamos las distancias crecientemente
-     	distancias_manhattan.sort();
+     	Arrays.sort(distancias_manhattan);
      	
      	// Primero asignamos centrales a los clientes asegurados
         for (int cliente = 0; cliente < tam; ++cliente) {
@@ -153,9 +149,7 @@ public class Estado {
                	for (int indice = 0; indice < centrales_mas_cercanas.length && !buena_asignacion; ++indice) {
                		int ind = centrales_mas_cercanas[indice];
                		if (centralValida(ind, cli)) {
-               			clientes[cliente] = ind;
-                 		++numero_clientes_central[ind];
-                  		producciones_aseguradas[ind]  = producciones_aseguradas[ind] + cli.getConsumo();
+               			asignar_cliente_a_central(cliente, ind);
                   		buena_asignacion = true;
                   	}
                	}
@@ -164,9 +158,7 @@ public class Estado {
                	int indice_random = rand.nextInt(ref_centrales.size());
                	while (!buena_asignacion) {
                 	if (centralValida(indice_random, cli)) {
-                  		clientes[cliente] = indice_random;
-                  		++numero_clientes_central[indice_random];
-                  		producciones_aseguradas[indice_random]  = producciones_aseguradas[indice_random] + cli.getConsumo();
+                  		asignar_cliente_a_central(cliente, indice_random);
                   		buena_asignacion = true;
                 	}
                 	else indice_random = rand.nextInt(ref_centrales.size());
@@ -195,9 +187,7 @@ public class Estado {
                 else {
                 	indice_random = rand.nextInt(ref_centrales.size());
                 	if (centralValida(indice_random, cli)) {
-                  		clientes[cliente] = indice_random;
-                  		++numero_clientes_central[indice_random];
-                  		producciones_aseguradas[indice_random]  = producciones_aseguradas[indice_random] + cli.getConsumo();
+                  		asignar_cliente_a_central(cliente, indice_random);
                   		buena_asignacion = true;
                 	}
                 }
@@ -208,12 +198,13 @@ public class Estado {
    }
 
    public Estado(Centrales centrales, Clientes clientes, int opcion) {
-   		asignacion_clientes = new int[clientes.size()];
+   	asignacion_clientes = new int[clientes.size()];
+        for (int i = 0; i < clientes.size(); ++i) asignacion_clientes[i] = -1;
     	numero_clientes_central = new int[centrales.size()];
     	ref_centrales = centrales;
     	ref_clientes = clientes;
-    	dinero = 0;
-    	if (opcion == 1) asignar1(asignacion_clientes, numero_clientes_central);
+    	dinero = calcular_coste_centrales();
+    	if (opcion == 1) asignar1(asignacion_clientes);
     	else if (opcion == 2) asignar2(asignacion_clientes, numero_clientes_central);
    }
 
