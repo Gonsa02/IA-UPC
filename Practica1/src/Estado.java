@@ -121,7 +121,7 @@ public class Estado {
     	}
 	}
    
-   private void asignar2(int[] clientes, int[] numero_clientes_central) {
+   private void asignar2(int[] clientes) {
    		Random rand = new Random();
    		int tam = clientes.length;
    		double[] producciones_aseguradas = new double[ref_centrales.size()];
@@ -178,9 +178,7 @@ public class Estado {
                	int ind = centrales_mas_cercanas[indice_random];
                	// Primero miramos de asignar aleatoriamente una de las k centrales más cercanas que tiene cli
                	if (centralValida(ind, cli)) {
-               		clientes[cliente] = ind;
-                 	++numero_clientes_central[ind];
-                  	producciones_aseguradas[ind]  = producciones_aseguradas[ind] + cli.getConsumo();
+               	asignar_cliente_a_central(cliente, ind);
                   	buena_asignacion = true;
                 }
                 // En caso que no funcione miramos de asignarle una central aleatoriamente (ahora no hace falta que esté entre las k más cercanas)
@@ -205,7 +203,7 @@ public class Estado {
     	ref_clientes = clientes;
     	dinero = calcular_coste_centrales();
     	if (opcion == 1) asignar1(asignacion_clientes);
-    	else if (opcion == 2) asignar2(asignacion_clientes, numero_clientes_central);
+    	else if (opcion == 2) asignar2(asignacion_clientes);
    }
 
    public boolean move_efectivo(int cliente, int central){
