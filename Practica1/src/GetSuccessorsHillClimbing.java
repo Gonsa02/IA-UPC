@@ -14,6 +14,38 @@ public class GetSuccessorsHillClimbing implements SuccessorFunction {
     public List getSuccessors(Object state){
         ArrayList retval = new ArrayList();
         Estado estado_actual = (Estado)state;
-
+        int clientes = estado_actual.get_n_clientes();
+        int centrales = estado_actual.get_n_centrales();
+        
+        //aplicacion de los operadores move
+        for(int i = 0; i< clientes; ++i){
+            for(int j = -1; j < centrales; ++j){
+                if(estado_actual.move_efectivo(i, j)){
+                    Estado succesor = estado_actual.clonar();
+                    succesor.asignar_cliente_a_central(i, j);
+                    
+                    String accion = "Cliente " +i+ " es transferido a la central "+j;
+                    Successor new_succ = new Successor(accion,succesor);
+                    retval.add(new_succ);
+                }
+            }
+        }
+        //aplicacion de los swaps
+        for(int i = 0; i< clientes; ++i){
+            for(int j = 0; j < clientes; ++j){
+                //esta funcion la implementa marc
+                if(estado_actual.swap_efectivo(i, j)){
+                    Estado succesor = estado_actual.clonar();
+                    
+                    //esta funcion la implementa marc
+                    succesor.asignar_swap(i, j);
+                    
+                    String accion = "Cliente " +i+ " es intercambiado de central con el cliente "+j;
+                    Successor new_succ = new Successor(accion,succesor);
+                    retval.add(new_succ);
+                }
+            }
+        }
+        return retval;
     }
 }

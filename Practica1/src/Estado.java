@@ -204,7 +204,19 @@ public class Estado {
     	if (opcion == 1) asignar1(asignacion_clientes);
     	else if (opcion == 2) asignar2(asignacion_clientes);
    }
-
+   private Estado(int[] asignacion, int[] num_cli, double dinero, Clientes clientes, Centrales centrales){
+       asignacion_clientes = new int[asignacion.length];
+       for(int i = 0; i < asignacion_clientes.length; ++i){
+           asignacion_clientes[i] = asignacion[i];
+       }
+       numero_clientes_central = new int[num_cli.length];
+       for(int i = 0; i < num_cli.length; ++i){
+           numero_clientes_central[i] = num_cli[i];
+       }
+       this.dinero = dinero;
+       ref_clientes = clientes;
+       ref_centrales = centrales;   
+   }
    public boolean move_efectivo(int cliente, int central){
        Cliente cli = ref_clientes.get(cliente);
        if(cli.getContrato() == Cliente.GARANTIZADO && central == -1) return false;
@@ -292,5 +304,13 @@ public class Estado {
    }
 
    public void swap(int cliente1, int cliente2){}
-   
+   public int get_n_clientes(){
+       return ref_clientes.size();
+   }
+   public int get_n_centrales(){
+       return ref_centrales.size();
+   }
+   public Estado clonar(){
+       return new Estado(asignacion_clientes, numero_clientes_central, dinero, ref_clientes, ref_centrales);
+   }
 }
