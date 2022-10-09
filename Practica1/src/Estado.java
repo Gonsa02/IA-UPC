@@ -56,13 +56,6 @@ public class Estado {
        int distancia_y = Math.abs(pos_y_central - pos_y_cliente);
        return Math.hypot((double)distancia_x, (double)distancia_y);
    }
-   private double consumo_real_central(int central){
-       double consumo_real = 0.0;
-       for(int i = 0; i < asignacion_clientes.length; ++i){
-           if(asignacion_clientes[i]== central) consumo_real += consumo_real_cliente(i, central);
-       }
-       return consumo_real;
-   }
    
    private static int[] getNCentrales(int k, int dist_cli, double[] distancias_manhattan) {
    		int l = distancias_manhattan.binarySearch(dist_cli);
@@ -90,11 +83,6 @@ public class Estado {
    		
    		return sol;
    	}
-   	
-    private boolean centralValida(int indice, int cli) {
-        Central cent = ref_centrales.get(indice);
-        return consumo_real_central(indice) + consumo_real_cliente(cli, indice) <= cent.getProduccion();
-    }
    
    private void asignar1(int[] clientes){
        Random rand = new Random();
@@ -201,6 +189,19 @@ public class Estado {
             }
         }
    }
+   
+    private double consumo_real_central(int central){
+       double consumo_real = 0.0;
+       for(int i = 0; i < asignacion_clientes.length; ++i){
+           if(asignacion_clientes[i]== central) consumo_real += consumo_real_cliente(i, central);
+       }
+       return consumo_real;
+   }
+   	
+    private boolean centralValida(int indice, int cli) {
+        Central cent = ref_centrales.get(indice);
+        return consumo_real_central(indice) + consumo_real_cliente(cli, indice) <= cent.getProduccion();
+    }
    
    private double consumo_real_cliente(int cliente, int central) {
        if (central != -1) {
