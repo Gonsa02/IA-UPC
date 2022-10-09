@@ -9,6 +9,7 @@ import IA.Energia.Clientes;
 import java.util.Random;
 import java.util.Arrays;
 import IA.Energia.VEnergia;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 /**
@@ -57,8 +58,8 @@ public class Estado {
        return Math.hypot((double)distancia_x, (double)distancia_y);
    }
    
-   private static int[] getNCentrales(int k, int dist_cli, double[] distancias_manhattan) {
-   		int l = distancias_manhattan.binarySearch(dist_cli);
+   private static int[] getNCentrales(int k, int dist_cli, int[] distancias_manhattan) {
+   		int l = Arrays.binarySearch(distancias_manhattan, dist_cli);
    		int r = l + 1;
    		int count = 0;
    		int n = distancias_manhattan.length;
@@ -77,9 +78,10 @@ public class Estado {
    			sol[count++] = r++;
    		
    		// Ordenem aleatòriament els elements
-   		List<int> list = Arrays.asList(sol);
+   		List<Integer> list = new ArrayList<>();
+                for (int i : sol) list.add(i);
    		Collections.shuffle(list);
-   		list.toArray(sol);
+   		sol = list.stream().mapToInt(i -> i).toArray();
    		
    		return sol;
    	}
@@ -330,5 +332,8 @@ public class Estado {
    }
    public Estado clonar(){
        return new Estado(asignacion_clientes, numero_clientes_central, dinero, ref_clientes, ref_centrales);
+   }
+   public double get_dinero(){
+       return dinero;
    }
 }
