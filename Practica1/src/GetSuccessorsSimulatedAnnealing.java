@@ -58,9 +58,10 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
         }
         else {
             Successor randomSuccessor = (Successor)v.get(rand.nextInt(v.size()));
-            String actionn = randomSuccessor.getAction();
-            System.out.println("- " + actionn);
-            retval.add(randomSuccessor);
+            String accion = new String(randomSuccessor.getAction());
+            Estado succesor = ((Estado)randomSuccessor.getState()).clonar();
+            System.out.println(succesor == randomSuccessor.getState());
+            retval.add(new Successor(accion,succesor));
         }
         
         return retval;

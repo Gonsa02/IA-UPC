@@ -10,7 +10,9 @@
 import aima.search.framework.HeuristicFunction;
 public class FuncionHeuristica implements HeuristicFunction {
     public double getHeuristicValue(Object n){
-
-        return -((Estado) n).get_dinero();
+        double h = -((Estado) n).get_dinero();
+        //System.out.println(h);
+        return h;
+        
     }
 }

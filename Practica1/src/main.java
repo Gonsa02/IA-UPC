@@ -65,8 +65,8 @@ public class main {
      private static void printActions(List actions) {
          System.out.println(actions.size());
         for (int i = 0; i < actions.size(); i++) {
-            //String action = (String) actions.get(i);
-            //System.out.println(action);
+            String action = (String) actions.get(i);
+            System.out.println(action);
         }
     }
     
