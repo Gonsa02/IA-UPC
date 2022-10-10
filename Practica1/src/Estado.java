@@ -102,7 +102,7 @@ public class Estado {
                int indice_random = rand.nextInt(ref_centrales.size());
                boolean buena_asignacion = false;
                while (!buena_asignacion) {
-                        System.out.println("Seguimos tirando " + cliente);
+                        //System.out.println("Seguimos tirando " + cliente);
                		if (centralValida(indice_random, cliente)) {
                 		asignar_cliente_a_central(cliente, indice_random);
                   		buena_asignacion = true;
