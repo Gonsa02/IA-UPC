@@ -59,12 +59,16 @@ public class Estado {
    }
    
    private static int[] getNCentrales(int k, int dist_cli, int[] distancias_manhattan) {
+                
    		int l = Arrays.binarySearch(distancias_manhattan, dist_cli);
+                if (l < 0) l = Math.abs(l) - 1;
+                if (l == distancias_manhattan.length) l--;
    		int r = l + 1;
+
    		int count = 0;
    		int n = distancias_manhattan.length;
    		int sol[] = new int[k];
-   		
+
    		while (l >= 0 && r < n && count < k) {
    			if (dist_cli - distancias_manhattan[l] < dist_cli - distancias_manhattan[r])
    				sol[count++] = l--;
@@ -82,7 +86,7 @@ public class Estado {
                 for (int i : sol) list.add(i);
    		Collections.shuffle(list);
    		sol = list.stream().mapToInt(i -> i).toArray();
-   		
+
    		return sol;
    	}
    
@@ -121,9 +125,9 @@ public class Estado {
     }
    
    private void asignar2(int[] clientes) {
-   		Random rand = new Random();
-   		int tam = clientes.length;
-   		int k = 5;
+   	Random rand = new Random();
+   	int tam = clientes.length;
+   	int k = 5;
        	
        	// Hacemos un vector con las distancias
        	int[] distancias_manhattan = new int[ref_centrales.size()];
@@ -143,7 +147,6 @@ public class Estado {
                	boolean buena_asignacion = false;
                	// Obtenemos las k centrales más cercanas a cli
                	int[] centrales_mas_cercanas = getNCentrales(k, dist_cli, distancias_manhattan);
-               
                	for (int indice = 0; indice < centrales_mas_cercanas.length && !buena_asignacion; ++indice) {
                		int ind = centrales_mas_cercanas[indice];
                		if (centralValida(ind, cliente)) {
@@ -151,7 +154,7 @@ public class Estado {
                   		buena_asignacion = true;
                   	}
                	}
-               
+                
                	// Si no hemos podido asignar alguna de las k centrales más cercanas a cli entonces le asignamos una central aleatoriamente
                	int indice_random = rand.nextInt(ref_centrales.size());
                	while (!buena_asignacion) {
@@ -170,19 +173,20 @@ public class Estado {
            	boolean buena_asignacion = false;
            	
            	if (cli.getContrato() == Cliente.NOGARANTIZADO) {
-           		int dist_cli = cli.getCoordX() + cli.getCoordY();
-           		int[] centrales_mas_cercanas = getNCentrales(k, dist_cli, distancias_manhattan);
-               	int indice_random = rand.nextInt(distancias_manhattan.length);
-               	int ind = centrales_mas_cercanas[indice_random];
-               	// Primero miramos de asignar aleatoriamente una de las k centrales más cercanas que tiene cli
-               	if (centralValida(ind, cliente)) {
-               	asignar_cliente_a_central(cliente, ind);
-                  	buena_asignacion = true;
-                }
-                // En caso que no funcione miramos de asignarle una central aleatoriamente (ahora no hace falta que esté entre las k más cercanas)
-                else {
-                	indice_random = rand.nextInt(ref_centrales.size());
-                	if (centralValida(indice_random, cliente)) {
+                    int dist_cli = cli.getCoordX() + cli.getCoordY();
+                    int[] centrales_mas_cercanas = getNCentrales(k, dist_cli, distancias_manhattan);
+                    int indice_random = rand.nextInt(centrales_mas_cercanas.length);
+                    int ind = centrales_mas_cercanas[indice_random];
+                    
+                    // Primero miramos de asignar aleatoriamente una de las k centrales más cercanas que tiene cli
+                    if (centralValida(ind, cliente)) {
+                        asignar_cliente_a_central(cliente, ind);
+                        buena_asignacion = true;
+                    }
+                    // En caso que no funcione miramos de asignarle una central aleatoriamente (ahora no hace falta que esté entre las k más cercanas)
+                      else {
+                            indice_random = rand.nextInt(ref_centrales.size());
+                            if (centralValida(indice_random, cliente)) {
                   		asignar_cliente_a_central(cliente, indice_random);
                   		buena_asignacion = true;
                 	}

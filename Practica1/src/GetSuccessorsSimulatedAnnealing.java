@@ -21,7 +21,6 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
         Random rand = new Random();
         int indice_random = rand.nextInt(2);
         
-        
         // Aplicamos el operador asignar_cliente_a_central
         if (indice_random == 0) {
             List<Integer> cliente1 = new ArrayList<>();
@@ -58,7 +57,7 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
             List<Integer> cliente1 = new ArrayList<Integer>();
             List<Integer> cliente2 = new ArrayList<Integer>();
             for (int i = 0; i < clientes; ++i) {
-                for (int j = 0; j < clientes; ++j) {
+                for (int j = i + 1; j < clientes; ++j) {
                     if (estado_actual.swap_efectivo(i, j)) {
                         Integer cli = i;
                         cliente1.add(cli);
@@ -83,9 +82,6 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
                 return retval;
             }
         }
-        
-        
-        
     }
 }
 
