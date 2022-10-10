@@ -55,7 +55,7 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
                 String accion = "Cliente " + cli + " es transferido a la central " + cent;
                 Successor s = new Successor(accion,next);
                 retval.add(s);
-                System.out.println(retval);
+                //System.out.println(retval);
                 return retval;
             }
         }
@@ -90,7 +90,7 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
                 String accion = "Cliente " + cli + " es intercambiado por el cliente " + cli2;
                 Successor s = new Successor(accion,next);
                 retval.add(s);
-                System.out.println(retval);
+                //System.out.println(retval);
                 return retval;
             }
         }
