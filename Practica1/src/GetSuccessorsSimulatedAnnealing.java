@@ -12,9 +12,11 @@ import java.util.Random;
  * @author jk
  */
 public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
+    
     public List getSuccessors(Object state) {
         ArrayList retval = new ArrayList();
         Estado estado_actual = (Estado)state;
+        
         int clientes = estado_actual.get_n_clientes();
         int centrales = estado_actual.get_n_centrales();
         System.out.println(estado_actual.get_dinero());
@@ -38,6 +40,10 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
             }
              if (cliente1.isEmpty()) {
                 System.out.println("No hay sucesores");
+                String accion = "No hay sucesores";
+                Successor s = new Successor(accion,estado_actual);
+                retval.add(s);
+                System.out.println(retval);
                 return retval;
             }
             else {
@@ -49,6 +55,7 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
                 String accion = "Cliente " + cli + " es transferido a la central " + cent;
                 Successor s = new Successor(accion,next);
                 retval.add(s);
+                System.out.println(retval);
                 return retval;
             }
         }
@@ -68,6 +75,10 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
             }
             if (cliente1.isEmpty()) {
                 System.out.println("No hay sucesores");
+                String accion = "No hay sucesores";
+                Successor s = new Successor(accion,estado_actual);
+                retval.add(s);
+                System.out.println(retval);
                 return retval;
             }
             else {
@@ -79,6 +90,7 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
                 String accion = "Cliente " + cli + " es intercambiado por el cliente " + cli2;
                 Successor s = new Successor(accion,next);
                 retval.add(s);
+                System.out.println(retval);
                 return retval;
             }
         }
