@@ -17,6 +17,7 @@ public class GetSuccessorsHillClimbing implements SuccessorFunction {
         int clientes = estado_actual.get_n_clientes();
         int centrales = estado_actual.get_n_centrales();
         
+        
         //aplicacion de los operadores move
         for(int i = 0; i< clientes; ++i){
             for(int j = -1; j < centrales; ++j){
@@ -31,16 +32,15 @@ public class GetSuccessorsHillClimbing implements SuccessorFunction {
             }
         }
         //aplicacion de los swaps
-        for(int i = 0; i< clientes; ++i){
-            for(int j = 0; j < clientes; ++j){
+        for (int i = 0; i< clientes; ++i) {
+            for (int j = 0; j < clientes; ++j) {
 
-                if(estado_actual.swap_efectivo(i, j)){
+                if (estado_actual.swap_efectivo(i, j)) {
                     Estado succesor = estado_actual.clonar();
-                    
                    
                     succesor.swap(i, j);
                     
-                    String accion = "Cliente " +i+ " es intercambiado de central con el cliente "+j;
+                    String accion = "Cliente " + i + " es intercambiado de central con el cliente " + j;
                     Successor new_succ = new Successor(accion,succesor);
                     retval.add(new_succ);
                 }

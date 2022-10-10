@@ -27,11 +27,11 @@ public class main {
         
         try{
           int[] centrales = new int[]{3,3,3};
-          double[] clientes = new double[]{1./2.,1./4.,1./4.};
+          double[] clientes = new double[]{1./3.,1./3.,1./3.};
           
-          Centrales cent = new Centrales(centrales, 123);
+          Centrales cent = new Centrales(centrales, 12);
           System.out.println(1);
-          Clientes cli = new Clientes(4,clientes,0.5, 123);
+          Clientes cli = new Clientes(20,clientes,0.7, 12);
           System.out.println(2);
           Estado state = new Estado(cent, cli, 1);
           System.out.println(3);
@@ -63,9 +63,10 @@ public class main {
         
     }
      private static void printActions(List actions) {
+         System.out.println(actions.size());
         for (int i = 0; i < actions.size(); i++) {
-            String action = (String) actions.get(i);
-            System.out.println(action);
+            //String action = (String) actions.get(i);
+            //System.out.println(action);
         }
     }
     

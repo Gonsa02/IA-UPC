@@ -19,47 +19,48 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
         int centrales = estado_actual.get_n_centrales();
         
         Random rand = new Random();
-        int indice_random = rand.nextInt();
+        int indice_random = rand.nextInt(2);
+        ArrayList v = new ArrayList();
         
         // Aplicamos el operador asignar_cliente_a_central
-        if (indice_random % 2 == 0) {
-            int i = rand.nextInt(clientes);
-            int j = rand.nextInt(centrales);
-            int a = 0;
-            while (!estado_actual.move_efectivo(i, j)) {
-                i = rand.nextInt(clientes);
-                j = rand.nextInt(centrales);
-                System.out.println("Move " + a);
-                ++a;
-            }
-            
-                Estado succesor = estado_actual.clonar();
-                succesor.asignar_cliente_a_central(i, j);
+        if (indice_random == 0) {
+            for (int i = 0; i < clientes; ++i) {
+                for (int j = -1; j < centrales; ++j) {
+                    if (estado_actual.move_efectivo(i, j)) {
+                        Estado succesor = estado_actual.clonar();
+                        succesor.asignar_cliente_a_central(i, j);
                     
-                String accion = "Cliente " + i + " es transferido a la central " + j;
-                Successor new_succ = new Successor(accion,succesor);
-                retval.add(new_succ);
-            
+                        String accion = "Cliente " + i + " es transferido a la central " + j;
+                        Successor new_succ = new Successor(accion,succesor);
+                        v.add(new_succ);
+                    }
+                }
+            } 
         }
         // Aplicamos el operador swap
         else {
-            int i = rand.nextInt(clientes);
-            int j = rand.nextInt(clientes);
-            int a = 0;
-            while (!estado_actual.swap_efectivo(i, j)) {
-                i = rand.nextInt(clientes);
-                j = rand.nextInt(clientes);
-                System.out.println("Swap " + a);
-                ++a;
+            for (int i = 0; i < clientes; ++i) {
+                for (int j = 0; j < clientes; ++j) {
+                    if (estado_actual.swap_efectivo(i, j)) {
+                        Estado succesor = estado_actual.clonar();
+                        succesor.swap(i, j);
+                        String accion = "Cliente " + i + " es intercambiado de central con el cliente " + j;
+                        Successor new_succ = new Successor(accion,succesor);
+                        v.add(new_succ);
+                    }
+                }
             }
-            
-                Estado succesor = estado_actual.clonar();
-                   
-                succesor.swap(i, j);
-                    
-                String accion = "Cliente " + i + " es intercambiado de central con el cliente " + j;
-                Successor new_succ = new Successor(accion,succesor);
-                retval.add(new_succ);
+        }
+        
+        if (v.isEmpty()) {
+            System.out.println("No hay sucesores");
+            return retval;
+        }
+        else {
+            Successor randomSuccessor = (Successor)v.get(rand.nextInt(v.size()));
+            String actionn = randomSuccessor.getAction();
+            System.out.println("- " + actionn);
+            retval.add(randomSuccessor);
         }
         
         return retval;

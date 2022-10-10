@@ -271,13 +271,24 @@ public class Estado {
    
    public boolean swap_efectivo(int cliente1, int cliente2) {
        Cliente c1 = ref_clientes.get(cliente1), c2 = ref_clientes.get(cliente2);
-       if (!(c1.getContrato() == c2.getContrato() && c2.getContrato() == Cliente.GARANTIZADO))  return false; //Comprobamos que el swap se haga con clientes del mismo tipo
-       if (!(c1.getContrato() == c2.getContrato() && c2.getContrato() == Cliente.NOGARANTIZADO)) return false;
-       double consumo_cliente1_central_actual = consumo_real_cliente(cliente1, asignacion_clientes[cliente1]);
-       double consumo_cliente2_central_actual = consumo_real_cliente(cliente2, asignacion_clientes[cliente2]);
-       double consumo_cliente1_central_futura = consumo_real_cliente(cliente1, asignacion_clientes[cliente2]);
-       double consumo_cliente2_central_futura = consumo_real_cliente(cliente2, asignacion_clientes[cliente1]);
+       if (c1.getContrato() != c2.getContrato())  return false; //Comprobamos que el swap se haga con clientes del mismo tipo
+       
        int id_central1 = asignacion_clientes[cliente1], id_central2 = asignacion_clientes[cliente2];
+       double consumo_cliente1_central_actual = consumo_real_cliente(cliente1, id_central1);
+       double consumo_cliente2_central_actual = consumo_real_cliente(cliente2, id_central2);
+       double consumo_cliente1_central_futura = consumo_real_cliente(cliente1, id_central2);
+       double consumo_cliente2_central_futura = consumo_real_cliente(cliente2, id_central1);
+       
+       if (id_central1 == id_central2 && id_central1 == -1) return false;
+       else if (id_central1 == -1) {
+           Central central2 = ref_centrales.get(id_central2);
+           return (consumo_real_central(id_central2)-consumo_cliente2_central_actual+consumo_cliente1_central_futura) <= central2.getProduccion();
+       }
+       else if (id_central2 == -1) {
+           Central central1 = ref_centrales.get(id_central1);
+           return (consumo_real_central(id_central1)-consumo_cliente1_central_actual+consumo_cliente2_central_futura) <= central1.getProduccion();
+       }
+       
        Central central1 = ref_centrales.get(id_central1), central2 = ref_centrales.get(id_central2);
        //A continuación comprobamos si las centrales tienen suficiente produccion disponible como para servir a los clientes una vez se haya hecho el swap
        return (((consumo_real_central(id_central1)-consumo_cliente1_central_actual+consumo_cliente2_central_futura) <= central1.getProduccion()) && ((consumo_real_central(id_central2)-consumo_cliente2_central_actual+consumo_cliente1_central_futura) <= central2.getProduccion()));
@@ -334,7 +345,11 @@ public class Estado {
    public Estado clonar(){
        return new Estado(asignacion_clientes, numero_clientes_central, dinero, ref_clientes, ref_centrales);
    }
-   public double get_dinero(){
-       return dinero;
+   public double get_dinero() {
+       double produccion = 0.0;
+       for (int i = 0; i < ref_clientes.size(); ++i) {
+           produccion += consumo_real_cliente(i, asignacion_clientes[i]);
+       }
+       return dinero - produccion;
    }
 }
