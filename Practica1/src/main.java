@@ -26,12 +26,12 @@ public class main {
         // TODO code application logic her
         
         try{
-          int[] centrales = new int[]{3,3,3};
-          double[] clientes = new double[]{1./3.,1./3.,1./3.};
+          int[] centrales = new int[]{5,10,25};
+          double[] clientes = new double[]{0.25,0.3,0.45};
           
-          Centrales cent = new Centrales(centrales, 12);
+          Centrales cent = new Centrales(centrales, 1234);
           System.out.println(1);
-          Clientes cli = new Clientes(20,clientes,0.7, 12);
+          Clientes cli = new Clientes(1000,clientes,0.25, 1234);
           System.out.println(2);
           Estado state = new Estado(cent, cli, 1);
           System.out.println(3);
