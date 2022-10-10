@@ -31,7 +31,7 @@ public class main {
           
           Centrales cent = new Centrales(centrales, 1234);
           System.out.println(1);
-          Clientes cli = new Clientes(1000,clientes,0.25, 1234);
+          Clientes cli = new Clientes(10,clientes,0.25, 1234);
           System.out.println(2);
           Estado state = new Estado(cent, cli, 1);
           System.out.println(3);
@@ -45,6 +45,7 @@ public class main {
           SearchAgent agent = new SearchAgent(p,alg);
           System.out.println(6);
           System.out.println();
+           
             printActions(agent.getActions());
             printInstrumentation(agent.getInstrumentation());
         } 
@@ -63,6 +64,7 @@ public class main {
         
     }
      private static void printActions(List actions) {
+         System.out.println(actions); 
          System.out.println(actions.size());
         for (int i = 0; i < actions.size(); i++) {
             String action = (String) actions.get(i);

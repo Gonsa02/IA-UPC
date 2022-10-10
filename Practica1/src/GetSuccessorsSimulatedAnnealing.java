@@ -39,6 +39,7 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
             }
              if (cliente1.isEmpty()) {
                 System.out.println("No hay sucesores");
+                retval.add(estado_actual);
                 return retval;
             }
             else {
@@ -48,8 +49,7 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
                 Estado next = estado_actual.clonar();
                 next.asignar_cliente_a_central(cli, cent);
                 String accion = "Cliente " + cli + " es transferido a la central " + cent;
-                Successor s = new Successor(accion,next);
-                retval.add(s);
+                retval.add(new Successor(accion,next));
                 return retval;
             }
         }
@@ -69,6 +69,7 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
             }
             if (cliente1.isEmpty()) {
                 System.out.println("No hay sucesores");
+                retval.add(estado_actual);
                 return retval;
             }
             else {
@@ -78,8 +79,7 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
                 Estado next = estado_actual.clonar();
                 next.swap(cli, cli2);
                 String accion = "Cliente " + cli + " es intercambiado por el cliente " + cli2;
-                Successor s = new Successor(accion,next);
-                retval.add(s);
+                retval.add(new Successor(accion,next));
                 return retval;
             }
         }
