@@ -25,10 +25,12 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
         if (indice_random % 2 == 0) {
             int i = rand.nextInt(clientes);
             int j = rand.nextInt(centrales);
-            
+            int a = 0;
             while (!estado_actual.move_efectivo(i, j)) {
                 i = rand.nextInt(clientes);
                 j = rand.nextInt(centrales);
+                System.out.println("Move " + a);
+                ++a;
             }
             
                 Estado succesor = estado_actual.clonar();
@@ -42,11 +44,13 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
         // Aplicamos el operador swap
         else {
             int i = rand.nextInt(clientes);
-            int j = rand.nextInt(centrales);
-            
+            int j = rand.nextInt(clientes);
+            int a = 0;
             while (!estado_actual.swap_efectivo(i, j)) {
                 i = rand.nextInt(clientes);
-                j = rand.nextInt(centrales);
+                j = rand.nextInt(clientes);
+                System.out.println("Swap " + a);
+                ++a;
             }
             
                 Estado succesor = estado_actual.clonar();

@@ -13,7 +13,7 @@ import aima.search.framework.Problem;
 import aima.search.framework.Search;
 import aima.search.framework.SearchAgent;
 import aima.search.informed.HillClimbingSearch;
-import aima.search.informed.IterativeDeepeningAStarSearch;
+import aima.search.informed.SimulatedAnnealingSearch;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -26,21 +26,21 @@ public class main {
         // TODO code application logic her
         
         try{
-          int[] centrales = new int[]{1,1,2};
+          int[] centrales = new int[]{3,3,3};
           double[] clientes = new double[]{1./2.,1./4.,1./4.};
           
-          Centrales cent = new Centrales(centrales, 1234);
+          Centrales cent = new Centrales(centrales, 123);
           System.out.println(1);
-          Clientes cli = new Clientes(20,clientes,0.5, 1234);
+          Clientes cli = new Clientes(4,clientes,0.5, 123);
           System.out.println(2);
           Estado state = new Estado(cent, cli, 1);
           System.out.println(3);
           Problem p = new Problem(state,
-                                  new GetSuccessorsHillClimbing(),
+                                  new GetSuccessorsSimulatedAnnealing(),
                                   new SolucionTest(),
                                   new FuncionHeuristica());
           System.out.println(4);
-          Search alg = new HillClimbingSearch();
+          Search alg = new SimulatedAnnealingSearch();
           System.out.println(5);
           SearchAgent agent = new SearchAgent(p,alg);
           System.out.println(6);
