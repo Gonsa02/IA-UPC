@@ -8,26 +8,65 @@
  * @author jeremy
  */
 import IA.Energia.*;
-
+import aima.search.framework.GraphSearch;
+import aima.search.framework.Problem;
+import aima.search.framework.Search;
+import aima.search.framework.SearchAgent;
+import aima.search.informed.HillClimbingSearch;
+import aima.search.informed.IterativeDeepeningAStarSearch;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 public class main {
  
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
-        int[] vector = new int[]{1,2,3};
+        // TODO code application logic her
         
         try{
-           Centrales mycentrales = new Centrales(vector, 1234);
-           Central a = mycentrales.get(4);
-           System.out.println(a.getProduccion() );
-           System.out.println(a.getTipo());
+          int[] centrales = new int[]{1,1,2};
+          double[] clientes = new double[]{1./2.,1./4.,1./4.};
+          
+          Centrales cent = new Centrales(centrales, 1234);
+          System.out.println(1);
+          Clientes cli = new Clientes(20,clientes,0.5, 1234);
+          System.out.println(2);
+          Estado state = new Estado(cent, cli, 1);
+          System.out.println(3);
+          Problem p = new Problem(state,
+                                  new GetSuccessorsHillClimbing(),
+                                  new SolucionTest(),
+                                  new FuncionHeuristica());
+          System.out.println(4);
+          Search alg = new HillClimbingSearch();
+          System.out.println(5);
+          SearchAgent agent = new SearchAgent(p,alg);
+          System.out.println(6);
+          System.out.println();
+            printActions(agent.getActions());
+            printInstrumentation(agent.getInstrumentation());
         } 
         catch(Exception e){
-        System.out.println("errror");
+        System.out.println(e);
         }
         
+    }
+     private static void printInstrumentation(Properties properties) {
+        Iterator keys = properties.keySet().iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            String property = properties.getProperty(key);
+            System.out.println(key + " : " + property);
+        }
+        
+    }
+     private static void printActions(List actions) {
+        for (int i = 0; i < actions.size(); i++) {
+            String action = (String) actions.get(i);
+            System.out.println(action);
+        }
     }
     
 }

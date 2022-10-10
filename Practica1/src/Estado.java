@@ -217,6 +217,7 @@ public class Estado {
    }
    
    private boolean capacidad_suficiente_para_cliente(int cliente, int central) {
+       if (central == -1) return true;
        Central cent = ref_centrales.get(central);
        double capacidad_consumida_por_central = consumo_real_central(central);
        double capacidad_real_consumida_por_cliente  = consumo_real_cliente(cliente, central);
@@ -305,7 +306,7 @@ public class Estado {
            dinero -= VEnergia.getTarifaClientePenalizacion(c.getTipo())*c.getConsumo(); //Pagamos la indemnización
            dinero -= c.getConsumo()*VEnergia.getTarifaClienteNoGarantizada(c.getTipo()); //No nos paga la tarifa
            --numero_clientes_central[id_central_anterior];
-           if (!central_con_clientes(id_central)) parar_central(id_central); //Si no hay clientes paramos la central
+           if (!central_con_clientes(id_central_anterior)) parar_central(id_central_anterior); //Si no hay clientes paramos la central
            } catch (Exception err) {
                System.out.println("Error al dejar a un cliente sin suministro");
            }
