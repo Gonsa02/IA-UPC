@@ -19,7 +19,7 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
         
         int clientes = estado_actual.get_n_clientes();
         int centrales = estado_actual.get_n_centrales();
-        System.out.println(estado_actual.get_dinero());
+        
         Random rand = new Random();
         int indice_random = rand.nextInt(2);
         
