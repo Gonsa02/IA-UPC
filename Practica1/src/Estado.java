@@ -385,10 +385,23 @@ public class Estado {
        return new Estado(asignacion_clientes, numero_clientes_central, dinero, ref_clientes, ref_centrales);
    }
    public double get_dinero() {
-       double produccion = 0.0;
-       for (int i = 0; i < ref_clientes.size(); ++i) {
-           produccion += consumo_real_cliente(i, asignacion_clientes[i]);
+       try{
+        double produccion = 0.0;
+        for (int i = 0; i < ref_clientes.size(); ++i) {
+            double consumo = consumo_real_cliente(i, asignacion_clientes[i]);
+            if(asignacion_clientes[i] != -1){
+             Cliente cli = ref_clientes.get(i);
+             Central a = ref_centrales.get(asignacion_clientes[i]);
+             double dinero = (consumo-cli.getConsumo()) * VEnergia.getCosteProduccionMW(a.getTipo());
+             produccion += dinero;
+            }
+
+        }
+        return dinero - produccion;
        }
-       return dinero - produccion;
+       catch(Exception e){
+          System.out.println(e);
+       }
+       return 0;
    }
 }

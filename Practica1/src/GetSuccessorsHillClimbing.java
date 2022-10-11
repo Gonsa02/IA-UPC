@@ -33,7 +33,7 @@ public class GetSuccessorsHillClimbing implements SuccessorFunction {
         }
         //aplicacion de los swaps
         for (int i = 0; i< clientes; ++i) {
-            for (int j = 0; j < clientes; ++j) {
+            for (int j = i+1; j < clientes; ++j) {
 
                 if (estado_actual.swap_efectivo(i, j)) {
                     Estado succesor = estado_actual.clonar();
