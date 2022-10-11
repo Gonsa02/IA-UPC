@@ -36,14 +36,13 @@ public class main {
           Estado state = new Estado(cent, cli, 2);
           System.out.println(3);
           Problem p = new Problem(state,
-                                  new GetSuccessorsSimulatedAnnealing(),
+                                  new GetSuccessorsHillClimbing(),
                                   new SolucionTest(),
                                   new FuncionHeuristica());
           System.out.println(4);
           Search alg = new SimulatedAnnealingSearch();
           System.out.println(5);
           SearchAgent agent = new SearchAgent(p,alg);
-          System.out.println(6);
           System.out.println();
            
             printActions(agent.getActions());
@@ -64,8 +63,6 @@ public class main {
         
     }
      private static void printActions(List actions) {
-         System.out.println(actions); 
-         System.out.println(actions.size());
         for (int i = 0; i < actions.size(); i++) {
             String action = (String) actions.get(i);
             System.out.println(action);
