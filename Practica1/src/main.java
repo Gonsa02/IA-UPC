@@ -31,16 +31,16 @@ public class main {
           
           Centrales cent = new Centrales(centrales, 1234);
           System.out.println(1);
-          Clientes cli = new Clientes(10,clientes,0.25, 1234);
+          Clientes cli = new Clientes(1000,clientes,0.25, 1234);
           System.out.println(2);
-          Estado state = new Estado(cent, cli, 2);
+          Estado state = new Estado(cent, cli, 1);
           System.out.println(3);
           Problem p = new Problem(state,
                                   new GetSuccessorsHillClimbing(),
                                   new SolucionTest(),
                                   new FuncionHeuristica());
           System.out.println(4);
-          Search alg = new SimulatedAnnealingSearch();
+          Search alg = new HillClimbingSearch();
           System.out.println(5);
           SearchAgent agent = new SearchAgent(p,alg);
           System.out.println();

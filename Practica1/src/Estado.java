@@ -93,21 +93,39 @@ public class Estado {
    private void asignar1(int[] clientes){
        Random rand = new Random();
        int tam = clientes.length;
-       
+       //hacemos listas de las centrales de cada tipo
+       List<Integer> centrales_a = new ArrayList<>();
+       List<Integer> centrales_b = new ArrayList<>();
+       List<Integer> centrales_c = new ArrayList<>();
+       for(int i = 0; i < ref_centrales.size();++i){
+           Central cent = ref_centrales.get(i);
+           if(cent.getTipo() == Central.CENTRALA) centrales_a.add(i);
+           else if(cent.getTipo() == Central.CENTRALB) centrales_b.add(i);
+           else centrales_c.add(i);
+       }
        // Primero asignamos centrales a los clientes asegurados
        for (int cliente = 0; cliente < tam; ++cliente) {
            // Elegimos la central que va a escoger [0 hasta num.centrales-1]
            Cliente cli = ref_clientes.get(cliente);
            if (cli.getContrato() == Cliente.GARANTIZADO) {
-               int indice_random = rand.nextInt(ref_centrales.size());
+               int tipo_central = asignacion_cliente_central(cli.getTipo());
+               int bound;
+               if(tipo_central == Central.CENTRALA) bound = centrales_a.size();
+               else if(tipo_central == Central.CENTRALB) bound = centrales_b.size();
+               else bound = centrales_c.size();
+               int indice_random = rand.nextInt(bound);
                boolean buena_asignacion = false;
                while (!buena_asignacion) {
-                        //System.out.println("Seguimos tirando " + cliente);
-               		if (centralValida(indice_random, cliente)) {
-                		asignar_cliente_a_central(cliente, indice_random);
+                        int central;
+                        if(tipo_central == Central.CENTRALA) central = centrales_a.get(indice_random);
+                        else if(tipo_central == Central.CENTRALB) central = centrales_b.get(indice_random);
+                        else central = centrales_c.get(indice_random);
+                        System.out.println("Seguimos tirando " + cliente);
+               		if (centralValida(central, cliente)) {
+                		asignar_cliente_a_central(cliente, central);
                   		buena_asignacion = true;
                 	}
-                	else indice_random = rand.nextInt(ref_centrales.size());
+                	else indice_random = rand.nextInt(bound);
                	}
             }
         }
@@ -117,8 +135,20 @@ public class Estado {
     		// Elegimos la central que va escoger [0 hasta num.centrales-1]
         	Cliente cli = ref_clientes.get(cliente);
         	if (cli.getContrato() == Cliente.NOGARANTIZADO) {
-        		int indice_random = rand.nextInt(ref_centrales.size());
-                        if (centralValida(indice_random, cliente)) asignar_cliente_a_central(cliente, indice_random);
+                        int tipo_central = asignacion_cliente_central(cli.getTipo());
+                        
+                        int bound;
+                        if(tipo_central == Central.CENTRALA) bound = centrales_a.size();
+                        else if(tipo_central == Central.CENTRALB) bound = centrales_b.size();
+                        else bound = centrales_c.size();
+        		int indice_random = rand.nextInt(bound);
+                        
+                        int central;
+                        if(tipo_central == Central.CENTRALA) central = centrales_a.get(indice_random);
+                        else if(tipo_central == Central.CENTRALB) central = centrales_b.get(indice_random);
+                        else central = centrales_c.get(indice_random);
+                        
+                        if (centralValida(central, cliente)) asignar_cliente_a_central(cliente, central);
            		else clientes[cliente] = -1;
         	}
     	}
@@ -196,7 +226,11 @@ public class Estado {
             }
         }
    }
-   
+    private int asignacion_cliente_central(int tipo_cliente){
+        if(tipo_cliente == Cliente.CLIENTEG) return Central.CENTRALC;
+        else if(tipo_cliente == Cliente.CLIENTEMG) return Central.CENTRALB;
+        return Central.CENTRALA;
+    }
     private double consumo_real_central(int central){
        double consumo_real = 0.0;
        for(int i = 0; i < asignacion_clientes.length; ++i){
