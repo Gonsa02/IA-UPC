@@ -58,7 +58,7 @@ public class Estado {
        return Math.hypot((double)distancia_x, (double)distancia_y);
    }
    
-   private static int[] getNCentrales(int k, int dist_cli, int[] distancias_manhattan) {
+   private  int[] getNCentrales(int k, int dist_cli, int[] distancias_manhattan, int cli) {
                 
    		int l = Arrays.binarySearch(distancias_manhattan, dist_cli);
                 if (l < 0) l = Math.abs(l) - 1;
@@ -70,10 +70,15 @@ public class Estado {
    		int sol[] = new int[k];
 
    		while (l >= 0 && r < n && count < k) {
-   			if (dist_cli - distancias_manhattan[l] < dist_cli - distancias_manhattan[r])
-   				sol[count++] = l--;
-   			else
-   				sol[count++] = r++;
+   			if ((dist_cli - distancias_manhattan[l] < dist_cli - distancias_manhattan[r])) {
+                            if  (centralValida(l, cli)) sol[count++] = l;
+                            --l;
+                        }
+   				
+                        else {
+                            if (centralValida(l, cli)) sol[count++] = r;
+                            r++;
+                        }	
    		}
    		while (count < k && l >= 0)
    			sol[count++] = l--;
@@ -171,12 +176,13 @@ public class Estado {
      	// Primero asignamos centrales a los clientes asegurados
         for (int cliente = 0; cliente < tam; ++cliente) {
         	Cliente cli = ref_clientes.get(cliente);
-           
+                
            	if (cli.getContrato() == Cliente.GARANTIZADO) {
+                    System.out.println("Cliente garantizado " + cliente);
             	int dist_cli = cli.getCoordX() + cli.getCoordY();
                	boolean buena_asignacion = false;
                	// Obtenemos las k centrales más cercanas a cli
-               	int[] centrales_mas_cercanas = getNCentrales(k, dist_cli, distancias_manhattan);
+               	int[] centrales_mas_cercanas = getNCentrales(k, dist_cli, distancias_manhattan, cliente);
                	for (int indice = 0; indice < centrales_mas_cercanas.length && !buena_asignacion; ++indice) {
                		int ind = centrales_mas_cercanas[indice];
                		if (centralValida(ind, cliente)) {
@@ -195,16 +201,17 @@ public class Estado {
                 	else indice_random = rand.nextInt(ref_centrales.size());
                 }
             }
+                else System.out.println("Cliente NO GARANTIZADO " + cliente);
         }
         
     	// Una vez todos los clientes asegurados tienen una central asignada hacemos la asignacion de los no asegurados
     	for (int cliente = 0; cliente < tam; ++cliente) {
            	Cliente cli = ref_clientes.get(cliente);
            	boolean buena_asignacion = false;
-           	
+           	System.out.println("Cliente no garantizado " + cliente);
            	if (cli.getContrato() == Cliente.NOGARANTIZADO) {
                     int dist_cli = cli.getCoordX() + cli.getCoordY();
-                    int[] centrales_mas_cercanas = getNCentrales(k, dist_cli, distancias_manhattan);
+                    int[] centrales_mas_cercanas = getNCentrales(k, dist_cli, distancias_manhattan, cliente);
                     int indice_random = rand.nextInt(centrales_mas_cercanas.length);
                     int ind = centrales_mas_cercanas[indice_random];
                     

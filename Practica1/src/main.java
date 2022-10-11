@@ -27,26 +27,40 @@ public class main {
         
         try{
           int[] centrales = new int[]{5,10,25};
-          double[] clientes = new double[]{0.25,0.3,0.45};
-          
+          double[] clientes = new double[]{0.45,0.3,0.25};
+          int opcion = 1;
           Centrales cent = new Centrales(centrales, 1234);
           System.out.println(1);
-          Clientes cli = new Clientes(1000,clientes,0.25, 1234);
+          Clientes cli = new Clientes(1000,clientes,0.75, 1234);
           System.out.println(2);
-          Estado state = new Estado(cent, cli, 1);
+          Estado state = new Estado(cent, cli, 2);
           System.out.println(3);
-          Problem p = new Problem(state,
-                                  new GetSuccessorsHillClimbing(),
-                                  new SolucionTest(),
-                                  new FuncionHeuristica());
+          
           System.out.println(4);
-          Search alg = new HillClimbingSearch();
+          Search alg1 = new HillClimbingSearch();
+          Search alg2 = new SimulatedAnnealingSearch();
           System.out.println(5);
-          SearchAgent agent = new SearchAgent(p,alg);
+          
           System.out.println();
            
-            printActions(agent.getActions());
-            printInstrumentation(agent.getInstrumentation());
+          if (opcion == 1){
+            Problem p = new Problem(state,
+                        new GetSuccessorsHillClimbing(),
+                        new SolucionTest(),
+                        new FuncionHeuristica());
+           SearchAgent agent = new SearchAgent(p,alg1);
+           printActions(agent.getActions());
+           printInstrumentation(agent.getInstrumentation());
+          }
+          else if (opcion == 2) {
+              Problem p = new Problem(state,
+                          new GetSuccessorsSimulatedAnnealing(),
+                          new SolucionTest(),
+                          new FuncionHeuristica());
+              SearchAgent agent = new SearchAgent(p,alg2);
+              System.out.println(state.get_dinero());
+          }
+           
         } 
         catch(Exception e){
         System.out.println(e);
