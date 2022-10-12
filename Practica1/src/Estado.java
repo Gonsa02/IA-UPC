@@ -58,7 +58,7 @@ public class Estado {
        return Math.hypot((double)distancia_x, (double)distancia_y);
    }
    
-   private static int[] getNCentrales(int k, int dist_cli, int[] distancias_manhattan) {
+   private  int[] getNCentrales(int k, int dist_cli, int[] distancias_manhattan, int cli) {
                 
    		int l = Arrays.binarySearch(distancias_manhattan, dist_cli);
                 if (l < 0) l = Math.abs(l) - 1;
@@ -70,10 +70,15 @@ public class Estado {
    		int sol[] = new int[k];
 
    		while (l >= 0 && r < n && count < k) {
-   			if (dist_cli - distancias_manhattan[l] < dist_cli - distancias_manhattan[r])
-   				sol[count++] = l--;
-   			else
-   				sol[count++] = r++;
+   			if ((dist_cli - distancias_manhattan[l] < dist_cli - distancias_manhattan[r])) {
+                           /* if  (centralValida(l, cli))*/ sol[count++] = l;
+                            --l;
+                        }
+   				
+                        else {
+                            /*if (centralValida(l, cli))*/ sol[count++] = r;
+                            r++;
+                        }	
    		}
    		while (count < k && l >= 0)
    			sol[count++] = l--;
@@ -155,83 +160,109 @@ public class Estado {
     }
    
    private void asignar2(int[] clientes) {
-   	Random rand = new Random();
-   	int tam = clientes.length;
-   	int k = 5;
-       	
-       	// Hacemos un vector con las distancias
-       	int[] distancias_manhattan = new int[ref_centrales.size()];
-       	for (int i = 0; i < ref_centrales.size(); ++i) {
-       		Central cent = ref_centrales.get(i);
-       		distancias_manhattan[i] = cent.getCoordX() + cent.getCoordY();
-       	}
-       	// Ordenamos las distancias crecientemente
-     	Arrays.sort(distancias_manhattan);
-     	
-     	// Primero asignamos centrales a los clientes asegurados
-        for (int cliente = 0; cliente < tam; ++cliente) {
-        	Cliente cli = ref_clientes.get(cliente);
-           
-           	if (cli.getContrato() == Cliente.GARANTIZADO) {
-            	int dist_cli = cli.getCoordX() + cli.getCoordY();
-               	boolean buena_asignacion = false;
-               	// Obtenemos las k centrales más cercanas a cli
-               	int[] centrales_mas_cercanas = getNCentrales(k, dist_cli, distancias_manhattan);
-               	for (int indice = 0; indice < centrales_mas_cercanas.length && !buena_asignacion; ++indice) {
-               		int ind = centrales_mas_cercanas[indice];
-               		if (centralValida(ind, cliente)) {
-               			asignar_cliente_a_central(cliente, ind);
-                  		buena_asignacion = true;
-                  	}
-               	}
-                
-               	// Si no hemos podido asignar alguna de las k centrales más cercanas a cli entonces le asignamos una central aleatoriamente
-               	int indice_random = rand.nextInt(ref_centrales.size());
-               	while (!buena_asignacion) {
-                	if (centralValida(indice_random, cliente)) {
-                  		asignar_cliente_a_central(cliente, indice_random);
-                  		buena_asignacion = true;
-                	}
-                	else indice_random = rand.nextInt(ref_centrales.size());
+        // Hacemos una array desordenada con los índices de todas las centrales
+   	List<Integer> centrales = new ArrayList<>();
+        for (int i = 0; i < ref_centrales.size(); ++i) centrales.add(i);
+        Collections.shuffle(centrales);
+        
+        // Hacemos una lista desordenada con los índices de todos los clientes garantizados
+        // y otra con los índices de todos los clientes no garantizados
+        List<Integer> clientesGarantizados = new ArrayList<>();
+        List<Integer> clientesNoGarantizados = new ArrayList<>();
+        for (int i = 0; i < ref_clientes.size(); ++i) {
+            if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO)
+                clientesGarantizados.add(i);
+            else clientesNoGarantizados.add(i);
+        }
+        Collections.shuffle(clientesGarantizados);
+        Collections.shuffle(clientesNoGarantizados);
+        
+        // Para cada central asignamos con prioridad a los clientes garantizados con menor consumo_real_cliente
+        for (int i = 0; i < centrales.size();) {
+            int cent = centrales.get(i);
+            double min = Double.POSITIVE_INFINITY;
+            int minPos = -1;
+            for (int j = 0; j < clientesGarantizados.size(); ++j) {
+                int cli = clientesGarantizados.get(j);
+                if (asignacion_clientes[cli] == -1) {
+                    double prod = consumo_real_cliente(cli, cent);
+                    if (prod < min && centralValida(cent, cli)) {
+                        min = prod;
+                        minPos = j;
+                    }
                 }
+            }
+            if (minPos != -1) {
+                int minCli = clientesGarantizados.get(minPos);
+                asignar_cliente_a_central(minCli, cent);
+                System.out.println("Asignamos al cliente _" + minCli + "_ con la central " + cent);
+                clientesGarantizados.remove(minPos);
+            }
+            else { // No hemos encontrado un cliente que quepa en la central, por tanto avanzamos a la siguiente central
+                ++i;
             }
         }
         
-    	// Una vez todos los clientes asegurados tienen una central asignada hacemos la asignacion de los no asegurados
-    	for (int cliente = 0; cliente < tam; ++cliente) {
-           	Cliente cli = ref_clientes.get(cliente);
-           	boolean buena_asignacion = false;
-           	
-           	if (cli.getContrato() == Cliente.NOGARANTIZADO) {
-                    int dist_cli = cli.getCoordX() + cli.getCoordY();
-                    int[] centrales_mas_cercanas = getNCentrales(k, dist_cli, distancias_manhattan);
-                    int indice_random = rand.nextInt(centrales_mas_cercanas.length);
-                    int ind = centrales_mas_cercanas[indice_random];
-                    
-                    // Primero miramos de asignar aleatoriamente una de las k centrales más cercanas que tiene cli
-                    if (centralValida(ind, cliente)) {
-                        asignar_cliente_a_central(cliente, ind);
-                        buena_asignacion = true;
-                    }
-                    // En caso que no funcione miramos de asignarle una central aleatoriamente (ahora no hace falta que esté entre las k más cercanas)
-                      else {
-                            indice_random = rand.nextInt(ref_centrales.size());
-                            if (centralValida(indice_random, cliente)) {
-                  		asignar_cliente_a_central(cliente, indice_random);
-                  		buena_asignacion = true;
-                	}
+        // Intentamos que todos los clientes garantizados tengan central
+        while (!clientesGarantizados.isEmpty()) {
+            clientesGarantizados.remove(0);
+        }
+        
+        ///////////////////////
+        for (int i = 0; i < ref_clientes.size(); ++i) {
+            if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO) {
+                if (asignacion_clientes[i] == -1) {
+                    System.out.println("El cliente garantizado " + i + " sin central pide " + ref_clientes.get(i).getConsumo());
+                    boolean found = false;
                 }
-                // Si en ninguno de los dos intentos no hemos podido asignarle una central a cli entonces no le asignamos ninguna central
-                if (!buena_asignacion) clientes[cliente] = -1;
             }
         }
+        for (int j = 0; j < ref_centrales.size(); ++j) {
+            System.out.println("En la central " + j + " caben " + (ref_centrales.get(j).getProduccion() - consumo_real_central(j)));
+        }
+        ///////////////////////
+        
+        // Una vez asignamos a todos los clientes garantizados una central miramos de asignar centrales a los no garantizados
+        for (int i = 0; i < centrales.size();) {
+            int cent = centrales.get(i);
+            double min = Double.POSITIVE_INFINITY;
+            int minPos = -1;
+            for (int j = 0; j < clientesNoGarantizados.size(); ++j) {
+                int cli = clientesNoGarantizados.get(j);
+                if (asignacion_clientes[cli] == -1) {
+                    double prod = consumo_real_cliente(cli, cent);
+                    if (prod < min && centralValida(cent, cli)) {
+                        min = prod;
+                        minPos = j;
+                    }
+                }
+            }
+            if (minPos != -1) {
+                int minCli = clientesNoGarantizados.get(minPos);
+                asignar_cliente_a_central(minCli, cent);
+                System.out.println("Asignamos al cliente no garantizado _" + minCli + "_ con la central " + cent);
+                clientesNoGarantizados.remove(minPos);
+            }
+            else { // No hemos encontrado un cliente que quepa en la central, por tanto avanzamos a la siguiente central
+                ++i;
+            }
+        }
+        
+        int c1 = 0, c2 = 0;
+        for (int i = 0; i < ref_clientes.size(); ++i) {
+            if (asignacion_clientes[i] == -1) {
+                if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO) ++c1;
+                else ++c2;
+            }
+        }
+        System.out.println(c1 + " clientes garantizados sin central y " + c2 + " clientes no garantizados sin central");
    }
     private int asignacion_cliente_central(int tipo_cliente){
         if(tipo_cliente == Cliente.CLIENTEG) return Central.CENTRALC;
         else if(tipo_cliente == Cliente.CLIENTEMG) return Central.CENTRALB;
         return Central.CENTRALA;
     }
-    private double consumo_real_central(int central){
+    private double consumo_real_central(int central) {
        double consumo_real = 0.0;
        for(int i = 0; i < asignacion_clientes.length; ++i){
            if(asignacion_clientes[i]== central) consumo_real += consumo_real_cliente(i, central);
