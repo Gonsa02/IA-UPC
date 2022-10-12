@@ -30,7 +30,7 @@ public class Estado {
     	ref_centrales = centrales;
     	ref_clientes = clientes;
     	dinero = calcular_coste_centrales();
-    	if (opcion == 1) asignar1(asignacion_clientes);
+    	if (opcion == 1) asignar1();
     	else if (opcion == 2) asignar2(asignacion_clientes);
    }
    
@@ -95,68 +95,101 @@ public class Estado {
    		return sol;
    	}
    
-   private void asignar1(int[] clientes){
-       Random rand = new Random();
-       int tam = clientes.length;
-       //hacemos listas de las centrales de cada tipo
-       List<Integer> centrales_a = new ArrayList<>();
-       List<Integer> centrales_b = new ArrayList<>();
-       List<Integer> centrales_c = new ArrayList<>();
-       for(int i = 0; i < ref_centrales.size();++i){
-           Central cent = ref_centrales.get(i);
-           if(cent.getTipo() == Central.CENTRALA) centrales_a.add(i);
-           else if(cent.getTipo() == Central.CENTRALB) centrales_b.add(i);
-           else centrales_c.add(i);
+   private void asignar1(){
+       List<Integer> clientes_asegurados = new ArrayList<>();
+       List<Integer> centrales = new ArrayList<>();
+        //añadimos todas las centrales a la lista
+       for(int i =0; i < ref_centrales.size();++i)centrales.add(i);
+      //por cada cliente, si es asegurado lo metemos a nuestra lista de clientes asegurados, sino le asignamos inicialmente
+       for(int i = 0; i < asignacion_clientes.length;++i){
+            Cliente cli = ref_clientes.get(i);
+            if(cli.getContrato() == Cliente.GARANTIZADO) clientes_asegurados.add(i);
+            else asignacion_clientes[i] = -1;
        }
-       // Primero asignamos centrales a los clientes asegurados
-       for (int cliente = 0; cliente < tam; ++cliente) {
-           // Elegimos la central que va a escoger [0 hasta num.centrales-1]
-           Cliente cli = ref_clientes.get(cliente);
-           if (cli.getContrato() == Cliente.GARANTIZADO) {
-               int tipo_central = asignacion_cliente_central(cli.getTipo());
-               int bound;
-               if(tipo_central == Central.CENTRALA) bound = centrales_a.size();
-               else if(tipo_central == Central.CENTRALB) bound = centrales_b.size();
-               else bound = centrales_c.size();
-               int indice_random = rand.nextInt(bound);
-               boolean buena_asignacion = false;
-               while (!buena_asignacion) {
-                        int central;
-                        if(tipo_central == Central.CENTRALA) central = centrales_a.get(indice_random);
-                        else if(tipo_central == Central.CENTRALB) central = centrales_b.get(indice_random);
-                        else central = centrales_c.get(indice_random);
-                        System.out.println("Seguimos tirando " + cliente);
-               		if (centralValida(central, cliente)) {
-                		asignar_cliente_a_central(cliente, central);
-                  		buena_asignacion = true;
-                	}
-                	else indice_random = rand.nextInt(bound);
-               	}
+       
+      //mezclamos los clientes
+       Collections.shuffle(clientes_asegurados);
+       //ordenamos las centrales de más grande a más pequeña por capacidad
+       Collections.sort(centrales,new SortSystem());
+       
+       //por cada central la vamos llenando hasta que no pueda más con clientes asegurados_random
+       //si asignamos un cliente lo quitamos de la lista
+       for(int i = 0; i < ref_centrales.size(); ++i){
+           int index = centrales.get(i);
+           boolean encontrado = true;
+           while(encontrado){
+               encontrado = false;
+               for(int j = 0; j < clientes_asegurados.size();++j){
+                   int cli = clientes_asegurados.get(j);
+                   
+                        
+                    if(centralValida(index,cli)){
+                        asignacion_clientes[cli] = index;
+                        //asignar_cliente_a_central(cli,index);
+                        clientes_asegurados.remove(j);
+                        encontrado = true;
+                    }  
+                }
             }
+           Collections.shuffle(clientes_asegurados);
         }
-        
-    	// Una vez todos los clientes asegurados tienen una central asignada hacemos la asignacion de los no asegurados
-    	for (int cliente = 0; cliente < tam; ++cliente) {
-    		// Elegimos la central que va escoger [0 hasta num.centrales-1]
-        	Cliente cli = ref_clientes.get(cliente);
-        	if (cli.getContrato() == Cliente.NOGARANTIZADO) {
-                        int tipo_central = asignacion_cliente_central(cli.getTipo());
+       
+       //si hay un clientes asegurados, quitaremos tantas asignaciones hechas a clientes garantizados en la lista haya
+       while(! clientes_asegurados.isEmpty()){
+           //System.out.println("Hay " + clientes_asegurados.size() + " no inicializados");
+           int tam_inicial = clientes_asegurados.size();
+           Random rand = new Random();
+           for(int i = 0; i < tam_inicial;++i){
+               int indice = rand.nextInt(asignacion_clientes.length);
+               while(!(ref_clientes.get(indice).getContrato() == Cliente.GARANTIZADO && asignacion_clientes[indice] != -1)) indice = rand.nextInt(asignacion_clientes.length);
+               
+               asignacion_clientes[indice] = -1;
+               clientes_asegurados.add(indice);
+           }
+           //repetimos el mismo proceso descrito anteriormente
+           Collections.shuffle(clientes_asegurados);
+           for(int i = 0; i < ref_centrales.size(); ++i){
+           int index = centrales.get(i);
+           boolean encontrado = true;
+           while(encontrado){
+               encontrado = false;
+               for(int j = 0; j < clientes_asegurados.size();++j){
+                   int cli = clientes_asegurados.get(j);
+                   
                         
-                        int bound;
-                        if(tipo_central == Central.CENTRALA) bound = centrales_a.size();
-                        else if(tipo_central == Central.CENTRALB) bound = centrales_b.size();
-                        else bound = centrales_c.size();
-        		int indice_random = rand.nextInt(bound);
-                        
-                        int central;
-                        if(tipo_central == Central.CENTRALA) central = centrales_a.get(indice_random);
-                        else if(tipo_central == Central.CENTRALB) central = centrales_b.get(indice_random);
-                        else central = centrales_c.get(indice_random);
-                        
-                        if (centralValida(central, cliente)) asignar_cliente_a_central(cliente, central);
-           		else clientes[cliente] = -1;
-        	}
-    	}
+                    if(centralValida(index,cli)){
+                        asignacion_clientes[cli] = index;
+                        //asignar_cliente_a_central(cli,index);
+                        clientes_asegurados.remove(j);
+                        encontrado = true;
+                    }  
+                }
+            }
+           Collections.shuffle(clientes_asegurados);
+        }
+       }
+       
+       //una vez hecha la asignacion parcial, tenemos que formalizarla con la aplicacion de asignar_cliente_a_central
+       //nos ayudamos con un vector auxiliar donde copiamos la asignacion parcial y dejamos el vector de asignaciones todo a -1
+       int[] vector_parcial = new int[asignacion_clientes.length];
+       for(int i = 0; i < asignacion_clientes.length; ++i){
+           vector_parcial[i] = asignacion_clientes[i];
+           asignacion_clientes[i] = -1;
+       }
+       //aplicamos los cambios
+       for(int i = 0; i < asignacion_clientes.length; ++i){
+           if(move_efectivo(i, vector_parcial[i])){
+               asignar_cliente_a_central(i,vector_parcial[i]);
+           }
+       }
+       //imprimimos todo por si acaso 
+       //este paso se puede quitar
+       for(int i = 0; i < asignacion_clientes.length; ++i){
+          Cliente cli = ref_clientes.get(i);
+          if(cli.getContrato() == Cliente.GARANTIZADO){
+              System.out.println("El cliente garantizado "+ i + " tiene la central" + asignacion_clientes[i]);
+          }
+       }
     }
    
    private void asignar2(int[] clientes) {
