@@ -12,6 +12,7 @@ import IA.Energia.VEnergia;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Comparator;
 /**
  *
  * @author jeremy
@@ -136,7 +137,7 @@ public class Estado {
        
        //si hay un clientes asegurados, quitaremos tantas asignaciones hechas a clientes garantizados en la lista haya
        while(! clientes_asegurados.isEmpty()){
-           //System.out.println("Hay " + clientes_asegurados.size() + " no inicializados");
+           System.out.println("Hay " + clientes_asegurados.size() + " no inicializados");
            int tam_inicial = clientes_asegurados.size();
            Random rand = new Random();
            for(int i = 0; i < tam_inicial;++i){
@@ -454,5 +455,14 @@ public class Estado {
            produccion += consumo_real_cliente(i, asignacion_clientes[i]);
        }
        return dinero - produccion;
+   }
+    class SortSystem implements Comparator<Integer>{
+       public int compare(Integer a, Integer b){
+           int index1 = a;
+           int index2 = b;
+           Central cent1 = ref_centrales.get(index1);
+           Central cent2 = ref_centrales.get(index2);
+           return (int)cent2.getProduccion()-(int) cent1.getProduccion();
+       }
    }
 }
