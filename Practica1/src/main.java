@@ -31,9 +31,9 @@ public class main {
           
           Centrales cent = new Centrales(centrales, 1234);
           System.out.println(1);
-          Clientes cli = new Clientes(1000,clientes,0.25, 1234);
+          Clientes cli = new Clientes(1000,clientes,0.75, 1234);
           System.out.println(2);
-          Estado state = new Estado(cent, cli, 2);
+          Estado state = new Estado(cent, cli, 1);
           System.out.println(3);
           Problem p = new Problem(state,
                                   new GetSuccessorsHillClimbing(),
