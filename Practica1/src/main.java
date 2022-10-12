@@ -27,7 +27,7 @@ public class main {
         
         try{
           int[] centrales = new int[]{5,10,25};
-          double[] clientes = new double[]{0.45,0.3,0.25};
+          double[] clientes = new double[]{0.25,0.3,0.45};
           int opcion = 1;
           Centrales cent = new Centrales(centrales, 1234);
           System.out.println(1);
