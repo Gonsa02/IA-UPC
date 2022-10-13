@@ -183,14 +183,21 @@ public class Estado {
                asignar_cliente_a_central(i,vector_parcial[i]);
            }
        }
-       //imprimimos todo por si acaso 
-       //este paso se puede quitar
-       for(int i = 0; i < asignacion_clientes.length; ++i){
-          Cliente cli = ref_clientes.get(i);
-          if(cli.getContrato() == Cliente.GARANTIZADO){
-              System.out.println("El cliente garantizado "+ i + " tiene la central" + asignacion_clientes[i]);
-          }
-       }
+       ///////////////////////////////////////////////
+       int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
+        for (int i = 0; i < ref_clientes.size(); ++i) {
+            if (asignacion_clientes[i] == -1) {
+                if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO) ++c1;
+                else ++c2;
+            }
+            else {
+                if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO) ++c3;
+                else ++c4;
+            }
+        }
+        System.out.println(c1 + " clientes garantizados sin central y " + c2 + " clientes no garantizados sin central");
+        System.out.println(c3 + " clientes garantizados con central y " + c4 + " clientes no garantizados con central");
+        ///////////////////////////////////////////////
     }
    
    private void asignar2(int[] clientes) {
@@ -295,15 +302,21 @@ public class Estado {
                 ++i;
             }
         }
-        
-        int c1 = 0, c2 = 0;
+        ///////////////////////////////////////////////
+        int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
         for (int i = 0; i < ref_clientes.size(); ++i) {
             if (asignacion_clientes[i] == -1) {
                 if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO) ++c1;
                 else ++c2;
             }
+            else {
+                if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO) ++c3;
+                else ++c4;
+            }
         }
         System.out.println(c1 + " clientes garantizados sin central y " + c2 + " clientes no garantizados sin central");
+        System.out.println(c3 + " clientes garantizados con central y " + c4 + " clientes no garantizados con central");
+        ///////////////////////////////////////////////
    }
     private int asignacion_cliente_central(int tipo_cliente){
         if(tipo_cliente == Cliente.CLIENTEG) return Central.CENTRALC;

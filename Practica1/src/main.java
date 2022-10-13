@@ -38,10 +38,8 @@ public class main {
           
           System.out.println(4);
           Search alg1 = new HillClimbingSearch();
-          Search alg2 = new SimulatedAnnealingSearch();
-          System.out.println(5);
-          
-          System.out.println();
+          Search alg2 = new SimulatedAnnealingSearch(1000000, 1000, 50, 30);
+          System.out.println(5); System.out.println();
            
           if (opcion == 1){
             Problem p = new Problem(state,
@@ -58,7 +56,7 @@ public class main {
                           new SolucionTest(),
                           new FuncionHeuristica());
               SearchAgent agent = new SearchAgent(p,alg2);
-              System.out.println(state.get_dinero());
+              System.out.println("Annealing Dinero = " + state.get_dinero());
           }
            
         } 
