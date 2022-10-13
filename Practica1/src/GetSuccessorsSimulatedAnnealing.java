@@ -32,28 +32,26 @@ public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
                 i = rand.nextInt(clientes);
                 j = rand.nextInt(centrales);
             }
-
-                Estado succesor = estado_actual.clonar();
-                succesor.asignar_cliente_a_central(i, j);
-
-                String accion = "Cliente " + i + " es transferido a la central " + j;
-                Successor new_succ = new Successor(accion,succesor);
-                retval.add(new_succ);
+            
+            Estado succesor = estado_actual.clonar();
+            succesor.asignar_cliente_a_central(i, j);
+            System.out.println("Asignamos al cliente " + i + " a la central " + j);
+            String accion = "Cliente " + i + " es transferido a la central " + j;
+            Successor new_succ = new Successor(accion,succesor);
+            retval.add(new_succ);
         }
         // Aplicamos el operador swap
         else {
             int i = rand.nextInt(clientes);
             int j = rand.nextInt(centrales);
-
             while (!estado_actual.swap_efectivo(i, j)) {
                 i = rand.nextInt(clientes);
                 j = rand.nextInt(centrales);
             }
-
             Estado succesor = estado_actual.clonar();
 
             succesor.swap(i, j);
-
+            System.out.println("Hacemos swap del cliente " + i + " al cliente " + j);
             String accion = "Cliente " + i + " es intercambiado de central con el cliente " + j;
             Successor new_succ = new Successor(accion,succesor);
             retval.add(new_succ);
