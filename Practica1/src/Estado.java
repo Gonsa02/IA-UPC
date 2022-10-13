@@ -229,32 +229,46 @@ public class Estado {
             if (minPos != -1) {
                 int minCli = clientesGarantizados.get(minPos);
                 asignar_cliente_a_central(minCli, cent);
-                System.out.println("Asignamos al cliente _" + minCli + "_ con la central " + cent);
+                //System.out.println("Asignamos al cliente _" + minCli + "_ con la central " + cent);
                 clientesGarantizados.remove(minPos);
             }
             else { // No hemos encontrado un cliente que quepa en la central, por tanto avanzamos a la siguiente central
                 ++i;
             }
         }
-        
+        /*
         // Intentamos que todos los clientes garantizados tengan central
         while (!clientesGarantizados.isEmpty()) {
-            clientesGarantizados.remove(0);
-        }
-        
-        ///////////////////////
-        for (int i = 0; i < ref_clientes.size(); ++i) {
-            if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO) {
-                if (asignacion_clientes[i] == -1) {
-                    System.out.println("El cliente garantizado " + i + " sin central pide " + ref_clientes.get(i).getConsumo());
-                    boolean found = false;
-                }
+            System.out.println("Hay " + clientesGarantizados.size() + " no inicializados");
+            int tam_inicial = clientesGarantizados.size();
+            Random rand = new Random();
+            for (int i = 0; i < tam_inicial;++i) {
+                int indice = rand.nextInt(asignacion_clientes.length);
+                while(!(ref_clientes.get(indice).getContrato() == Cliente.GARANTIZADO && asignacion_clientes[indice] != -1))
+                    indice = rand.nextInt(asignacion_clientes.length);
+                asignacion_clientes[indice] = -1;
+                clientesGarantizados.add(indice);
             }
-        }
-        for (int j = 0; j < ref_centrales.size(); ++j) {
-            System.out.println("En la central " + j + " caben " + (ref_centrales.get(j).getProduccion() - consumo_real_central(j)));
-        }
-        ///////////////////////
+            //repetimos el mismo proceso descrito anteriormente
+            Collections.shuffle(clientesGarantizados);
+            for (int i = 0; i < ref_centrales.size(); ++i) {
+                int index = centrales.get(i);
+                boolean encontrado = true;
+                while (encontrado) {
+                    encontrado = false;
+                    for (int j = 0; j < clientesGarantizados.size();++j) {
+                        int cli = clientesGarantizados.get(j);  
+                        if (centralValida(index,cli)) {
+                            asignacion_clientes[cli] = index;
+                            //asignar_cliente_a_central(cli,index);
+                            clientesGarantizados.remove(j);
+                            encontrado = true;
+                        }  
+                    }
+                }
+                Collections.shuffle(clientesGarantizados);
+            }
+        }*/
         
         // Una vez asignamos a todos los clientes garantizados una central miramos de asignar centrales a los no garantizados
         for (int i = 0; i < centrales.size();) {
@@ -274,7 +288,7 @@ public class Estado {
             if (minPos != -1) {
                 int minCli = clientesNoGarantizados.get(minPos);
                 asignar_cliente_a_central(minCli, cent);
-                System.out.println("Asignamos al cliente no garantizado _" + minCli + "_ con la central " + cent);
+                //System.out.println("Asignamos al cliente no garantizado _" + minCli + "_ con la central " + cent);
                 clientesNoGarantizados.remove(minPos);
             }
             else { // No hemos encontrado un cliente que quepa en la central, por tanto avanzamos a la siguiente central
