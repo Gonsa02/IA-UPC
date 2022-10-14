@@ -18,21 +18,22 @@ public class GetSuccessorsHillClimbing implements SuccessorFunction {
         int centrales = estado_actual.get_n_centrales();
         //System.out.println(estado_actual.get_dinero());
         
-        //aplicacion de los operadores move
-        for(int i = 0; i< clientes; ++i){
-            for(int j = -1; j < centrales; ++j){
-                if(estado_actual.move_efectivo(i, j)){
+        // Aplicación de los operadores move
+        for (int i = 0; i < clientes; ++i) {
+            for (int j = -1; j < centrales; ++j) {
+                if (estado_actual.move_efectivo(i, j)) {
                     Estado succesor = estado_actual.clonar();
                     succesor.asignar_cliente_a_central(i, j);
                     
-                    String accion = succesor.printEstado();//"Cliente " +i+ " es transferido a la central "+j;
+                    String accion = succesor.printEstado();
                     Successor new_succ = new Successor(accion,succesor);
                     retval.add(new_succ);
                 }
             }
         }
-        //aplicacion de los swaps
-        for (int i = 0; i< clientes; ++i) {
+        
+        // Aplicación de los operadores swap
+        for (int i = 0; i < clientes; ++i) {
             for (int j = 0; j < clientes; ++j) {
 
                 if (estado_actual.swap_efectivo(i, j)) {

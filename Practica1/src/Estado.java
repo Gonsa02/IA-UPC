@@ -20,7 +20,7 @@ import java.util.Comparator;
 public class Estado {
    private int[] asignacion_clientes;
    private int[] numero_clientes_central;
-   private double[] prod_centrales;
+   private double[] consumo_centrales;
    private double dinero;
    private static Centrales ref_centrales;
    private static Clientes ref_clientes;
@@ -31,19 +31,25 @@ public class Estado {
     	numero_clientes_central = new int[centrales.size()];
     	ref_centrales = centrales;
     	ref_clientes = clientes;
+        consumo_centrales = new double[centrales.size()];
+        for (int i = 0; i < ref_centrales.size(); ++i) consumo_centrales[i] = 0.0;
     	inicializar_dinero();
     	if (opcion == 1) asignar1();
     	else if (opcion == 2) asignar2();
    }
    
-   private Estado(int[] asignacion, int[] num_cli, double dinero, Clientes clientes, Centrales centrales){
+   private Estado(int[] asignacion, int[] num_cli, double[] cons_cent, double dinero, Clientes clientes, Centrales centrales) {
        asignacion_clientes = new int[asignacion.length];
-       for(int i = 0; i < asignacion_clientes.length; ++i){
+       for (int i = 0; i < asignacion_clientes.length; ++i) {
            asignacion_clientes[i] = asignacion[i];
        }
        numero_clientes_central = new int[num_cli.length];
-       for(int i = 0; i < num_cli.length; ++i){
+       for (int i = 0; i < num_cli.length; ++i) {
            numero_clientes_central[i] = num_cli[i];
+       }
+       consumo_centrales = new double[cons_cent.length];
+       for (int i = 0; i < cons_cent.length; ++i) {
+           consumo_centrales[i] = cons_cent[i];
        }
        this.dinero = dinero;
        ref_clientes = clientes;
@@ -275,20 +281,12 @@ public class Estado {
         }
         printEstado();
     }
-    
-    // Coste: O(|Clientes|)
-    private double consumo_real_central(int central) {
-        double consumo_real = 0.0;
-        for (int i = 0; i < asignacion_clientes.length; ++i) {
-            if (asignacion_clientes[i] == central) consumo_real += consumo_real_cliente(i, central);
-        }
-        return consumo_real;
-    }
    	
+    // Coste: O(1)
     private boolean centralValida(int central, int cli) {
         if (central == -1) return true;
         Central cent = ref_centrales.get(central);
-        return consumo_real_central(central) + consumo_real_cliente(cli, central) <= cent.getProduccion();
+        return consumo_centrales[central] + consumo_real_cliente(cli, central) <= cent.getProduccion();
     }
     
     // Coste: O(1)
@@ -301,59 +299,64 @@ public class Estado {
         double porcentaje = VEnergia.getPerdida(distancia);
         return cli.getConsumo()/(1 - porcentaje);
     }
+    
+    // Coste: O(1)
+    private boolean central_con_clientes(int id_central) {
+        return numero_clientes_central[id_central] > 0;
+    }
    
-      private boolean central_con_clientes(int id_central) {
-       return numero_clientes_central[id_central] > 0;
-   }
-   
-   private void parar_central(int id_central) {
-       Central c = ref_centrales.get(id_central);
-       try {
-           dinero += VEnergia.getCosteProduccionMW(c.getTipo())*c.getProduccion() + VEnergia.getCosteMarcha(c.getTipo());
-           dinero -= VEnergia.getCosteParada(c.getTipo());
-       } catch(Exception err) {
-           System.out.println("Error en parar_central");
-       }
-   }
-   
+    // Coste: O(1)
+    private void parar_central(int id_central) {
+        Central c = ref_centrales.get(id_central);
+        try {
+            dinero += VEnergia.getCosteProduccionMW(c.getTipo())*c.getProduccion() + VEnergia.getCosteMarcha(c.getTipo());
+            dinero -= VEnergia.getCosteParada(c.getTipo());
+        } catch(Exception err) {
+            System.out.println("Error en parar_central");
+        }
+    }
+    
+    // Coste: O(1)
     private void activar_central(int id_central) {
         Central c = ref_centrales.get(id_central);
         try {
             dinero -= VEnergia.getCosteProduccionMW(c.getTipo())*c.getProduccion() + VEnergia.getCosteMarcha(c.getTipo());
             dinero += VEnergia.getCosteParada(c.getTipo());
         } catch(Exception err) {
-            System.out.println("Error en parar_central");
+            System.out.println("Error en activar_central");
         }
     }
-
-   private void inicializar_dinero() {
-       dinero = 0;
-       for (int i = 0; i < ref_centrales.size(); ++i) {
-           Central c = ref_centrales.get(i);
-           try {
-               // Todas las centrales empiezan paradas
-               dinero -= VEnergia.getCosteParada(c.getTipo());
-           } catch(Exception err) {
-               System.out.println("Error al inicializar el dinero calculando el coste de las centrales");
-           }
-       }
-       for (int i = 0; i < ref_clientes.size(); ++i) {
-           Cliente c = ref_clientes.get(i);
-           try {
-               // Todas los clientes empiezan sin central
-               dinero -= VEnergia.getTarifaClientePenalizacion(c.getTipo())*c.getConsumo();
-           } catch(Exception err) {
-               System.out.println("Error al inicializar el dinero calculando el coste de los clientes");
-           }
-       }
-   }
-   
-   public boolean move_efectivo(int cliente, int central){
-       Cliente cli = ref_clientes.get(cliente);
-       if (cli.getContrato() == Cliente.GARANTIZADO && central == -1) return false;
-       if (asignacion_clientes[cliente] == central) return false;
-       return centralValida(central, cliente);
-   }
+    
+    // Coste: O(|Clientes| + |Centrales|)
+    private void inicializar_dinero() {
+        dinero = 0;
+         for (int i = 0; i < ref_centrales.size(); ++i) {
+            Central c = ref_centrales.get(i);
+             try {
+                // Todas las centrales empiezan paradas
+                dinero -= VEnergia.getCosteParada(c.getTipo());
+            } catch(Exception err) {
+                System.out.println("Error en inicializar_dinero() calculando el coste de las centrales");
+            }
+        }
+        for (int i = 0; i < ref_clientes.size(); ++i) {
+            Cliente c = ref_clientes.get(i);
+            try {
+                // Todos los clientes empiezan sin central
+                dinero -= VEnergia.getTarifaClientePenalizacion(c.getTipo())*c.getConsumo();
+            } catch(Exception err) {
+                System.out.println("Error en inicializar_dinero() calculando el coste de los clientes");
+            }
+        }
+    }
+    
+    // Coste: O(1)
+    public boolean move_efectivo(int cliente, int central) {
+        Cliente cli = ref_clientes.get(cliente);
+        if (cli.getContrato() == Cliente.GARANTIZADO && central == -1) return false;
+        if (asignacion_clientes[cliente] == central) return false;
+        return centralValida(central, cliente);
+    }
    
    public boolean swap_efectivo(int cliente1, int cliente2) {
        Cliente c1 = ref_clientes.get(cliente1), c2 = ref_clientes.get(cliente2);
@@ -368,27 +371,29 @@ public class Estado {
        if (id_central1 == id_central2 && id_central1 == -1) return false;
        else if (id_central1 == -1) {
            Central central2 = ref_centrales.get(id_central2);
-           return (consumo_real_central(id_central2)-consumo_cliente2_central_actual+consumo_cliente1_central_futura) <= central2.getProduccion();
+           return (consumo_centrales[id_central2] - consumo_cliente2_central_actual+consumo_cliente1_central_futura) <= central2.getProduccion();
        }
        else if (id_central2 == -1) {
            Central central1 = ref_centrales.get(id_central1);
-           return (consumo_real_central(id_central1)-consumo_cliente1_central_actual+consumo_cliente2_central_futura) <= central1.getProduccion();
+           return (consumo_centrales[id_central1] - consumo_cliente1_central_actual+consumo_cliente2_central_futura) <= central1.getProduccion();
        }
        
        Central central1 = ref_centrales.get(id_central1), central2 = ref_centrales.get(id_central2);
        //A continuación comprobamos si las centrales tienen suficiente produccion disponible como para servir a los clientes una vez se haya hecho el swap
-       return (((consumo_real_central(id_central1)-consumo_cliente1_central_actual+consumo_cliente2_central_futura) <= central1.getProduccion()) && ((consumo_real_central(id_central2)-consumo_cliente2_central_actual+consumo_cliente1_central_futura) <= central2.getProduccion()));
+       return (((consumo_centrales[id_central1] - consumo_cliente1_central_actual+consumo_cliente2_central_futura) <= central1.getProduccion()) && ((consumo_centrales[id_central2] - consumo_cliente2_central_actual+consumo_cliente1_central_futura) <= central2.getProduccion()));
    }
       
     public void asignar_cliente_a_central(int id_cliente, int id_central) {
         Cliente c = ref_clientes.get(id_cliente);
         int id_central_anterior = asignacion_clientes[id_cliente];
         asignacion_clientes[id_cliente] = id_central;
-        if (id_central_anterior == -1 && id_central >= 0) { //Damos suministro al cliente
+        
+        if (id_central_anterior == -1 && id_central >= 0) { // Damos suministro al cliente
             try {
                 dinero += VEnergia.getTarifaClientePenalizacion(c.getTipo())*c.getConsumo(); // Ya no pagamos la indemnización
                 if (!central_con_clientes(id_central)) activar_central(id_central); // Si la central esta parada activamos la central
                 ++numero_clientes_central[id_central];
+                consumo_centrales[id_central] += consumo_real_cliente(id_cliente, id_central);
                 if (c.getContrato() == Cliente.GARANTIZADO) {
                     dinero += c.getConsumo()*VEnergia.getTarifaClienteGarantizada(c.getTipo()); //El cliente nos paga la tarifa
                 }  else {
@@ -398,32 +403,39 @@ public class Estado {
                 System.out.println("Error al asignar_cliente a central");
             }
         }
-        if (id_central_anterior >= 0 && id_central == -1) {  //Dejamos al cliente sin suministro
-           try {
-           dinero -= VEnergia.getTarifaClientePenalizacion(c.getTipo())*c.getConsumo(); //Pagamos la indemnización
-           dinero -= c.getConsumo()*VEnergia.getTarifaClienteNoGarantizada(c.getTipo()); //No nos paga la tarifa
-           --numero_clientes_central[id_central_anterior];
-           if (!central_con_clientes(id_central_anterior)) parar_central(id_central_anterior); //Si no hay clientes paramos la central
-           } catch (Exception err) {
-               System.out.println("Error al dejar a un cliente sin suministro");
-           }
-       }
-      if (id_central_anterior >= 0 && id_central >= 0) {
-          --numero_clientes_central[id_central_anterior];
-          if (!central_con_clientes(id_central_anterior)) parar_central(id_central_anterior);
-          if (!central_con_clientes(id_central)) activar_central(id_central);
-          ++numero_clientes_central[id_central];
-      }
-   }
-
-   public void swap(int cliente1, int cliente2) {
-       int aux = asignacion_clientes[cliente1];
-       asignar_cliente_a_central(cliente1, asignacion_clientes[cliente2]);
-       asignar_cliente_a_central(cliente2, aux);
-   }
+        
+        else if (id_central_anterior >= 0 && id_central == -1) {  //Dejamos al cliente sin suministro
+            try {
+                dinero -= VEnergia.getTarifaClientePenalizacion(c.getTipo())*c.getConsumo(); //Pagamos la indemnización
+                dinero -= c.getConsumo()*VEnergia.getTarifaClienteNoGarantizada(c.getTipo()); //No nos paga la tarifa
+                --numero_clientes_central[id_central_anterior];
+                consumo_centrales[id_central_anterior] -= consumo_real_cliente(id_cliente, id_central_anterior);
+                if (!central_con_clientes(id_central_anterior)) parar_central(id_central_anterior); //Si no hay clientes paramos la central
+            } catch (Exception err) {
+                System.out.println("Error al dejar a un cliente sin suministro");
+            }
+        }
+        
+        else if (id_central_anterior >= 0 && id_central >= 0) {
+            --numero_clientes_central[id_central_anterior];
+            if (!central_con_clientes(id_central_anterior)) parar_central(id_central_anterior);
+            if (!central_con_clientes(id_central)) activar_central(id_central);
+            ++numero_clientes_central[id_central];
+            consumo_centrales[id_central_anterior] -= consumo_real_cliente(id_cliente, id_central_anterior);
+            consumo_centrales[id_central] += consumo_real_cliente(id_cliente, id_central);
+        }
+    }
+    
+    // Coste: O()
+    public void swap(int cliente1, int cliente2) {
+        int aux = asignacion_clientes[cliente1];
+        asignar_cliente_a_central(cliente1, asignacion_clientes[cliente2]);
+        asignar_cliente_a_central(cliente2, aux);
+    }
    
-   public String printEstado() {
-       int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
+    // Coste: O(|Clientes|)
+    public String printEstado() {
+        int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
         for (int i = 0; i < ref_clientes.size(); ++i) {
             if (asignacion_clientes[i] == -1) {
                 if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO) ++c1;
@@ -437,16 +449,20 @@ public class Estado {
         String s1 = (c1 + " clientes garantizados sin central y " + c2 + " clientes no garantizados sin central.");
         String s2 = (c3 + " clientes garantizados con central y " + c4 + " clientes no garantizados con central");
         return s1 + "\n" + s2;
-   }
+    }
+    
+    // Coste: O(1)
+    public int get_n_clientes() {
+        return ref_clientes.size();
+    }
+    
+    // Coste: O(1)
+    public int get_n_centrales() {
+        return ref_centrales.size();
+    }
    
-   public int get_n_clientes() {
-       return ref_clientes.size();
-   }
-   public int get_n_centrales() {
-       return ref_centrales.size();
-   }
-   public Estado clonar(){
-       return new Estado(asignacion_clientes, numero_clientes_central, dinero, ref_clientes, ref_centrales);
+   public Estado clonar() {
+       return new Estado(asignacion_clientes, numero_clientes_central, consumo_centrales, dinero, ref_clientes, ref_centrales);
    }
    
     public double get_dinero() {
@@ -470,7 +486,7 @@ public class Estado {
     }
     
     class SortSystem implements Comparator<Integer> {
-       public int compare(Integer a, Integer b){
+       public int compare(Integer a, Integer b) {
            int index1 = a;
            int index2 = b;
            Central cent1 = ref_centrales.get(index1);
