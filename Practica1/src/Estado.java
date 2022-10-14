@@ -66,117 +66,74 @@ public class Estado {
        return Math.hypot((double)distancia_x, (double)distancia_y);
    }
    
-   private void asignar1(){
-       List<Integer> clientes_asegurados = new ArrayList<>();
-       List<Integer> centrales = new ArrayList<>();
-        //añadimos todas las centrales a la lista
-       for(int i =0; i < ref_centrales.size();++i)centrales.add(i);
-      //por cada cliente, si es asegurado lo metemos a nuestra lista de clientes asegurados, sino le asignamos inicialmente
-       for(int i = 0; i < asignacion_clientes.length;++i){
+    private void asignar1() {
+        List<Integer> clientes_asegurados = new ArrayList<>();
+        List<Integer> centrales = new ArrayList<>();
+        // Añadimos todas las centrales a la lista
+        for (int i = 0; i < ref_centrales.size(); ++i) centrales.add(i);
+        // Por cada cliente, si es asegurado lo metemos a nuestra lista de clientes asegurados, sino le asignamos inicialmente
+        for (int i = 0; i < asignacion_clientes.length; ++i) {
             Cliente cli = ref_clientes.get(i);
-            if(cli.getContrato() == Cliente.GARANTIZADO) clientes_asegurados.add(i);
-            else asignacion_clientes[i] = -1;
-       }
+            if (cli.getContrato() == Cliente.GARANTIZADO) clientes_asegurados.add(i);
+            //else asignacion_clientes[i] = -1; // Esto ya lo hacemos al crear el estado
+        }
        
-      //mezclamos los clientes
-       Collections.shuffle(clientes_asegurados);
-       //ordenamos las centrales de más grande a más pequeña por capacidad
-       Collections.sort(centrales,new SortSystem());
+        // Mezclamos los clientes
+        Collections.shuffle(clientes_asegurados);
+        // Ordenamos las centrales de más grande a más pequeña por capacidad
+        Collections.sort(centrales, new SortSystem());
        
-       //por cada central la vamos llenando hasta que no pueda más con clientes asegurados_random
-       //si asignamos un cliente lo quitamos de la lista
-       for(int i = 0; i < ref_centrales.size(); ++i){
-           int index = centrales.get(i);
-           boolean encontrado = true;
-           while(encontrado){
-               encontrado = false;
-               for(int j = 0; j < clientes_asegurados.size();++j){
+        // Por cada central la vamos llenando hasta que no pueda más con clientes_asegurados random
+        // Si asignamos un cliente lo quitamos de la lista
+        for (int i = 0; i < ref_centrales.size(); ++i) {
+            int index = centrales.get(i);
+            boolean encontrado = true;
+            while (encontrado) {
+                encontrado = false;
+                for (int j = 0; j < clientes_asegurados.size(); ++j) {
                    int cli = clientes_asegurados.get(j);
-                   
-                        
-                    if(centralValida(index,cli)){
-                        asignacion_clientes[cli] = index;
-                        //asignar_cliente_a_central(cli,index);
+                    if (centralValida(index, cli)) {
+                        asignar_cliente_a_central(cli,index);
                         clientes_asegurados.remove(j);
                         encontrado = true;
                     }  
                 }
             }
-           Collections.shuffle(clientes_asegurados);
+            Collections.shuffle(clientes_asegurados);
         }
-       
-       //si hay un clientes asegurados, quitaremos tantas asignaciones hechas a clientes garantizados en la lista haya
-       while(! clientes_asegurados.isEmpty()){
-           System.out.println("Hay " + clientes_asegurados.size() + " no inicializados");
-           int tam_inicial = clientes_asegurados.size();
-           Random rand = new Random();
-           for(int i = 0; i < tam_inicial;++i){
-               int indice = rand.nextInt(asignacion_clientes.length);
-               while(!(ref_clientes.get(indice).getContrato() == Cliente.GARANTIZADO && asignacion_clientes[indice] != -1)) indice = rand.nextInt(asignacion_clientes.length);
-               
-               asignacion_clientes[indice] = -1;
-               clientes_asegurados.add(indice);
-           }
-           //repetimos el mismo proceso descrito anteriormente
-           Collections.shuffle(clientes_asegurados);
-           for(int i = 0; i < ref_centrales.size(); ++i){
-           int index = centrales.get(i);
-           boolean encontrado = true;
-           while(encontrado){
-               encontrado = false;
-               for(int j = 0; j < clientes_asegurados.size();++j){
-                   int cli = clientes_asegurados.get(j);
-                   
-                        
-                    if(centralValida(index,cli)){
-                        asignacion_clientes[cli] = index;
-                        //asignar_cliente_a_central(cli,index);
-                        clientes_asegurados.remove(j);
-                        encontrado = true;
-                    }  
+        // Si hay un clientes asegurados, quitaremos tantas asignaciones hechas a clientes garantizados en la lista haya
+        while (!clientes_asegurados.isEmpty()) {
+            System.out.println("Hay " + clientes_asegurados.size() + " no inicializados");
+            int tam_inicial = clientes_asegurados.size();
+            Random rand = new Random();
+            for (int i = 0; i < tam_inicial; ++i) {
+                int indice = rand.nextInt(asignacion_clientes.length);
+                while (!(ref_clientes.get(indice).getContrato() == Cliente.GARANTIZADO && asignacion_clientes[indice] != -1))
+                    indice = rand.nextInt(asignacion_clientes.length);
+                
+                asignar_cliente_a_central(indice,-1);
+                clientes_asegurados.add(indice);
+            }
+            // Repetimos el mismo proceso descrito anteriormente
+            Collections.shuffle(clientes_asegurados);
+            for (int i = 0; i < ref_centrales.size(); ++i) {
+                int index = centrales.get(i);
+                boolean encontrado = true;
+                while (encontrado) {
+                    encontrado = false;
+                    for (int j = 0; j < clientes_asegurados.size(); ++j) {
+                        int cli = clientes_asegurados.get(j);
+                     
+                        if (centralValida(index, cli)) {
+                            asignar_cliente_a_central(cli,index);
+                            clientes_asegurados.remove(j);
+                            encontrado = true;
+                        }  
+                    }
                 }
-            }
-           Collections.shuffle(clientes_asegurados);
-        }
-       }
-       
-       //una vez hecha la asignacion parcial, tenemos que formalizarla con la aplicacion de asignar_cliente_a_central
-       //nos ayudamos con un vector auxiliar donde copiamos la asignacion parcial y dejamos el vector de asignaciones todo a -1
-       int[] vector_parcial = new int[asignacion_clientes.length];
-       for(int i = 0; i < asignacion_clientes.length; ++i){
-           vector_parcial[i] = asignacion_clientes[i];
-           asignacion_clientes[i] = -1;
-       }
-       //aplicamos los cambios
-       for(int i = 0; i < asignacion_clientes.length; ++i){
-           if(move_efectivo(i, vector_parcial[i])){
-               asignar_cliente_a_central(i,vector_parcial[i]);
-           }
-       }
-       ///////////////////////////////////////////////
-       //imprimimos todo por si acaso 
-       //este paso se puede quitar
-       for(int i = 0; i < asignacion_clientes.length; ++i){
-          Cliente cli = ref_clientes.get(i);
-          if(cli.getContrato() == Cliente.GARANTIZADO){
-              //System.out.println("El cliente garantizado "+ i + " tiene la central" + asignacion_clientes[i]);
-          }
-       }
-       
-       int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
-        for (int i = 0; i < ref_clientes.size(); ++i) {
-            if (asignacion_clientes[i] == -1) {
-                if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO) ++c1;
-                else ++c2;
-            }
-            else {
-                if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO) ++c3;
-                else ++c4;
+                Collections.shuffle(clientes_asegurados);
             }
         }
-        System.out.println(c1 + " clientes garantizados sin central y " + c2 + " clientes no garantizados sin central");
-        System.out.println(c3 + " clientes garantizados con central y " + c4 + " clientes no garantizados con central");
-        ///////////////////////////////////////////////
     }
    
    private void asignar2() {
@@ -426,7 +383,7 @@ public class Estado {
         }
     }
     
-    // Coste: O()
+    // Coste:
     public void swap(int cliente1, int cliente2) {
         int aux = asignacion_clientes[cliente1];
         asignar_cliente_a_central(cliente1, asignacion_clientes[cliente2]);
