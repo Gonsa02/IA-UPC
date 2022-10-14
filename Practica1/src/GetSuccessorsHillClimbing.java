@@ -25,7 +25,7 @@ public class GetSuccessorsHillClimbing implements SuccessorFunction {
                     Estado succesor = estado_actual.clonar();
                     succesor.asignar_cliente_a_central(i, j);
                     
-                    String accion = "Cliente " +i+ " es transferido a la central "+j;
+                    String accion = succesor.printEstado();//"Cliente " +i+ " es transferido a la central "+j;
                     Successor new_succ = new Successor(accion,succesor);
                     retval.add(new_succ);
                 }

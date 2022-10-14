@@ -20,6 +20,7 @@ import java.util.Comparator;
 public class Estado {
    private int[] asignacion_clientes;
    private int[] numero_clientes_central;
+   private double[] prod_centrales;
    private double dinero;
    private static Centrales ref_centrales;
    private static Clientes ref_clientes;
@@ -30,9 +31,9 @@ public class Estado {
     	numero_clientes_central = new int[centrales.size()];
     	ref_centrales = centrales;
     	ref_clientes = clientes;
-    	dinero = calcular_coste_centrales();
+    	inicializar_dinero();
     	if (opcion == 1) asignar1();
-    	else if (opcion == 2) asignar2(asignacion_clientes);
+    	else if (opcion == 2) asignar2();
    }
    
    private Estado(int[] asignacion, int[] num_cli, double dinero, Clientes clientes, Centrales centrales){
@@ -58,43 +59,6 @@ public class Estado {
        int distancia_y = Math.abs(pos_y_central - pos_y_cliente);
        return Math.hypot((double)distancia_x, (double)distancia_y);
    }
-   
-   private  int[] getNCentrales(int k, int dist_cli, int[] distancias_manhattan, int cli) {
-                
-   		int l = Arrays.binarySearch(distancias_manhattan, dist_cli);
-                if (l < 0) l = Math.abs(l) - 1;
-                if (l == distancias_manhattan.length) l--;
-   		int r = l + 1;
-
-   		int count = 0;
-   		int n = distancias_manhattan.length;
-   		int sol[] = new int[k];
-
-   		while (l >= 0 && r < n && count < k) {
-   			if ((dist_cli - distancias_manhattan[l] < dist_cli - distancias_manhattan[r])) {
-                           /* if  (centralValida(l, cli))*/ sol[count++] = l;
-                            --l;
-                        }
-   				
-                        else {
-                            /*if (centralValida(l, cli))*/ sol[count++] = r;
-                            r++;
-                        }	
-   		}
-   		while (count < k && l >= 0)
-   			sol[count++] = l--;
-   		
-   		while (count < k && r < n)
-   			sol[count++] = r++;
-   		
-   		// Ordenem aleatòriament els elements
-   		List<Integer> list = new ArrayList<>();
-                for (int i : sol) list.add(i);
-   		Collections.shuffle(list);
-   		sol = list.stream().mapToInt(i -> i).toArray();
-
-   		return sol;
-   	}
    
    private void asignar1(){
        List<Integer> clientes_asegurados = new ArrayList<>();
@@ -184,6 +148,15 @@ public class Estado {
            }
        }
        ///////////////////////////////////////////////
+       //imprimimos todo por si acaso 
+       //este paso se puede quitar
+       for(int i = 0; i < asignacion_clientes.length; ++i){
+          Cliente cli = ref_clientes.get(i);
+          if(cli.getContrato() == Cliente.GARANTIZADO){
+              //System.out.println("El cliente garantizado "+ i + " tiene la central" + asignacion_clientes[i]);
+          }
+       }
+       
        int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
         for (int i = 0; i < ref_clientes.size(); ++i) {
             if (asignacion_clientes[i] == -1) {
@@ -200,7 +173,7 @@ public class Estado {
         ///////////////////////////////////////////////
     }
    
-   private void asignar2(int[] clientes) {
+   private void asignar2() {
         // Hacemos una array desordenada con los índices de todas las centrales
    	List<Integer> centrales = new ArrayList<>();
         for (int i = 0; i < ref_centrales.size(); ++i) centrales.add(i);
@@ -236,7 +209,6 @@ public class Estado {
             if (minPos != -1) {
                 int minCli = clientesGarantizados.get(minPos);
                 asignar_cliente_a_central(minCli, cent);
-                //System.out.println("Asignamos al cliente _" + minCli + "_ con la central " + cent);
                 clientesGarantizados.remove(minPos);
             }
             else { // No hemos encontrado un cliente que quepa en la central, por tanto avanzamos a la siguiente central
@@ -295,65 +267,40 @@ public class Estado {
             if (minPos != -1) {
                 int minCli = clientesNoGarantizados.get(minPos);
                 asignar_cliente_a_central(minCli, cent);
-                //System.out.println("Asignamos al cliente no garantizado _" + minCli + "_ con la central " + cent);
                 clientesNoGarantizados.remove(minPos);
             }
             else { // No hemos encontrado un cliente que quepa en la central, por tanto avanzamos a la siguiente central
                 ++i;
             }
         }
-        ///////////////////////////////////////////////
-        int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
-        for (int i = 0; i < ref_clientes.size(); ++i) {
-            if (asignacion_clientes[i] == -1) {
-                if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO) ++c1;
-                else ++c2;
-            }
-            else {
-                if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO) ++c3;
-                else ++c4;
-            }
-        }
-        System.out.println(c1 + " clientes garantizados sin central y " + c2 + " clientes no garantizados sin central");
-        System.out.println(c3 + " clientes garantizados con central y " + c4 + " clientes no garantizados con central");
-        ///////////////////////////////////////////////
-   }
-    private int asignacion_cliente_central(int tipo_cliente){
-        if(tipo_cliente == Cliente.CLIENTEG) return Central.CENTRALC;
-        else if(tipo_cliente == Cliente.CLIENTEMG) return Central.CENTRALB;
-        return Central.CENTRALA;
+        printEstado();
     }
+    
+   // Coste: O(|Clientes|)
     private double consumo_real_central(int central) {
-       double consumo_real = 0.0;
-       for(int i = 0; i < asignacion_clientes.length; ++i){
-           if(asignacion_clientes[i]== central) consumo_real += consumo_real_cliente(i, central);
-       }
-       return consumo_real;
+        double consumo_real = 0.0;
+        for (int i = 0; i < asignacion_clientes.length; ++i) {
+            if (asignacion_clientes[i] == central) consumo_real += consumo_real_cliente(i, central);
+        }
+        return consumo_real;
    }
    	
-    private boolean centralValida(int indice, int cli) {
-        Central cent = ref_centrales.get(indice);
-        return consumo_real_central(indice) + consumo_real_cliente(cli, indice) <= cent.getProduccion();
+    private boolean centralValida(int central, int cli) {
+        if (central == -1) return true;
+        Central cent = ref_centrales.get(central);
+        return consumo_real_central(central) + consumo_real_cliente(cli, central) <= cent.getProduccion();
     }
-   
-   private double consumo_real_cliente(int cliente, int central) {
-       if (central != -1) {
+    
+    // Coste: O(1)
+    private double consumo_real_cliente(int cliente, int central) {
+        if (central == -1)  return 0.0; // Si el cliente se compara con una central de índice -1 quiere decir que no consume de una central "no existente"
+        
         Cliente cli = ref_clientes.get(cliente);
         Central cent = ref_centrales.get(central);
         double distancia = distancia_euclidiana(cli, cent);
         double porcentaje = VEnergia.getPerdida(distancia);
-        return cli.getConsumo()/(1-porcentaje);
-       }
-       else return 0.0; //Si el cliente se compara con una central de índice -1 quiere decir que no consume de una central "no existente"
-   }
-   
-   private boolean capacidad_suficiente_para_cliente(int cliente, int central) {
-       if (central == -1) return true;
-       Central cent = ref_centrales.get(central);
-       double capacidad_consumida_por_central = consumo_real_central(central);
-       double capacidad_real_consumida_por_cliente  = consumo_real_cliente(cliente, central);
-       return capacidad_consumida_por_central + capacidad_real_consumida_por_cliente <= cent.getProduccion();
-   }
+        return cli.getConsumo()/(1 - porcentaje);
+    }
    
       private boolean central_con_clientes(int id_central) {
        return numero_clientes_central[id_central] > 0;
@@ -369,35 +316,43 @@ public class Estado {
        }
    }
    
-   private void activar_central(int id_central) {
-       Central c = ref_centrales.get(id_central);
-       try {
-       dinero -= VEnergia.getCosteProduccionMW(c.getTipo())*c.getProduccion() + VEnergia.getCosteMarcha(c.getTipo());
-       dinero += VEnergia.getCosteParada(c.getTipo());
-       } catch(Exception err) {
-           System.out.println("Error en parar_central");
-       }
-   }
+    private void activar_central(int id_central) {
+        Central c = ref_centrales.get(id_central);
+        try {
+            dinero -= VEnergia.getCosteProduccionMW(c.getTipo())*c.getProduccion() + VEnergia.getCosteMarcha(c.getTipo());
+            dinero += VEnergia.getCosteParada(c.getTipo());
+        } catch(Exception err) {
+            System.out.println("Error en parar_central");
+        }
+    }
 
-   private double calcular_coste_centrales() {
-       double money = 0;
+   private void inicializar_dinero() {
+       dinero = 0;
        for (int i = 0; i < ref_centrales.size(); ++i) {
            Central c = ref_centrales.get(i);
            try {
-           if (central_con_clientes(i)) dinero -=  VEnergia.getCosteProduccionMW(c.getTipo())*c.getProduccion() +VEnergia.getCosteMarcha(c.getTipo());
-           else dinero -= VEnergia.getCosteParada(c.getTipo());
+               // Todas las centrales empiezan paradas
+               dinero -= VEnergia.getCosteParada(c.getTipo());
            } catch(Exception err) {
-               System.out.println("Error calculando el coste de las centrales");
+               System.out.println("Error al inicializar el dinero calculando el coste de las centrales");
            }
        }
-       return money;
+       for (int i = 0; i < ref_clientes.size(); ++i) {
+           Cliente c = ref_clientes.get(i);
+           try {
+               // Todas los clientes empiezan sin central
+               dinero -= VEnergia.getTarifaClientePenalizacion(c.getTipo())*c.getConsumo();
+           } catch(Exception err) {
+               System.out.println("Error al inicializar el dinero calculando el coste de los clientes");
+           }
+       }
    }
    
    public boolean move_efectivo(int cliente, int central){
        Cliente cli = ref_clientes.get(cliente);
-       if(cli.getContrato() == Cliente.GARANTIZADO && central == -1) return false;
-       if (asignacion_clientes[cliente]== central) return false;
-       return capacidad_suficiente_para_cliente(cliente, central);
+       if (cli.getContrato() == Cliente.GARANTIZADO && central == -1) return false;
+       if (asignacion_clientes[cliente] == central) return false;
+       return centralValida(central, cliente);
    }
    
    public boolean swap_efectivo(int cliente1, int cliente2) {
@@ -425,25 +380,25 @@ public class Estado {
        return (((consumo_real_central(id_central1)-consumo_cliente1_central_actual+consumo_cliente2_central_futura) <= central1.getProduccion()) && ((consumo_real_central(id_central2)-consumo_cliente2_central_actual+consumo_cliente1_central_futura) <= central2.getProduccion()));
    }
       
-   public void asignar_cliente_a_central(int id_cliente, int id_central) {
-       Cliente c = ref_clientes.get(id_cliente);
-       int id_central_anterior = asignacion_clientes[id_cliente];
-       asignacion_clientes[id_cliente] = id_central;
-       if (id_central_anterior == -1 && id_central >= 0) { //Damos suministro al cliente
-           try {
-            dinero += VEnergia.getTarifaClientePenalizacion(c.getTipo())*c.getConsumo(); //Ya no pagamos indemnización
-            if (!central_con_clientes(id_central)) activar_central(id_central); //Si la central esta parada activamos la central
-            ++numero_clientes_central[id_central];
-            if (c.getContrato() == Cliente.GARANTIZADO) {
-                dinero += c.getConsumo()*VEnergia.getTarifaClienteGarantizada(c.getTipo()); //El cliente nos paga la tarifa
-            }  else {
-                dinero += c.getConsumo()*VEnergia.getTarifaClienteNoGarantizada(c.getTipo());
+    public void asignar_cliente_a_central(int id_cliente, int id_central) {
+        Cliente c = ref_clientes.get(id_cliente);
+        int id_central_anterior = asignacion_clientes[id_cliente];
+        asignacion_clientes[id_cliente] = id_central;
+        if (id_central_anterior == -1 && id_central >= 0) { //Damos suministro al cliente
+            try {
+                dinero += VEnergia.getTarifaClientePenalizacion(c.getTipo())*c.getConsumo(); // Ya no pagamos la indemnización
+                if (!central_con_clientes(id_central)) activar_central(id_central); // Si la central esta parada activamos la central
+                ++numero_clientes_central[id_central];
+                if (c.getContrato() == Cliente.GARANTIZADO) {
+                    dinero += c.getConsumo()*VEnergia.getTarifaClienteGarantizada(c.getTipo()); //El cliente nos paga la tarifa
+                }  else {
+                    dinero += c.getConsumo()*VEnergia.getTarifaClienteNoGarantizada(c.getTipo());
+                }
+            } catch (Exception err) {
+                System.out.println("Error al asignar_cliente a central");
             }
-           } catch (Exception err) {
-               System.out.println("Error al asignar_cliente a central");
-           }
-       }
-       if (id_central_anterior >= 0 && id_central == -1) {  //Dejamos al cliente sin suministro
+        }
+        if (id_central_anterior >= 0 && id_central == -1) {  //Dejamos al cliente sin suministro
            try {
            dinero -= VEnergia.getTarifaClientePenalizacion(c.getTipo())*c.getConsumo(); //Pagamos la indemnización
            dinero -= c.getConsumo()*VEnergia.getTarifaClienteNoGarantizada(c.getTipo()); //No nos paga la tarifa
@@ -461,48 +416,66 @@ public class Estado {
       }
    }
 
-   public void swap(int cliente1, int cliente2){
+   public void swap(int cliente1, int cliente2) {
        int aux = asignacion_clientes[cliente1];
        asignar_cliente_a_central(cliente1, asignacion_clientes[cliente2]);
        asignar_cliente_a_central(cliente2, aux);
    }
    
-   public int get_n_clientes(){
+   public String printEstado() {
+       int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
+        for (int i = 0; i < ref_clientes.size(); ++i) {
+            if (asignacion_clientes[i] == -1) {
+                if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO) ++c1;
+                else ++c2;
+            }
+            else {
+                if (ref_clientes.get(i).getContrato() == Cliente.GARANTIZADO) ++c3;
+                else ++c4;
+            }
+        }
+        String s1 = (c1 + " clientes garantizados sin central y " + c2 + " clientes no garantizados sin central.");
+        String s2 = (c3 + " clientes garantizados con central y " + c4 + " clientes no garantizados con central");
+        return s1 + "\n" + s2;
+   }
+   
+   public int get_n_clientes() {
        return ref_clientes.size();
    }
-   public int get_n_centrales(){
+   public int get_n_centrales() {
        return ref_centrales.size();
    }
    public Estado clonar(){
        return new Estado(asignacion_clientes, numero_clientes_central, dinero, ref_clientes, ref_centrales);
    }
-   public double get_dinero() {
-       try{
-        double produccion = 0.0;
-        for (int i = 0; i < ref_clientes.size(); ++i) {
-            double consumo = consumo_real_cliente(i, asignacion_clientes[i]);
-            if(asignacion_clientes[i] != -1){
-             Cliente cli = ref_clientes.get(i);
-             Central a = ref_centrales.get(asignacion_clientes[i]);
-             double dinero = (consumo-cli.getConsumo()) * VEnergia.getCosteProduccionMW(a.getTipo());
-             produccion += dinero;
+   
+    public double get_dinero() {
+        try {
+            double produccion = 0.0;
+            for (int i = 0; i < ref_clientes.size(); ++i) {
+                double consumo = consumo_real_cliente(i, asignacion_clientes[i]);
+                if (asignacion_clientes[i] != -1) {
+                    Cliente cli = ref_clientes.get(i);
+                    Central a = ref_centrales.get(asignacion_clientes[i]);
+                    double din = (consumo - cli.getConsumo()) * VEnergia.getCosteProduccionMW(a.getTipo());
+                    produccion += din;
+                }
             }
-
+            return dinero - produccion;
         }
-        return dinero - produccion;
-       }
-       catch(Exception e){
-          System.out.println(e);
-       }
-       return 0;
-   }
-    class SortSystem implements Comparator<Integer>{
+        catch(Exception e) {
+            System.out.println(e);
+        }
+        return 0;
+    }
+    
+    class SortSystem implements Comparator<Integer> {
        public int compare(Integer a, Integer b){
            int index1 = a;
            int index2 = b;
            Central cent1 = ref_centrales.get(index1);
            Central cent2 = ref_centrales.get(index2);
-           return (int)cent2.getProduccion()-(int) cent1.getProduccion();
+           return (int)cent2.getProduccion() - (int)cent1.getProduccion();
        }
    }
 }
