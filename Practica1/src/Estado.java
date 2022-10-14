@@ -276,14 +276,14 @@ public class Estado {
         printEstado();
     }
     
-   // Coste: O(|Clientes|)
+    // Coste: O(|Clientes|)
     private double consumo_real_central(int central) {
         double consumo_real = 0.0;
         for (int i = 0; i < asignacion_clientes.length; ++i) {
             if (asignacion_clientes[i] == central) consumo_real += consumo_real_cliente(i, central);
         }
         return consumo_real;
-   }
+    }
    	
     private boolean centralValida(int central, int cli) {
         if (central == -1) return true;
