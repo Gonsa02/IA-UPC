@@ -14,6 +14,7 @@ import aima.search.framework.Search;
 import aima.search.framework.SearchAgent;
 import aima.search.informed.HillClimbingSearch;
 import aima.search.informed.SimulatedAnnealingSearch;
+import java.util.Random;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -26,41 +27,58 @@ public class main {
         // TODO code application logic her
         
         try {
+            // Generamos una configuración inicial aleatoria
+            Random generator = new Random(System.currentTimeMillis());
+            int seed = generator.nextInt();
+            
+            // Configuramos las centrales y los clientes
             int[] centrales = new int[]{5,10,25};
             double[] clientes = new double[]{0.25,0.3,0.45};
+            
+            // Escogemos si queremos usar Hill Climbing (opcion == 1)
+            // o Simulated Annealing (opcion == 2)
             int opcion = 1;
-            Centrales cent = new Centrales(centrales, 1234);
-            System.out.println(1);
-            Clientes cli = new Clientes(1000,clientes,0.75, 1234);
-            System.out.println(2);
-            Estado state = new Estado(cent, cli, 2);
-             System.out.println(3);
-          
-            System.out.println(4);
-             Search alg1 = new HillClimbingSearch();
-             Search alg2 = new SimulatedAnnealingSearch(1000000, 1000, 50, 30);
-             System.out.println(5); System.out.println();
+            
+            // Escogemos si queremos generar la solución inicial con
+            // asignar1 (asignacion == 1) o asignar2 (asignacion == 2)
+            int asignacion = 2;
+            
+            // Creamos las varaibles para generar el Problema
+            Centrales cent = new Centrales(centrales, seed);
+            Clientes cli = new Clientes(1000,clientes,0.75, seed);
+            Estado state = new Estado(cent, cli, asignacion);
            
             if (opcion == 1) {
+                System.out.print("Hill Climbing ");
+                if (asignacion == 1) System.out.println("Asignación 1");
+                else System.out.println("Asignación 2");
+                System.out.println("Semilla: " + seed);
+                Search alg = new HillClimbingSearch();
                 Problem p = new Problem(state,
                             new GetSuccessorsHillClimbing(),
                             new SolucionTest(),
                             new FuncionHeuristica());
-                SearchAgent agent = new SearchAgent(p,alg1);
-                Estado goal = (Estado)alg1.getGoalState();
+                SearchAgent agent = new SearchAgent(p,alg);
+                Estado goal = (Estado)alg.getGoalState();
                 System.out.println(goal.printEstado());
-                System.out.println("Hill Climbing ganancias = " + goal.get_dinero());
+                System.out.println("Heurístico: " + goal.get_dinero());
                 printInstrumentation(agent.getInstrumentation());
             }
+            
             else if (opcion == 2) {
+                System.out.println("Simulated Annealing ");
+                if (asignacion == 1) System.out.println("Asignación 1");
+                else System.out.println("Asignación 2");
+                System.out.println("Semilla: " + seed);
+                Search alg = new SimulatedAnnealingSearch(1000000, 1000, 50, 30);
                 Problem p = new Problem(state,
                             new GetSuccessorsSimulatedAnnealing(),
                             new SolucionTest(),
                             new FuncionHeuristica());
-                SearchAgent agent = new SearchAgent(p,alg2);
-                Estado goal = (Estado)alg2.getGoalState();
+                SearchAgent agent = new SearchAgent(p,alg);
+                Estado goal = (Estado)alg.getGoalState();
                 System.out.println(goal.printEstado());
-                System.out.println("Hill Climbing ganancias = " + goal.get_dinero());
+                System.out.println("Heurístico: " + goal.get_dinero());
                 printInstrumentation(agent.getInstrumentation());
             }
         } catch(Exception e) {
