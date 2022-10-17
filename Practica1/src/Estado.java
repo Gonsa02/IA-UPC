@@ -356,6 +356,10 @@ public class Estado {
                 }  else {
                     dinero += c.getConsumo()*VEnergia.getTarifaClienteNoGarantizada(c.getTipo());
                 }
+                double consumo = consumo_real_cliente(id_cliente, id_central);
+                Central cent = ref_centrales.get(id_central);
+                double din = (consumo - c.getConsumo()) * VEnergia.getCosteProduccionMW(cent.getTipo());
+                dinero -= din;
             } catch (Exception err) {
                 System.out.println("Error al asignar_cliente a central");
             }
@@ -368,18 +372,35 @@ public class Estado {
                 --numero_clientes_central[id_central_anterior];
                 consumo_centrales[id_central_anterior] -= consumo_real_cliente(id_cliente, id_central_anterior);
                 if (!central_con_clientes(id_central_anterior)) parar_central(id_central_anterior); //Si no hay clientes paramos la central
+                double consumo = consumo_real_cliente(id_cliente, id_central_anterior);
+                Central cent = ref_centrales.get(id_central_anterior);
+                double din = (consumo - c.getConsumo()) * VEnergia.getCosteProduccionMW(cent.getTipo());
+                dinero += din;
             } catch (Exception err) {
                 System.out.println("Error al dejar a un cliente sin suministro");
             }
         }
         
         else if (id_central_anterior >= 0 && id_central >= 0) {
-            --numero_clientes_central[id_central_anterior];
+          try{
+              --numero_clientes_central[id_central_anterior];
             if (!central_con_clientes(id_central_anterior)) parar_central(id_central_anterior);
             if (!central_con_clientes(id_central)) activar_central(id_central);
             ++numero_clientes_central[id_central];
             consumo_centrales[id_central_anterior] -= consumo_real_cliente(id_cliente, id_central_anterior);
             consumo_centrales[id_central] += consumo_real_cliente(id_cliente, id_central);
+            
+            double consumo1 = consumo_real_cliente(id_cliente, id_central_anterior);
+            double consumo2 = consumo_real_cliente(id_cliente, id_central);
+            Central cent1 = ref_centrales.get(id_central_anterior);
+            Central cent2 = ref_centrales.get(id_central);
+            double din1 = (consumo1 - c.getConsumo()) * VEnergia.getCosteProduccionMW(cent1.getTipo());
+            double din2 = (consumo2 - c.getConsumo()) * VEnergia.getCosteProduccionMW(cent2.getTipo());
+            dinero = dinero + din1 - din2;
+          }catch(Exception err){
+              System.out.println("Error al dejar a un cliente sin suministro");
+          }
+            
         }
     }
     
@@ -423,23 +444,7 @@ public class Estado {
    }
    
     public double get_dinero() {
-        try {
-            double produccion = 0.0;
-            for (int i = 0; i < ref_clientes.size(); ++i) {
-                double consumo = consumo_real_cliente(i, asignacion_clientes[i]);
-                if (asignacion_clientes[i] != -1) {
-                    Cliente cli = ref_clientes.get(i);
-                    Central a = ref_centrales.get(asignacion_clientes[i]);
-                    double din = (consumo - cli.getConsumo()) * VEnergia.getCosteProduccionMW(a.getTipo());
-                    produccion += din;
-                }
-            }
-            return dinero - produccion;
-        }
-        catch(Exception e) {
-            System.out.println(e);
-        }
-        return 0;
+        return dinero;
     }
     
     class SortSystem implements Comparator<Integer> {
