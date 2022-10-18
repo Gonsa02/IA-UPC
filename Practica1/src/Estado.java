@@ -368,7 +368,11 @@ public class Estado {
         else if (id_central_anterior >= 0 && id_central == -1) {  //Dejamos al cliente sin suministro
             try {
                 dinero -= VEnergia.getTarifaClientePenalizacion(c.getTipo())*c.getConsumo(); //Pagamos la indemnización
-                dinero -= c.getConsumo()*VEnergia.getTarifaClienteNoGarantizada(c.getTipo()); //No nos paga la tarifa
+                if (c.getContrato() == Cliente.GARANTIZADO) {
+                    dinero -= c.getConsumo()*VEnergia.getTarifaClienteGarantizada(c.getTipo()); //El cliente nos paga la tarifa
+                }  else {
+                    dinero -= c.getConsumo()*VEnergia.getTarifaClienteNoGarantizada(c.getTipo());
+                } //No nos paga la tarifa
                 --numero_clientes_central[id_central_anterior];
                 consumo_centrales[id_central_anterior] -= consumo_real_cliente(id_cliente, id_central_anterior);
                 if (!central_con_clientes(id_central_anterior)) parar_central(id_central_anterior); //Si no hay clientes paramos la central
