@@ -30,7 +30,7 @@ public class main {
             // Generamos una configuración inicial aleatoria
             Random generator = new Random(System.currentTimeMillis());
             int seed = generator.nextInt();
-            
+            seed = 351716896;
             // Configuramos las centrales y los clientes
             int[] centrales = new int[]{5,10,25};
             double[] clientes = new double[]{0.25,0.3,0.45};
