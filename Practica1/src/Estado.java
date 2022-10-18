@@ -385,8 +385,9 @@ public class Estado {
           try{
               --numero_clientes_central[id_central_anterior];
             if (!central_con_clientes(id_central_anterior)) parar_central(id_central_anterior);
+             ++numero_clientes_central[id_central];
             if (!central_con_clientes(id_central)) activar_central(id_central);
-            ++numero_clientes_central[id_central];
+            
             consumo_centrales[id_central_anterior] -= consumo_real_cliente(id_cliente, id_central_anterior);
             consumo_centrales[id_central] += consumo_real_cliente(id_cliente, id_central);
             
