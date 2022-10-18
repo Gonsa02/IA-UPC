@@ -103,7 +103,7 @@ public class Estado {
         }
         // Si hay un clientes asegurados, quitaremos tantas asignaciones hechas a clientes garantizados en la lista haya
         while (!clientes_asegurados.isEmpty()) {
-            System.out.println("Hay " + clientes_asegurados.size() + " no inicializados");
+           //System.out.println("Hay " + clientes_asegurados.size() + " no inicializados");
             int tam_inicial = clientes_asegurados.size();
             Random rand = new Random();
             for (int i = 0; i < tam_inicial; ++i) {
