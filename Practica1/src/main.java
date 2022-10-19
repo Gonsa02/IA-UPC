@@ -44,7 +44,7 @@ public class main {
             // Generamos una configuración inicial aleatoria
             Random generator = new Random(System.currentTimeMillis());
             int seed = generator.nextInt(500);
-            seed = 20;
+            seed = -1184119069;
             
             // Configuramos las centrales y los clientes
             int[] centrales = new int[]{5,10,25};
@@ -56,7 +56,7 @@ public class main {
             
             // Escogemos si queremos generar la solución inicial con
             // asignar1 (asignacion == 1) o asignar2 (asignacion == 2)
-            int asignacion = 1;
+            int asignacion = 2;
             
             // Creamos las varaibles para generar el Problema
             Centrales cent = new Centrales(centrales, seed);
