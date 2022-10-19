@@ -320,6 +320,7 @@ public class Estado {
        if (c1.getContrato() != c2.getContrato())  return false; //Comprobamos que el swap se haga con clientes del mismo tipo
        
        int id_central1 = asignacion_clientes[cliente1], id_central2 = asignacion_clientes[cliente2];
+       if (id_central1 == id_central2) return false;
        double consumo_cliente1_central_actual = consumo_real_cliente(cliente1, id_central1);
        double consumo_cliente2_central_actual = consumo_real_cliente(cliente2, id_central2);
        double consumo_cliente1_central_futura = consumo_real_cliente(cliente1, id_central2);
