@@ -416,6 +416,23 @@ public class Estado {
         asignar_cliente_a_central(cliente1, asignacion_clientes[cliente2]);
         asignar_cliente_a_central(cliente2, aux);
     }
+    
+    public boolean cent_to_cent_efectivo(int central1, int central2){
+        if(central1 == central2)return false;
+        double produccion = 0.0;
+        for(int i = 0; i < asignacion_clientes.length; ++i){
+            if(asignacion_clientes[i] == central1) produccion += consumo_real_cliente(i,central2);
+        }
+        Central cent = ref_centrales.get(central2);
+        return produccion + consumo_centrales[central2] <= cent.getProduccion();
+    }
+    public void cent_to_cent(int central1, int central2){
+        for(int i = 0; i < asignacion_clientes.length;++i){
+            if(asignacion_clientes[i] == central1){
+                asignar_cliente_a_central(i,central2);
+            }
+        }
+    }
    
     // Coste: O(|Clientes|)
     public String printEstado() {
