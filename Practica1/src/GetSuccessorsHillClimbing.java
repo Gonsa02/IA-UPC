@@ -20,19 +20,20 @@ public class GetSuccessorsHillClimbing implements SuccessorFunction {
         int op_1 = 0;
         int op_2 = 0;
         //Aplicacion operador central_to_central
-        for (int i = 0; i < centrales; ++i){
+        /*for (int i = 0; i < centrales; ++i){
             for (int j = 0; j < centrales; ++j){
                 if(estado_actual.cent_to_cent_efectivo(i,j)){
                     ++op_1;
                     Estado succesor = estado_actual.clonar();
                     succesor.cent_to_cent(i,j);
-                    String accion = succesor.printEstado();
+                    String accion = "swap centrales";
                     Successor new_succ = new Successor(accion,succesor);
                     retval.add(new_succ);
                 }
             }
-        }
+        }*/
         // Aplicación de los operadores move
+        
         for (int i = 0; i < clientes; ++i) {
             for (int j = -1; j < centrales; ++j) {
                 if (estado_actual.move_efectivo(i, j)) {
@@ -40,7 +41,7 @@ public class GetSuccessorsHillClimbing implements SuccessorFunction {
                     Estado succesor = estado_actual.clonar();
                     succesor.asignar_cliente_a_central(i, j);
                     
-                    String accion = succesor.printEstado();
+                    String accion = "Cliente " + i + " es transferido a la central " + j;
                     Successor new_succ = new Successor(accion,succesor);
                     retval.add(new_succ);
                 }
@@ -48,7 +49,7 @@ public class GetSuccessorsHillClimbing implements SuccessorFunction {
         }
         
         // Aplicación de los operadores swap
-        /*
+        
         for (int i = 0; i < clientes; ++i) {
             for (int j = i+1; j < clientes; ++j) {
 
@@ -62,8 +63,8 @@ public class GetSuccessorsHillClimbing implements SuccessorFunction {
                     retval.add(new_succ);
                 }
             }
-        }*/
-        System.out.println("OP 1 " + op_1 + " OP 2 " + op_2);
+        }
+        //System.out.println("OP 1 " + op_1 + " OP 2 " + op_2);
         return retval;
     }
 }

@@ -44,7 +44,7 @@ public class main {
             // Generamos una configuración inicial aleatoria
             Random generator = new Random(System.currentTimeMillis());
             int seed = generator.nextInt(500);
-            seed = -1184119069;
+            //seed = 313;
             
             // Configuramos las centrales y los clientes
             int[] centrales = new int[]{5,10,25};
@@ -81,6 +81,7 @@ public class main {
                 System.out.println("Heurístico: " + goal.get_dinero());
                 System.out.println("Tiempo: " + (finish - start));
                 printInstrumentation(agent.getInstrumentation());
+                printActions(agent.getActions());
             }
             
             else if (opcion == 2) {
