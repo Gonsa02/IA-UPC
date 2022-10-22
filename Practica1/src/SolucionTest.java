@@ -5,7 +5,7 @@
 
 /**
  *
- * @author jeremy
+ * @author Joan Caballero, Jeremy Comino, Marc Gonzalez
  */
 import aima.search.framework.GoalTest;
 public class SolucionTest implements GoalTest{

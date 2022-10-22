@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 /**
  *
- * @author jeremy
+ * @author Joan Caballero, Jeremy Comino, Marc Gonzalez
  */
 public class GetSuccessorsHillClimbing implements SuccessorFunction {
     public List getSuccessors(Object state){
@@ -16,7 +16,7 @@ public class GetSuccessorsHillClimbing implements SuccessorFunction {
         Estado estado_actual = (Estado)state;
         int clientes = estado_actual.get_n_clientes();
         int centrales = estado_actual.get_n_centrales();
-        //System.out.println(estado_actual.get_dinero());
+        
         
         // Aplicación de los operadores move
         for (int i = 0; i < clientes; ++i) {

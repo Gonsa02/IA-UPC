@@ -5,16 +5,14 @@
 
 /**
  *
- * @author jeremy
+ * @author Joan Caballero, Jeremy Comino, Marc Gonzalez
  */
 import IA.Energia.*;
-import aima.search.framework.GraphSearch;
 import aima.search.framework.Problem;
 import aima.search.framework.Search;
 import aima.search.framework.SearchAgent;
 import aima.search.informed.HillClimbingSearch;
 import aima.search.informed.SimulatedAnnealingSearch;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Iterator;
 import java.util.List;
@@ -44,7 +42,7 @@ public class main {
             // Generamos una configuración inicial aleatoria
             Random generator = new Random(System.currentTimeMillis());
             int seed = generator.nextInt(500);
-            seed = 20;
+            
             
             // Configuramos las centrales y los clientes
             int[] centrales = new int[]{5,10,25};
