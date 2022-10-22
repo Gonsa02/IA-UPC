@@ -75,7 +75,6 @@ public class Estado {
         for (int i = 0; i < asignacion_clientes.length; ++i) {
             Cliente cli = ref_clientes.get(i);
             if (cli.getContrato() == Cliente.GARANTIZADO) clientes_asegurados.add(i);
-            //else asignacion_clientes[i] = -1; // Esto ya lo hacemos al crear el estado
         }
        
         // Mezclamos los clientes
@@ -178,31 +177,31 @@ public class Estado {
                 ++i;
             }
         }
-        /*
-        // Intentamos que todos los clientes garantizados tengan central
+        
         while (!clientesGarantizados.isEmpty()) {
             System.out.println("Hay " + clientesGarantizados.size() + " no inicializados");
             int tam_inicial = clientesGarantizados.size();
             Random rand = new Random();
-            for (int i = 0; i < tam_inicial;++i) {
+            for (int i = 0; i < tam_inicial; ++i) {
                 int indice = rand.nextInt(asignacion_clientes.length);
-                while(!(ref_clientes.get(indice).getContrato() == Cliente.GARANTIZADO && asignacion_clientes[indice] != -1))
+                while (!(ref_clientes.get(indice).getContrato() == Cliente.GARANTIZADO && asignacion_clientes[indice] != -1))
                     indice = rand.nextInt(asignacion_clientes.length);
-                asignacion_clientes[indice] = -1;
+                
+                asignar_cliente_a_central(indice,-1);
                 clientesGarantizados.add(indice);
             }
-            //repetimos el mismo proceso descrito anteriormente
+            // Repetimos el mismo proceso descrito anteriormente
             Collections.shuffle(clientesGarantizados);
             for (int i = 0; i < ref_centrales.size(); ++i) {
                 int index = centrales.get(i);
                 boolean encontrado = true;
                 while (encontrado) {
                     encontrado = false;
-                    for (int j = 0; j < clientesGarantizados.size();++j) {
-                        int cli = clientesGarantizados.get(j);  
-                        if (centralValida(index,cli)) {
-                            asignacion_clientes[cli] = index;
-                            //asignar_cliente_a_central(cli,index);
+                    for (int j = 0; j < clientesGarantizados.size(); ++j) {
+                        int cli = clientesGarantizados.get(j);
+                     
+                        if (centralValida(index, cli)) {
+                            asignar_cliente_a_central(cli,index);
                             clientesGarantizados.remove(j);
                             encontrado = true;
                         }  
@@ -210,7 +209,7 @@ public class Estado {
                 }
                 Collections.shuffle(clientesGarantizados);
             }
-        }*/
+        }
         
         // Una vez asignamos a todos los clientes garantizados una central miramos de asignar centrales a los no garantizados
         for (int i = 0; i < centrales.size();) {
@@ -236,7 +235,6 @@ public class Estado {
                 ++i;
             }
         }
-        printEstado();
     }
    	
     // Coste: O(1)
@@ -451,6 +449,36 @@ public class Estado {
    
     public double get_dinero() {
         return dinero;
+    }
+    
+    // Función para el experimento 6
+    public int getAsignacionesA() {
+        int x = 0;
+        for (int i = 0; i < ref_centrales.size(); ++i) {
+            if (ref_centrales.get(i).getTipo() == Central.CENTRALA)
+                x += numero_clientes_central[i];
+        }
+        return x;
+    }
+    
+    // Función para el experimento 6
+    public int getAsignacionesB() {
+        int x = 0;
+        for (int i = 0; i < ref_centrales.size(); ++i) {
+            if (ref_centrales.get(i).getTipo() == Central.CENTRALB)
+                x += numero_clientes_central[i];
+        }
+        return x;
+    }
+    
+    // Función para el experimento 6
+    public int getAsignacionesC() {
+        int x = 0;
+        for (int i = 0; i < ref_centrales.size(); ++i) {
+            if (ref_centrales.get(i).getTipo() == Central.CENTRALC)
+                x += numero_clientes_central[i];
+        }
+        return x;
     }
     
     class SortSystem implements Comparator<Integer> {
