@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Comparator;
 /**
  *
- * @author jeremy
+ * @author Joan Caballero, Jeremy Comino, Marc Gonzalez
  */
 public class Estado {
    private int[] asignacion_clientes;
@@ -25,18 +25,18 @@ public class Estado {
    private static Centrales ref_centrales;
    private static Clientes ref_clientes;
    
-      public Estado(Centrales centrales, Clientes clientes, int opcion) {
-   	asignacion_clientes = new int[clientes.size()];
-        for (int i = 0; i < clientes.size(); ++i) asignacion_clientes[i] = -1;
-    	numero_clientes_central = new int[centrales.size()];
-    	ref_centrales = centrales;
-    	ref_clientes = clientes;
-        consumo_centrales = new double[centrales.size()];
-        for (int i = 0; i < ref_centrales.size(); ++i) consumo_centrales[i] = 0.0;
-    	inicializar_dinero();
-    	if (opcion == 1) asignar1();
-    	else if (opcion == 2) asignar2();
-   }
+   public Estado(Centrales centrales, Clientes clientes, int opcion) {
+      asignacion_clientes = new int[clientes.size()];
+      for (int i = 0; i < clientes.size(); ++i) asignacion_clientes[i] = -1;
+      numero_clientes_central = new int[centrales.size()];
+      ref_centrales = centrales;
+      ref_clientes = clientes;
+      consumo_centrales = new double[centrales.size()];
+      for (int i = 0; i < ref_centrales.size(); ++i) consumo_centrales[i] = 0.0;
+      inicializar_dinero();
+      if (opcion == 1) asignar1();
+      else if (opcion == 2) asignar2();
+    }
    
    private Estado(int[] asignacion, int[] num_cli, double[] cons_cent, double dinero, Clientes clientes, Centrales centrales) {
        asignacion_clientes = new int[asignacion.length];
@@ -54,9 +54,9 @@ public class Estado {
        this.dinero = dinero;
        ref_clientes = clientes;
        ref_centrales = centrales;   
-   }
-   
-   private static double distancia_euclidiana(Cliente cl, Central c) {
+    }
+   //Coste: O(1)
+    private static double distancia_euclidiana(Cliente cl, Central c) {
        int pos_x_central = c.getCoordX();
        int pos_y_central = c.getCoordY();
        int pos_x_cliente = cl.getCoordX();
@@ -64,7 +64,7 @@ public class Estado {
        int distancia_x = Math.abs(pos_x_central - pos_x_cliente);
        int distancia_y = Math.abs(pos_y_central - pos_y_cliente);
        return Math.hypot((double)distancia_x, (double)distancia_y);
-   }
+    }
    
     private void asignar1() {
         List<Integer> clientes_asegurados = new ArrayList<>();
@@ -135,7 +135,7 @@ public class Estado {
         }
     }
    
-   private void asignar2() {
+    private void asignar2() {
         // Hacemos una array desordenada con los índices de todas las centrales
    	List<Integer> centrales = new ArrayList<>();
         for (int i = 0; i < ref_centrales.size(); ++i) centrales.add(i);
@@ -312,7 +312,7 @@ public class Estado {
         if (asignacion_clientes[cliente] == central) return false;
         return centralValida(central, cliente);
     }
-   
+   //Coste: O(1)
    public boolean swap_efectivo(int cliente1, int cliente2) {
        Cliente c1 = ref_clientes.get(cliente1), c2 = ref_clientes.get(cliente2);
        if (c1.getContrato() != c2.getContrato())  return false; //Comprobamos que el swap se haga con clientes del mismo tipo
@@ -337,8 +337,8 @@ public class Estado {
        Central central1 = ref_centrales.get(id_central1), central2 = ref_centrales.get(id_central2);
        //A continuación comprobamos si las centrales tienen suficiente produccion disponible como para servir a los clientes una vez se haya hecho el swap
        return (((consumo_centrales[id_central1] - consumo_cliente1_central_actual+consumo_cliente2_central_futura) <= central1.getProduccion()) && ((consumo_centrales[id_central2] - consumo_cliente2_central_actual+consumo_cliente1_central_futura) <= central2.getProduccion()));
-   }
-      
+    }
+    //Coste: O(1)
     public void asignar_cliente_a_central(int id_cliente, int id_central) {
         Cliente c = ref_clientes.get(id_cliente);
         int id_central_anterior = asignacion_clientes[id_cliente];
@@ -408,11 +408,29 @@ public class Estado {
         }
     }
     
-    // Coste:
+    // Coste: O(1)
     public void swap(int cliente1, int cliente2) {
         int aux = asignacion_clientes[cliente1];
         asignar_cliente_a_central(cliente1, asignacion_clientes[cliente2]);
         asignar_cliente_a_central(cliente2, aux);
+    }
+    //Coste: O(|Cliente|)
+    public boolean cent_to_cent_efectivo(int central1, int central2){
+        if(central1 == central2)return false;
+        double produccion = 0.0;
+        for(int i = 0; i < asignacion_clientes.length; ++i){
+            if(asignacion_clientes[i] == central1) produccion += consumo_real_cliente(i,central2);
+        }
+        Central cent = ref_centrales.get(central2);
+        return produccion + consumo_centrales[central2] <= cent.getProduccion();
+    }
+    //Coste: O(|Cliente|)
+    public void cent_to_cent(int central1, int central2){
+        for(int i = 0; i < asignacion_clientes.length;++i){
+            if(asignacion_clientes[i] == central1){
+                asignar_cliente_a_central(i,central2);
+            }
+        }
     }
    
     // Coste: O(|Clientes|)
@@ -442,11 +460,11 @@ public class Estado {
     public int get_n_centrales() {
         return ref_centrales.size();
     }
-   
-   public Estado clonar() {
-       return new Estado(asignacion_clientes, numero_clientes_central, consumo_centrales, dinero, ref_clientes, ref_centrales);
-   }
-   
+    //Coste: O(|Clientes|+|Centrales|)
+    public Estado clonar() {
+        return new Estado(asignacion_clientes, numero_clientes_central, consumo_centrales, dinero, ref_clientes, ref_centrales);
+    }
+    //Coste: O(1)
     public double get_dinero() {
         return dinero;
     }
@@ -489,5 +507,5 @@ public class Estado {
            Central cent2 = ref_centrales.get(index2);
            return (int)cent2.getProduccion() - (int)cent1.getProduccion();
        }
-   }
+    }
 }

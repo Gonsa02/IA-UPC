@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 /**
  *
- * @author jk
+ * @author Joan Caballero, Jeremy Comino, Marc Gonzalez
  */
 public class GetSuccessorsSimulatedAnnealing implements SuccessorFunction {
     

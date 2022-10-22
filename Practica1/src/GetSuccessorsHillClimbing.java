@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 /**
  *
- * @author jeremy
+ * @author Joan Caballero, Jeremy Comino, Marc Gonzalez
  */
 public class GetSuccessorsHillClimbing implements SuccessorFunction {
     public List getSuccessors(Object state){
@@ -24,7 +24,7 @@ public class GetSuccessorsHillClimbing implements SuccessorFunction {
                     Estado succesor = estado_actual.clonar();
                     succesor.asignar_cliente_a_central(i, j);
                     
-                    String accion = succesor.printEstado();
+                    String accion = "Cliente " + i + " es transferido a la central " + j;
                     Successor new_succ = new Successor(accion,succesor);
                     retval.add(new_succ);
                 }
