@@ -75,7 +75,6 @@ public class Estado {
         for (int i = 0; i < asignacion_clientes.length; ++i) {
             Cliente cli = ref_clientes.get(i);
             if (cli.getContrato() == Cliente.GARANTIZADO) clientes_asegurados.add(i);
-            //else asignacion_clientes[i] = -1; // Esto ya lo hacemos al crear el estado
         }
        
         // Mezclamos los clientes
@@ -176,6 +175,39 @@ public class Estado {
             }
             else { // No hemos encontrado un cliente que quepa en la central, por tanto avanzamos a la siguiente central
                 ++i;
+            }
+        }
+        
+        while (!clientesGarantizados.isEmpty()) {
+            System.out.println("Hay " + clientesGarantizados.size() + " no inicializados");
+            int tam_inicial = clientesGarantizados.size();
+            Random rand = new Random();
+            for (int i = 0; i < tam_inicial; ++i) {
+                int indice = rand.nextInt(asignacion_clientes.length);
+                while (!(ref_clientes.get(indice).getContrato() == Cliente.GARANTIZADO && asignacion_clientes[indice] != -1))
+                    indice = rand.nextInt(asignacion_clientes.length);
+                
+                asignar_cliente_a_central(indice,-1);
+                clientesGarantizados.add(indice);
+            }
+            // Repetimos el mismo proceso descrito anteriormente
+            Collections.shuffle(clientesGarantizados);
+            for (int i = 0; i < ref_centrales.size(); ++i) {
+                int index = centrales.get(i);
+                boolean encontrado = true;
+                while (encontrado) {
+                    encontrado = false;
+                    for (int j = 0; j < clientesGarantizados.size(); ++j) {
+                        int cli = clientesGarantizados.get(j);
+                     
+                        if (centralValida(index, cli)) {
+                            asignar_cliente_a_central(cli,index);
+                            clientesGarantizados.remove(j);
+                            encontrado = true;
+                        }  
+                    }
+                }
+                Collections.shuffle(clientesGarantizados);
             }
         }
         
@@ -435,6 +467,36 @@ public class Estado {
     //Coste: O(1)
     public double get_dinero() {
         return dinero;
+    }
+    
+    // Función para el experimento 6
+    public int getAsignacionesA() {
+        int x = 0;
+        for (int i = 0; i < ref_centrales.size(); ++i) {
+            if (ref_centrales.get(i).getTipo() == Central.CENTRALA)
+                x += numero_clientes_central[i];
+        }
+        return x;
+    }
+    
+    // Función para el experimento 6
+    public int getAsignacionesB() {
+        int x = 0;
+        for (int i = 0; i < ref_centrales.size(); ++i) {
+            if (ref_centrales.get(i).getTipo() == Central.CENTRALB)
+                x += numero_clientes_central[i];
+        }
+        return x;
+    }
+    
+    // Función para el experimento 6
+    public int getAsignacionesC() {
+        int x = 0;
+        for (int i = 0; i < ref_centrales.size(); ++i) {
+            if (ref_centrales.get(i).getTipo() == Central.CENTRALC)
+                x += numero_clientes_central[i];
+        }
+        return x;
     }
     
     class SortSystem implements Comparator<Integer> {

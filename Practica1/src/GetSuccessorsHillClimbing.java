@@ -17,7 +17,6 @@ public class GetSuccessorsHillClimbing implements SuccessorFunction {
         int clientes = estado_actual.get_n_clientes();
         int centrales = estado_actual.get_n_centrales();
         
-        
         // Aplicación de los operadores move
         for (int i = 0; i < clientes; ++i) {
             for (int j = -1; j < centrales; ++j) {
