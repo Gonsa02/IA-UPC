@@ -76,19 +76,19 @@
 )
 
 (deffunction input::instanciar_Antecendente (?tipo)
-    (bind ?instancia (make-instance (gensym) of Antecedente (nombre ?tipo)(Afectación ?tipo)))
+    (bind ?instancia (make-instance (gensym) of Antecedente (nombre ?tipo)(ZonaCuerpo ?tipo)))
     (return ?instancia)
 )
 
-(deffunction input::obtenir_enfermetats_tipos(?tipo, $?nivel)
+(deffunction input::obtenir_enfermetats_tipos(?tipo $?nivel)
     (printout t "Que enfermedad del tipo " ?tipo " tienes" crlf)
     (printout t "Para acabar escribe  FIN" crlf)
     (bind ?response (read))
     (bind $?return_list (create$))
     (while (not (eq ?response FIN))do
-        (printout t "Que nivel tienes de la enfermedad " ?respone " tienes, estas son las opciones: " $?nivel crlf)
+        (printout t "Que nivel tienes de la enfermedad " ?response " tienes, estas son las opciones: " $?nivel crlf)
         (bind ?level (read))
-        (while (not (member$ ?level $nivel)) do
+        (while (not (member$ ?level $?nivel)) do
          (printout t "lo siento esta respuesta no es valida, vuelva a especificar el nivel" crlf)
          (bind ?level (read))
         )
@@ -98,23 +98,13 @@
     )
     (return $?return_list)
 )
-(deffunction input::obtenir_sucesos_tipos(?tipo)
-    (printout t "Que sucesos del tipo " ?tipo " has sufrido?" crlf)
-    (printout t "Para acabar escribe  FIN" crlf)
-    (bind ?response (read))
-    (bind $?return_list (create$))
-    (while (not (eq ?response FIN))do 
-        (bind ?instancia (make-instance (gensym) of Enfermedad (nombre ?response)(Afectación ?tipo)))
-        (bind $?return_list (insert$ $?return_list (+ (length$ $?return_list) 1) ?instancia))
-        (bind ?response (read))
-    )
-    (return $?return_list)
-)
+
+
 (deffunction input::seleccion_una_opcion (?question $?opcions)
     (printout t ?question crlf)
     (printout t "Las opciones son: " $?opcions)
     (bind ?response (read))
-    (while (not (member$ ?respone $?opcions)) do 
+    (while (not (member$ ?response $?opcions)) do 
         (printout t "No forma part de les opcions, porfavor eliga otra vez" crlf)
         (bind ?response (read))
     )
@@ -124,9 +114,9 @@
     (printout t ?question crlf)
     (printout t "El valor tiene que ser mayor o igual a " ?min " y menor o igual a " ?max crlf)
     (bind ?response (read))
-    (while (and (integerp ?response) (>= ?respone ?min) (<= ?respone ?min)) do
+    (while (and (integerp ?response) (>= ?response ?min) (<= ?response ?min)) do
         (printout t "Valor invalido, porfavor vuelva a introducir uno nuevo" crlf)
-        (bind ?respone (read))
+        (bind ?response (read))
     )
     (return ?response)
 )
@@ -152,8 +142,8 @@
         )
     )
     ;preguntamos los antecente
-    (bind $?lista obtenir_tipo_Antecentes brazos piernas cuello cabeza tronco)
-    (progn$(?instance $?lista)
+    (bind $?lista2 (obtenir_tipo_Antecentes brazos piernas cuello cabeza tronco))
+    (progn$(?instance $?lista2)
             (bind $?enfermedades (insert$ $?enfermedades (+(length$ $?enfermedades) 1) (instanciar_Antecendente ?instance)))
     )
 
