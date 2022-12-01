@@ -80,13 +80,19 @@
     (return ?instancia)
 )
 
-(deffunction input::obtenir_enfermetats_tipos(?tipo)
+(deffunction input::obtenir_enfermetats_tipos(?tipo, $?nivel)
     (printout t "Que enfermedad del tipo " ?tipo " tienes" crlf)
     (printout t "Para acabar escribe  FIN" crlf)
     (bind ?response (read))
     (bind $?return_list (create$))
-    (while (not (eq ?response FIN))do 
-        (bind ?instancia (make-instance (gensym) of Enfermedad (nombre ?response)(Afectación ?tipo)))
+    (while (not (eq ?response FIN))do
+        (printout t "Que nivel tienes de la enfermedad " ?respone " tienes, estas son las opciones: " $?nivel crlf)
+        (bind ?level (read))
+        (while (not (member$ ?level $nivel)) do
+         (printout t "lo siento esta respuesta no es valida, vuelva a especificar el nivel" crlf)
+         (bind ?level (read))
+        )
+        (bind ?instancia (make-instance (gensym) of Enfermedad (nombre ?response)(Afectación ?tipo) (Nivel ?level)))
         (bind $?return_list (insert$ $?return_list (+ (length$ $?return_list) 1) ?instancia))
         (bind ?response (read))
     )
@@ -130,7 +136,7 @@
     (bind $?enfermedades (create$))
     (progn$ (?tipo $?lista)
         (bind $?list (create$))
-        (bind $?list (obtenir_enfermetats_tipos ?tipo))
+        (bind $?list (obtenir_enfermetats_tipos ?tipo temprano medio avanzado))
         (progn$(?instance $?list)
             (bind $?enfermedades (insert$ $?enfermedades (+(length$ $?enfermedades) 1) ?instance))
         )
