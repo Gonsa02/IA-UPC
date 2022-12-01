@@ -61,7 +61,7 @@
     (return $?return_list)
 )
 (deffunction input::obtenir_tipo_Antecentes ($?list_values)
-    (printout t "Tienes algun tipo de Antecente" crlf)
+    (printout t "Tienes algun tipo de Antecente?" crlf)
     (printout t "Estos son los tipos: " $?list_values crlf)
     (printout t "Para acabar escribe  FIN" crlf)
     (bind ?response (read))
@@ -120,10 +120,20 @@
     )
     (return ?response)
 )
+(deffunction input::seleccion_sobre_rango (?question ?min ?max)
+    (printout t ?question crlf)
+    (printout t "El valor tiene que ser mayor o igual a " ?min " y menor o igual a " ?max crlf)
+    (bind ?response (read))
+    (while (and (integerp ?response) (>= ?respone ?min) (<= ?respone ?min)) do
+        (printout t "Valor invalido, porfavor vuelva a introducir uno nuevo" crlf)
+        (bind ?respone (read))
+    )
+    (return ?response)
+)
 (deffunction input::instanciacion_persona ()
     ; preguntamos edad
     (bind ?edat (obtener_edad))
-   ; (printout t "La edad es: " ?edat crlf)
+   
 
     ;preguntamos escalas
     (bind ?fuerza (seleccion_una_opcion "Como describirías con estas opciones tu fuerza" BAJO MEDIO ALTO))
@@ -132,7 +142,7 @@
     (bind ?fuerza (seleccion_una_opcion "Como describirías con estas opciones tu flexibilidad" BAJO MEDIO ALTO))
     ;preguntamos si tiene algun tipo de enfermedad
     (bind $?lista (obtenir_tipo_enfermedad Cardiovascular Osea Muscular Respiratoria Hormonal Nerviosa))
-    ;(printout t "las enfermedades que tiene son: " $?lista crlf)
+    
     (bind $?enfermedades (create$))
     (progn$ (?tipo $?lista)
         (bind $?list (create$))
@@ -141,17 +151,21 @@
             (bind $?enfermedades (insert$ $?enfermedades (+(length$ $?enfermedades) 1) ?instance))
         )
     )
-    
-    (bind $?lista obtenir_tipo_Antecentes Lesion Esguinze Mareo)
+    ;preguntamos los antecente
+    (bind $?lista obtenir_tipo_Antecentes brazos piernas cuello cabeza tronco)
     (progn$(?instance $?lista)
             (bind $?enfermedades (insert$ $?enfermedades (+(length$ $?enfermedades) 1) (instanciar_Antecendente ?instance)))
     )
 
-    (printout t "instancias: " $?enfermedades crlf)
+   
 
-    
-    
+    (bind ?duracion_rutina (seleccion_sobre_rango "De cuanto dias desea la duracion de la rutina" 3 7) )
+    (bind ?duracion_sesion (seleccion_una_opcion "De cuantos minutos desea la sesion de cada sesion que compone la rutina" 30 60 90))
 
+    ;(printout t "La edad es: " ?edat crlf)
+    ;(printout t "instancias: " $?enfermedades crlf)
+    ;(printout t "duracion rutina: " ?duracion_rutina crlf)
+    ;(printout t "duracion sesion: " ?duracion_sesion crlf)
 )
 
 
