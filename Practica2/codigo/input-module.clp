@@ -26,6 +26,35 @@
         (type SYMBOL)
         (create-accessor read-write))
 )
+(defclass Persona
+    (is-a USER)
+    (role concrete)
+    (pattern-match reactive)
+    (multislot Padece
+        (type INSTANCE)
+        (create-accessor read-write))
+    (slot Duracion_dias
+        (type INTEGER)
+        (create-accessor read-write))
+    (slot Equilibrio
+        (type SYMBOL)
+        (create-accessor read-write))
+    (slot Flexibilidad
+        (type SYMBOL)
+        (create-accessor read-write))
+    (slot Fuerza_Muscular
+        (type SYMBOL)
+        (create-accessor read-write))
+    (slot Resistencia
+        (type SYMBOL)
+        (create-accessor read-write))
+    (slot duracion_sesion
+        (type INTEGER)
+        (create-accessor read-write))
+    (slot edad
+        (type SYMBOL)
+        (create-accessor read-write))
+)
 
 (defmodule MAIN
     (export ?ALL)
@@ -114,7 +143,7 @@
     (printout t ?question crlf)
     (printout t "El valor tiene que ser mayor o igual a " ?min " y menor o igual a " ?max crlf)
     (bind ?response (read))
-    (while (and (integerp ?response) (>= ?response ?min) (<= ?response ?min)) do
+    (while (not (and (integerp ?response) (>= ?response ?min) (<= ?response ?max))) do
         (printout t "Valor invalido, porfavor vuelva a introducir uno nuevo" crlf)
         (bind ?response (read))
     )
@@ -122,14 +151,14 @@
 )
 (deffunction input::instanciacion_persona ()
     ; preguntamos edad
-    (bind ?edat (obtener_edad))
+    (bind ?edad (obtener_edad))
    
 
     ;preguntamos escalas
     (bind ?fuerza (seleccion_una_opcion "Como describirías con estas opciones tu fuerza" BAJO MEDIO ALTO))
     (bind ?equilibrio (seleccion_una_opcion "Como describirías con estas opciones tu equilibrio" BAJO MEDIO ALTO))
     (bind ?resistencia (seleccion_una_opcion "Como describirías con estas opciones tu resistencia" BAJO MEDIO ALTO))
-    (bind ?fuerza (seleccion_una_opcion "Como describirías con estas opciones tu flexibilidad" BAJO MEDIO ALTO))
+    (bind ?flexibilidad (seleccion_una_opcion "Como describirías con estas opciones tu flexibilidad" BAJO MEDIO ALTO))
     ;preguntamos si tiene algun tipo de enfermedad
     (bind $?lista (obtenir_tipo_enfermedad Cardiovascular Osea Muscular Respiratoria Hormonal Nerviosa))
     
@@ -152,12 +181,34 @@
     (bind ?duracion_rutina (seleccion_sobre_rango "De cuanto dias desea la duracion de la rutina" 3 7) )
     (bind ?duracion_sesion (seleccion_una_opcion "De cuantos minutos desea la sesion de cada sesion que compone la rutina" 30 60 90))
 
-    ;(printout t "La edad es: " ?edat crlf)
+    ;(printout t "La edad es: " ?edad crlf)
     ;(printout t "instancias: " $?enfermedades crlf)
     ;(printout t "duracion rutina: " ?duracion_rutina crlf)
     ;(printout t "duracion sesion: " ?duracion_sesion crlf)
+    (make-instance Paciente of Persona (Padece $?enfermedades)(Duracion_dias ?duracion_rutina)(Equilibrio ?equilibrio) (Flexibilidad ?flexibilidad)(Fuerza_Muscular ?fuerza) (Resistencia ?resistencia) (duracion_sesion ?duracion_sesion) (edad ?edad))
+
+)
+
+(defrule input::creacion_persona
+ (declare (salience 10)) => 
+ (printout t "Ahora te haremos unas preguntas sobre ti para saber sobre ti." crlf)
+ (printout t crlf)
+ (instanciacion_persona)
+ ;falta el focus a la fase de descarte
 )
 
 
-
+(defrule MAIN::inicio 
+(declare (salience 20)) 
+=> 
+(printout t "######" crlf)
+(printout t "#     #  #####     ##     ####    #####     #     ####     ##" crlf) 
+(printout t "#     #  #    #   #  #   #    #     #       #    #    #   #  #" crlf) 
+(printout t "######   #    #  #    #  #          #       #    #       #    #" crlf)
+(printout t "#        #####   ######  #          #       #    #       ######" crlf) 
+(printout t "#        #   #   #    #  #    #     #       #    #    #  #    #" crlf) 
+(printout t "#        #    #  #    #   ####      #       #     ####   #    #" crlf)
+(printout t crlf)    
+(focus input)
+)
 
