@@ -1,3 +1,41 @@
+(defclass Accion
+    (is-a USER)
+    (role concrete)
+    (pattern-match reactive)
+    (slot Intensidad
+        (type SYMBOL)
+        (create-accessor read-write))
+    (slot ZonaCuerpo
+        (type SYMBOL)
+        (create-accessor read-write))
+    (slot nombre
+        (type STRING)
+        (create-accessor read-write))
+    (multislot objeto
+        (type STRING)
+        (create-accessor read-write))
+)
+
+(defclass Actividad
+    (is-a Accion)
+    (role concrete)
+    (pattern-match reactive)
+    (slot Tiempo_Actividad
+        (type SYMBOL)
+        (create-accessor read-write))
+)
+
+(defclass Ejercicio
+    (is-a Accion)
+    (role concrete)
+    (pattern-match reactive)
+    (slot Tiempo_Ejercicio
+        (type SYMBOL)
+        (create-accessor read-write))
+    (multislot Tipo_Objetivo
+        (type SYMBOL)
+        (create-accessor read-write))
+)
 (defclass Circunstancia
     (is-a USER)
     (role concrete)
@@ -165,13 +203,13 @@
     (bind $?enfermedades (create$))
     (progn$ (?tipo $?lista)
         (bind $?list (create$))
-        (bind $?list (obtenir_enfermetats_tipos ?tipo temprano medio avanzado))
+        (bind $?list (obtenir_enfermetats_tipos ?tipo Temprano Medio Avanzado))
         (progn$(?instance $?list)
             (bind $?enfermedades (insert$ $?enfermedades (+(length$ $?enfermedades) 1) ?instance))
         )
     )
     ;preguntamos los antecente
-    (bind $?lista2 (obtenir_tipo_Antecentes brazos piernas cuello cabeza tronco))
+    (bind $?lista2 (obtenir_tipo_Antecentes Brazos Piernas Cuello Cabeza Tronco))
     (progn$(?instance $?lista2)
             (bind $?enfermedades (insert$ $?enfermedades (+(length$ $?enfermedades) 1) (instanciar_Antecendente ?instance)))
     )
@@ -188,7 +226,65 @@
     (make-instance Paciente of Persona (Padece $?enfermedades)(Duracion_dias ?duracion_rutina)(Equilibrio ?equilibrio) (Flexibilidad ?flexibilidad)(Fuerza_Muscular ?fuerza) (Resistencia ?resistencia) (duracion_sesion ?duracion_sesion) (edad ?edad))
 
 )
+(deffunction MAIN::instanciar_ejercicio (?nombre_ejercicio ?objetivo ?zonacuerpo ?objeto ?corte $?intensidades_tiempos)
+    (bind $?intensidades (subseq$ $?intensidades_tiempos 1 ?corte))
+    (bind $?tiempos (subseq$ $?intensidades_tiempos (+ ?corte 1) (length$ $?intensidades_tiempos)))
+    (progn$ (?tiempo $?tiempos)
+        (progn$ (?intensidad $?intensidades)
+            (make-instance (gensym) of Ejercicio (nombre ?nombre_ejercicio)(ZonaCuerpo ?zonacuerpo)(Tipo_Objetivo ?objetivo)(objeto ?objeto)(Intensidad ?intensidad)(Tiempo_Ejercicio ?tiempo))
+        )
+    )
+)
+(deffunction MAIN::instanciar_actividad (?nombre_actividad ?zonacuerpo ?objeto ?corte $?intensidades_tiempos)
+    (bind $?intensidades (subseq$ $?intensidades_tiempos 1 ?corte))
+    (bind $?tiempos (subseq$ $?intensidades_tiempos (+ ?corte 1) (length$ $?intensidades_tiempos)))
+    (progn$ (?tiempo $?tiempos)
+        (progn$ (?intensidad $?intensidades)
+            (make-instance (gensym) of Actividad (nombre ?nombre_actividad) (ZonaCuerpo ?zonacuerpo) (objeto ?objeto)(Intensidad ?intensidad)(Tiempo_Actividad ?tiempo))
+        )
+    )
+)
 
+(deffunction MAIN::setup ()
+
+    (bind $?tiempos_ejercicio (create$ Baja Media Alta 5 10 15))
+    (bind $?tiempos_actividad (create$ Baja Media Alta 30 60 90))
+
+    (instanciar_ejercicio "Burpees" Resistencia Brazos "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Escaleras" Resistencia Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Bicicleta" Resistencia Piernas "Bicicleta estatica" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Press Banca" Fuerza Brazos "Mancuernas" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Press con mancuernas" Fuerza Brazos "Mancuernas" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Press de hombros" Fuerza Brazos "Mancuernas" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Remo" Resistencia Tronco "Maquina de remo" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Saltar a la cuerda" Resistencia Piernas "Cuerda" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Sentadillas" Resistencia Brazos "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Zancada con salto" Resistencia Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Sentadillas goblet" Fuerza Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Peso muerto" Fuerza Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Flexiones sobre pared" Fuerza Tronco "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Sentadillas goblet" Fuerza Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Curl de martillo" Fuerza Brazos "Mancuernas" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Pata coja" Equilibrio Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Marcha en línea" Equilibrio Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Elevaciones laterales" Equilibrio Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Elevaciones boca abajo" Fuerza Cuello "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Elevaciones boca arriba" Fuerza Cuello "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Ejercicio isométrico hacia los lados" Fuerza Cuello "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Esfera de reloj" Equilibrio Brazos "Nada" 3 ?tiempos_ejercicio)
+    (instanciar_ejercicio "Levantamiento de brazo" Equilibrio Brazos "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Estiramiento lumbar" Flexibilidad Tronco "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Estiramiento isquiotibial" Flexibilidad Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Estiramiento frontal" Flexibilidad Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Zancada con rotación" Flexibilidad Tronco "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Postura del gato" Flexibilidad Tronco "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Puente con pelota" Flexibilidad Tronco "Pelota medicinal" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Flexiones de bíceps" Flexibilidad Brazos "Bandas elásticas" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio "Patada de glúteos" Flexibilidad Piernas "Nada" 3 $?tiempos_ejercicio)
+
+
+    
+)   
 (defrule input::creacion_persona
  (declare (salience 10)) => 
  (printout t "Ahora te haremos unas preguntas sobre ti para saber sobre ti." crlf)
@@ -197,7 +293,11 @@
  ;falta el focus a la fase de descarte
 )
 
-
+(defrule MAIN::setup_program
+    (declare(salience 30))
+    =>
+    (setup)
+)
 (defrule MAIN::inicio 
 (declare (salience 20)) 
 => 

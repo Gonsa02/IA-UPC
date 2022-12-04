@@ -13,27 +13,6 @@
 #    Object Properties
 #################################################################
 
-###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Ayuda_a_contrarestar
-:Ayuda_a_contrarestar rdf:type owl:ObjectProperty ;
-                      rdfs:subPropertyOf owl:topObjectProperty ;
-                      rdfs:domain :Ejercicio ;
-                      rdfs:range :Objetivo .
-
-
-###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Complementa
-:Complementa rdf:type owl:ObjectProperty ;
-             rdfs:subPropertyOf owl:topObjectProperty ;
-             rdfs:domain :Actividad ;
-             rdfs:range :Ejercicio .
-
-
-###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Contraindicado_para
-:Contraindicado_para rdf:type owl:ObjectProperty ;
-                     rdfs:subPropertyOf owl:topObjectProperty ;
-                     rdfs:domain :Ejercicio ;
-                     rdfs:range :Objetivo .
-
-
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Es_un_conjunto_de
 :Es_un_conjunto_de rdf:type owl:ObjectProperty ;
                    rdfs:domain :Sesion ;
@@ -237,7 +216,7 @@
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Tipo_Objetivo
 :Tipo_Objetivo rdf:type owl:DatatypeProperty ;
                rdfs:subPropertyOf owl:topDataProperty ;
-               rdfs:domain :Objetivo ;
+               rdfs:domain :Ejercicio ;
                rdfs:range [ rdf:type rdfs:Datatype ;
                             owl:oneOf [ rdf:type rdf:List ;
                                         rdf:first "EQUILIBRIO" ;
@@ -255,28 +234,12 @@
                           ] .
 
 
-###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Tipo_de_Actividad
-:Tipo_de_Actividad rdf:type owl:DatatypeProperty ;
-                   rdfs:subPropertyOf owl:topDataProperty ;
-                   rdf:type owl:FunctionalProperty ;
-                   rdfs:domain :Actividad ;
-                   rdfs:range [ rdf:type rdfs:Datatype ;
-                                owl:oneOf [ rdf:type rdf:List ;
-                                            rdf:first "AL AIRE LIBRE" ;
-                                            rdf:rest [ rdf:type rdf:List ;
-                                                       rdf:first "ESPACIO CERRADO" ;
-                                                       rdf:rest rdf:nil
-                                                     ]
-                                          ]
-                              ] .
-
-
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#ZonaCuerpo
 :ZonaCuerpo rdf:type owl:DatatypeProperty ;
             rdfs:subPropertyOf owl:topDataProperty ;
             rdf:type owl:FunctionalProperty ;
-            rdfs:domain :Antecedente ,
-                        :Ejercicio .
+            rdfs:domain :Accion ,
+                        :Antecedente .
 
 
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#duracion_sesion
@@ -341,10 +304,6 @@
             rdfs:subClassOf :Circunstancia .
 
 
-###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Objetivo
-:Objetivo rdf:type owl:Class .
-
-
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Persona
 :Persona rdf:type owl:Class .
 
@@ -370,7 +329,6 @@
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Burpees
 :Burpees rdf:type owl:NamedIndividual ,
                   :Ejercicio ;
-         :Ayuda_a_contrarestar :Resistencia ;
          :Intesidad "" ;
          :Tiempo_Ejercicio "" ;
          :ZonaCuerpo "" ;
@@ -382,33 +340,14 @@
                    :Actividad .
 
 
-###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Equilibrio
-:Equilibrio rdf:type owl:NamedIndividual ,
-                     :Objetivo ;
-            :Tipo_Objetivo "EQUILIBRIO" .
-
-
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Escaleras
 :Escaleras rdf:type owl:NamedIndividual ,
                     :Ejercicio ;
-           :Ayuda_a_contrarestar :Resistencia ;
            :Intesidad "" ;
            :Tiempo_Ejercicio "" ;
            :ZonaCuerpo "" ;
            :nombre "Escaleras"^^xsd:string ;
            :objeto "Maquina de escalera"^^xsd:string .
-
-
-###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Flexibilidad
-:Flexibilidad rdf:type owl:NamedIndividual ,
-                       :Objetivo ;
-              :Tipo_Objetivo "FLEXIBILIDAD" .
-
-
-###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Fuerza
-:Fuerza rdf:type owl:NamedIndividual ,
-                 :Objetivo ;
-        :Tipo_Objetivo "FUERZA" .
 
 
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Gimansia
@@ -419,7 +358,6 @@
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#M.Bicicleta
 :M.Bicicleta rdf:type owl:NamedIndividual ,
                       :Ejercicio ;
-             :Ayuda_a_contrarestar :Resistencia ;
              :Intesidad "" ;
              :Tiempo_Ejercicio "" ;
              :ZonaCuerpo "" ;
@@ -435,7 +373,6 @@
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Press_Banca
 :Press_Banca rdf:type owl:NamedIndividual ,
                       :Ejercicio ;
-             :Ayuda_a_contrarestar :Fuerza ;
              :Intesidad "" ;
              :Tiempo_Ejercicio "" ;
              :ZonaCuerpo "" ;
@@ -446,7 +383,6 @@
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Press_con_mancuernas
 :Press_con_mancuernas rdf:type owl:NamedIndividual ,
                                :Ejercicio ;
-                      :Ayuda_a_contrarestar :Fuerza ;
                       :Intesidad "" ;
                       :Tiempo_Ejercicio "" ;
                       :ZonaCuerpo "" ;
@@ -457,7 +393,6 @@
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Press_de_hombros
 :Press_de_hombros rdf:type owl:NamedIndividual ,
                            :Ejercicio ;
-                  :Ayuda_a_contrarestar :Fuerza ;
                   :Intesidad "" ;
                   :Tiempo_Ejercicio "" ;
                   :ZonaCuerpo "" ;
@@ -468,7 +403,6 @@
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Remo
 :Remo rdf:type owl:NamedIndividual ,
                :Ejercicio ;
-      :Ayuda_a_contrarestar :Resistencia ;
       :Intesidad "" ;
       :Tiempo_Ejercicio "" ;
       :ZonaCuerpo "" ;
@@ -476,16 +410,9 @@
       :objeto "Maquina de remo"^^xsd:string .
 
 
-###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Resistencia
-:Resistencia rdf:type owl:NamedIndividual ,
-                      :Objetivo ;
-             :Tipo_Objetivo "RESISTENCIA" .
-
-
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Saltar_a_la_cuerda
 :Saltar_a_la_cuerda rdf:type owl:NamedIndividual ,
                              :Ejercicio ;
-                    :Ayuda_a_contrarestar :Resistencia ;
                     :Intesidad "" ;
                     :Tiempo_Ejercicio "" ;
                     :ZonaCuerpo "" ;
@@ -495,7 +422,6 @@
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Sentadillas
 :Sentadillas rdf:type owl:NamedIndividual ,
                       :Ejercicio ;
-             :Ayuda_a_contrarestar :Fuerza ;
              :Intesidad "" ;
              :Tiempo_Ejercicio "" ;
              :ZonaCuerpo "" ;
@@ -505,7 +431,6 @@
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Zancada_con_salto
 :Zancada_con_salto rdf:type owl:NamedIndividual ,
                             :Ejercicio ;
-                   :Ayuda_a_contrarestar :Resistencia ;
                    :Intesidad "" ;
                    :Tiempo_Ejercicio "" ;
                    :ZonaCuerpo "" ;
