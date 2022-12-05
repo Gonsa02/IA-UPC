@@ -1,8 +1,8 @@
 ;;; ---------------------------------------------------------
-;;; ontologia-8.clp
+;;; ontologia-11.clp
 ;;; Translated by owl2clips
-;;; Translated to CLIPS from ontology ontologia-8.owl
-;;; :Date 03/12/2022 16:29:05
+;;; Translated to CLIPS from ontology ontologia-11.owl
+;;; :Date 05/12/2022 16:38:27
 
 (defclass Circunstancia
     (is-a USER)
@@ -38,7 +38,10 @@
     (is-a USER)
     (role concrete)
     (pattern-match reactive)
-    (slot Intesidad
+    (slot Intensidad
+        (type SYMBOL)
+        (create-accessor read-write))
+    (slot ZonaCuerpo
         (type SYMBOL)
         (create-accessor read-write))
     (slot nombre
@@ -53,13 +56,7 @@
     (is-a Accion)
     (role concrete)
     (pattern-match reactive)
-    (multislot Complementa
-        (type INSTANCE)
-        (create-accessor read-write))
     (slot Tiempo_Actividad
-        (type SYMBOL)
-        (create-accessor read-write))
-    (slot Tipo_de_Actividad
         (type SYMBOL)
         (create-accessor read-write))
 )
@@ -68,24 +65,9 @@
     (is-a Accion)
     (role concrete)
     (pattern-match reactive)
-    (multislot Ayuda_a_contrarestar
-        (type INSTANCE)
-        (create-accessor read-write))
-    (multislot Contraindicado_para
-        (type INSTANCE)
-        (create-accessor read-write))
     (slot Tiempo_Ejercicio
         (type SYMBOL)
         (create-accessor read-write))
-    (slot ZonaCuerpo
-        (type SYMBOL)
-        (create-accessor read-write))
-)
-
-(defclass Objetivo
-    (is-a USER)
-    (role concrete)
-    (pattern-match reactive)
     (multislot Tipo_Objetivo
         (type SYMBOL)
         (create-accessor read-write))
@@ -117,7 +99,7 @@
         (type INTEGER)
         (create-accessor read-write))
     (slot edad
-        (type SYMBOL)
+        (type INTEGER)
         (create-accessor read-write))
 )
 

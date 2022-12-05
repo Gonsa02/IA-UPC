@@ -193,10 +193,10 @@
    
 
     ;preguntamos escalas
-    (bind ?fuerza (seleccion_una_opcion "Como describirías con estas opciones tu fuerza" BAJO MEDIO ALTO))
-    (bind ?equilibrio (seleccion_una_opcion "Como describirías con estas opciones tu equilibrio" BAJO MEDIO ALTO))
-    (bind ?resistencia (seleccion_una_opcion "Como describirías con estas opciones tu resistencia" BAJO MEDIO ALTO))
-    (bind ?flexibilidad (seleccion_una_opcion "Como describirías con estas opciones tu flexibilidad" BAJO MEDIO ALTO))
+    (bind ?fuerza (seleccion_una_opcion "Como describirías con estas opciones tu fuerza" Baja Media Alta))
+    (bind ?equilibrio (seleccion_una_opcion "Como describirías con estas opciones tu equilibrio" Baja Media Alta))
+    (bind ?resistencia (seleccion_una_opcion "Como describirías con estas opciones tu resistencia" Baja Media Alta))
+    (bind ?flexibilidad (seleccion_una_opcion "Como describirías con estas opciones tu flexibilidad" Baja Media Alta))
     ;preguntamos si tiene algun tipo de enfermedad
     (bind $?lista (obtenir_tipo_enfermedad Cardiovascular Osea Muscular Respiratoria Hormonal Nerviosa))
     

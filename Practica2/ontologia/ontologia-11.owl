@@ -1,0 +1,333 @@
+@prefix : <http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial> .
+
+<http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial> rdf:type owl:Ontology ;
+                                                                          rdfs:comment "ontologia de abuelos" .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Es_un_conjunto_de
+:Es_un_conjunto_de rdf:type owl:ObjectProperty ;
+                   rdfs:domain :Sesion ;
+                   rdfs:range :Accion .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Padece
+:Padece rdf:type owl:ObjectProperty ;
+        rdfs:domain :Persona ;
+        rdfs:range :Circunstancia .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Afectación
+:Afectación rdf:type owl:DatatypeProperty ;
+            rdfs:subPropertyOf owl:topDataProperty ;
+            rdf:type owl:FunctionalProperty ;
+            rdfs:domain :Enfermedad ;
+            rdfs:range [ rdf:type rdfs:Datatype ;
+                         owl:oneOf [ rdf:type rdf:List ;
+                                     rdf:first "Cardiovascular" ;
+                                     rdf:rest [ rdf:type rdf:List ;
+                                                rdf:first "Hormonal" ;
+                                                rdf:rest [ rdf:type rdf:List ;
+                                                           rdf:first "Muscular" ;
+                                                           rdf:rest [ rdf:type rdf:List ;
+                                                                      rdf:first "Nerviosa" ;
+                                                                      rdf:rest [ rdf:type rdf:List ;
+                                                                                 rdf:first "Osea" ;
+                                                                                 rdf:rest [ rdf:type rdf:List ;
+                                                                                            rdf:first "Respiratoria" ;
+                                                                                            rdf:rest rdf:nil
+                                                                                          ]
+                                                                               ]
+                                                                    ]
+                                                         ]
+                                              ]
+                                   ]
+                       ] .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Duracion_dias
+:Duracion_dias rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf owl:topDataProperty ;
+               rdf:type owl:FunctionalProperty ;
+               rdfs:domain :Persona ;
+               rdfs:range xsd:int .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Equilibrio
+:Equilibrio rdf:type owl:DatatypeProperty ;
+            rdfs:subPropertyOf owl:topDataProperty ;
+            rdf:type owl:FunctionalProperty ;
+            rdfs:domain :Persona ;
+            rdfs:range [ rdf:type rdfs:Datatype ;
+                         owl:oneOf [ rdf:type rdf:List ;
+                                     rdf:first "Alta" ;
+                                     rdf:rest [ rdf:type rdf:List ;
+                                                rdf:first "Baja" ;
+                                                rdf:rest [ rdf:type rdf:List ;
+                                                           rdf:first "Media" ;
+                                                           rdf:rest rdf:nil
+                                                         ]
+                                              ]
+                                   ]
+                       ] .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Flexibilidad
+:Flexibilidad rdf:type owl:DatatypeProperty ;
+              rdfs:subPropertyOf owl:topDataProperty ;
+              rdf:type owl:FunctionalProperty ;
+              rdfs:domain :Persona ;
+              rdfs:range [ rdf:type rdfs:Datatype ;
+                           owl:oneOf [ rdf:type rdf:List ;
+                                       rdf:first "Alta" ;
+                                       rdf:rest [ rdf:type rdf:List ;
+                                                  rdf:first "Baja" ;
+                                                  rdf:rest [ rdf:type rdf:List ;
+                                                             rdf:first "Media" ;
+                                                             rdf:rest rdf:nil
+                                                           ]
+                                                ]
+                                     ]
+                         ] .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Fuerza_Muscular
+:Fuerza_Muscular rdf:type owl:DatatypeProperty ;
+                 rdfs:subPropertyOf owl:topDataProperty ;
+                 rdf:type owl:FunctionalProperty ;
+                 rdfs:domain :Persona ;
+                 rdfs:range [ rdf:type rdfs:Datatype ;
+                              owl:oneOf [ rdf:type rdf:List ;
+                                          rdf:first "Alta" ;
+                                          rdf:rest [ rdf:type rdf:List ;
+                                                     rdf:first "Baja" ;
+                                                     rdf:rest [ rdf:type rdf:List ;
+                                                                rdf:first "Media" ;
+                                                                rdf:rest rdf:nil
+                                                              ]
+                                                   ]
+                                        ]
+                            ] .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Intensidad
+:Intensidad rdf:type owl:DatatypeProperty ;
+            rdfs:subPropertyOf owl:topDataProperty ;
+            rdf:type owl:FunctionalProperty ;
+            rdfs:domain :Accion ;
+            rdfs:range [ rdf:type rdfs:Datatype ;
+                         owl:oneOf [ rdf:type rdf:List ;
+                                     rdf:first "Alta" ;
+                                     rdf:rest [ rdf:type rdf:List ;
+                                                rdf:first "Baja" ;
+                                                rdf:rest [ rdf:type rdf:List ;
+                                                           rdf:first "Media" ;
+                                                           rdf:rest rdf:nil
+                                                         ]
+                                              ]
+                                   ]
+                       ] .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Nivel
+:Nivel rdf:type owl:DatatypeProperty ,
+                owl:FunctionalProperty ;
+       rdfs:domain :Enfermedad ;
+       rdfs:range [ rdf:type rdfs:Datatype ;
+                    owl:oneOf [ rdf:type rdf:List ;
+                                rdf:first "Avanzado" ;
+                                rdf:rest [ rdf:type rdf:List ;
+                                           rdf:first "Medio" ;
+                                           rdf:rest [ rdf:type rdf:List ;
+                                                      rdf:first "Temprano" ;
+                                                      rdf:rest rdf:nil
+                                                    ]
+                                         ]
+                              ]
+                  ] .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Resistencia
+:Resistencia rdf:type owl:DatatypeProperty ,
+                      owl:FunctionalProperty ;
+             rdfs:domain :Persona ;
+             rdfs:range [ rdf:type rdfs:Datatype ;
+                          owl:oneOf [ rdf:type rdf:List ;
+                                      rdf:first "Alta" ;
+                                      rdf:rest [ rdf:type rdf:List ;
+                                                 rdf:first "Baja" ;
+                                                 rdf:rest [ rdf:type rdf:List ;
+                                                            rdf:first "Media" ;
+                                                            rdf:rest rdf:nil
+                                                          ]
+                                               ]
+                                    ]
+                        ] .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Tiempo_Actividad
+:Tiempo_Actividad rdf:type owl:DatatypeProperty ,
+                           owl:FunctionalProperty ;
+                  rdfs:domain :Actividad ;
+                  rdfs:range [ rdf:type rdfs:Datatype ;
+                               owl:oneOf [ rdf:type rdf:List ;
+                                           rdf:first 30 ;
+                                           rdf:rest [ rdf:type rdf:List ;
+                                                      rdf:first 60 ;
+                                                      rdf:rest [ rdf:type rdf:List ;
+                                                                 rdf:first 90 ;
+                                                                 rdf:rest rdf:nil
+                                                               ]
+                                                    ]
+                                         ]
+                             ] .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Tiempo_Ejercicio
+:Tiempo_Ejercicio rdf:type owl:DatatypeProperty ,
+                           owl:FunctionalProperty ;
+                  rdfs:domain :Ejercicio ;
+                  rdfs:range [ rdf:type rdfs:Datatype ;
+                               owl:oneOf [ rdf:type rdf:List ;
+                                           rdf:first 10 ;
+                                           rdf:rest [ rdf:type rdf:List ;
+                                                      rdf:first 15 ;
+                                                      rdf:rest [ rdf:type rdf:List ;
+                                                                 rdf:first 5 ;
+                                                                 rdf:rest rdf:nil
+                                                               ]
+                                                    ]
+                                         ]
+                             ] .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Tipo_Objetivo
+:Tipo_Objetivo rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf owl:topDataProperty ;
+               rdfs:domain :Ejercicio ;
+               rdfs:range [ rdf:type rdfs:Datatype ;
+                            owl:oneOf [ rdf:type rdf:List ;
+                                        rdf:first "Equilibrio" ;
+                                        rdf:rest [ rdf:type rdf:List ;
+                                                   rdf:first "Flexibilidad" ;
+                                                   rdf:rest [ rdf:type rdf:List ;
+                                                              rdf:first "Fuerza" ;
+                                                              rdf:rest [ rdf:type rdf:List ;
+                                                                         rdf:first "Resistencia" ;
+                                                                         rdf:rest rdf:nil
+                                                                       ]
+                                                            ]
+                                                 ]
+                                      ]
+                          ] .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#ZonaCuerpo
+:ZonaCuerpo rdf:type owl:DatatypeProperty ;
+            rdfs:subPropertyOf owl:topDataProperty ;
+            rdf:type owl:FunctionalProperty ;
+            rdfs:domain :Accion ,
+                        :Antecedente ;
+            rdfs:range [ rdf:type rdfs:Datatype ;
+                         owl:oneOf [ rdf:type rdf:List ;
+                                     rdf:first "Brazos" ;
+                                     rdf:rest [ rdf:type rdf:List ;
+                                                rdf:first "Cabeza" ;
+                                                rdf:rest [ rdf:type rdf:List ;
+                                                           rdf:first "Cuello" ;
+                                                           rdf:rest [ rdf:type rdf:List ;
+                                                                      rdf:first "Piernas" ;
+                                                                      rdf:rest [ rdf:type rdf:List ;
+                                                                                 rdf:first "Tronco" ;
+                                                                                 rdf:rest rdf:nil
+                                                                               ]
+                                                                    ]
+                                                         ]
+                                              ]
+                                   ]
+                       ] .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#duracion_sesion
+:duracion_sesion rdf:type owl:DatatypeProperty ;
+                 rdfs:subPropertyOf owl:topDataProperty ;
+                 rdf:type owl:FunctionalProperty ;
+                 rdfs:domain :Persona ;
+                 rdfs:range xsd:int .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#edad
+:edad rdf:type owl:DatatypeProperty ;
+      rdfs:subPropertyOf owl:topDataProperty ;
+      rdf:type owl:FunctionalProperty ;
+      rdfs:domain :Persona ;
+      rdfs:range xsd:int .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#nombre
+:nombre rdf:type owl:DatatypeProperty ,
+                 owl:FunctionalProperty ;
+        rdfs:domain :Accion ,
+                    :Circunstancia ;
+        rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#objeto
+:objeto rdf:type owl:DatatypeProperty ;
+        rdfs:domain :Accion ;
+        rdfs:range xsd:string .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Accion
+:Accion rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Actividad
+:Actividad rdf:type owl:Class ;
+           rdfs:subClassOf :Accion .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Antecedente
+:Antecedente rdf:type owl:Class ;
+             rdfs:subClassOf :Circunstancia .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Circunstancia
+:Circunstancia rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Ejercicio
+:Ejercicio rdf:type owl:Class ;
+           rdfs:subClassOf :Accion .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Enfermedad
+:Enfermedad rdf:type owl:Class ;
+            rdfs:subClassOf :Circunstancia .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Persona
+:Persona rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Sesion
+:Sesion rdf:type owl:Class .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi
