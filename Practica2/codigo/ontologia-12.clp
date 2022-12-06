@@ -1,8 +1,8 @@
 ;;; ---------------------------------------------------------
-;;; ontologia-11.clp
+;;; ontologia-12.clp
 ;;; Translated by owl2clips
-;;; Translated to CLIPS from ontology ontologia-11.owl
-;;; :Date 05/12/2022 16:38:27
+;;; Translated to CLIPS from ontology ontologia-12.owl
+;;; :Date 05/12/2022 19:32:44
 
 (defclass Circunstancia
     (is-a USER)
@@ -41,6 +41,9 @@
     (slot Intensidad
         (type SYMBOL)
         (create-accessor read-write))
+    (slot Tipo_Objetivo
+        (type SYMBOL)
+        (create-accessor read-write))
     (slot ZonaCuerpo
         (type SYMBOL)
         (create-accessor read-write))
@@ -56,6 +59,7 @@
     (is-a Accion)
     (role concrete)
     (pattern-match reactive)
+    (slot Tiempo_Actividad
         (type SYMBOL)
         (create-accessor read-write))
 )
@@ -65,9 +69,6 @@
     (role concrete)
     (pattern-match reactive)
     (slot Tiempo_Ejercicio
-        (type SYMBOL)
-        (create-accessor read-write))
-    (multislot Tipo_Objetivo
         (type SYMBOL)
         (create-accessor read-write))
 )
@@ -91,6 +92,9 @@
     (slot Fuerza_Muscular
         (type SYMBOL)
         (create-accessor read-write))
+    (slot IMC
+        (type SYMBOL)
+        (create-accessor read-write))
     (slot Resistencia
         (type SYMBOL)
         (create-accessor read-write))
@@ -108,6 +112,9 @@
     (pattern-match reactive)
     (multislot Es_un_conjunto_de
         (type INSTANCE)
+        (create-accessor read-write))
+    (slot Tipo_Objetivo
+        (type SYMBOL)
         (create-accessor read-write))
 )
 
