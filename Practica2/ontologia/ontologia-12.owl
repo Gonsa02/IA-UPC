@@ -241,7 +241,9 @@
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Tipo_Objetivo
 :Tipo_Objetivo rdf:type owl:DatatypeProperty ;
                rdfs:subPropertyOf owl:topDataProperty ;
-               rdfs:domain :Ejercicio ;
+               rdf:type owl:FunctionalProperty ;
+               rdfs:domain :Accion ,
+                           :Sesion ;
                rdfs:range [ rdf:type rdfs:Datatype ;
                             owl:oneOf [ rdf:type rdf:List ;
                                         rdf:first "Equilibrio" ;
