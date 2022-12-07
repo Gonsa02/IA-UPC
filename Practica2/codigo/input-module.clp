@@ -311,8 +311,15 @@
     (instanciar_ejercicio "Flexiones de bíceps" Flexibilidad Brazos "Bandas elásticas" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio "Patada de glúteos" Flexibilidad Piernas "Nada" 3 $?tiempos_ejercicio)
 
-
-    
+    ;instanciar actividad
+    (instanciar_actividad "Caminar" Resistencia Piernas "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Aeróbic acúatico" Resistencia Brazos "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Pilates" Resistencia Tronco "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Ciclismo" Resistencia Piernas "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Surf" Equilibrio Tronco "Tabla de surf" 3 $?tiempos_actividad)
+    (instanciar_actividad "Natación" Flexbilidad Tronco "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Yoga" Flexibilidad Tronco "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Senderismo" Resistencia Piernas "Nada" 3 $?tiempos_actividad)
 )   
 (defrule input::creacion_persona
  (declare (salience 10)) => 
