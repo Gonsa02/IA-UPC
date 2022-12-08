@@ -1,3 +1,15 @@
+(defclass Sesion
+    (is-a USER)
+    (role concrete)
+    (pattern-match reactive)
+    (multislot Es_un_conjunto_de
+        (type INSTANCE)
+        (create-accessor read-write))
+    (slot Tipo_Objetivo
+        (type SYMBOL)
+        (create-accessor read-write))
+)
+
 (defclass Circunstancia
     (is-a USER)
     (role concrete)
@@ -20,7 +32,7 @@
     (is-a Circunstancia)
     (role concrete)
     (pattern-match reactive)
-    (slot Afectación
+    (slot Afectacion
         (type SYMBOL)
         (create-accessor read-write))
     (slot Nivel
@@ -54,7 +66,7 @@
     (role concrete)
     (pattern-match reactive)
     (slot Tiempo_Actividad
-        (type SYMBOL)
+        (type INTEGER)
         (create-accessor read-write))
 )
 
@@ -63,7 +75,7 @@
     (role concrete)
     (pattern-match reactive)
     (slot Tiempo_Ejercicio
-        (type SYMBOL)
+        (type INTEGER)
         (create-accessor read-write))
 )
 
@@ -169,7 +181,7 @@
          (printout t "lo siento esta respuesta no es valida, vuelva a especificar el nivel" crlf)
          (bind ?level (read))
         )
-        (bind ?instancia (make-instance (gensym) of Enfermedad (nombre ?response)(Afectación ?tipo) (Nivel ?level)))
+        (bind ?instancia (make-instance (gensym) of Enfermedad (nombre ?response)(Afectacion ?tipo) (Nivel ?level)))
         (bind $?return_list (insert$ $?return_list (+ (length$ $?return_list) 1) ?instancia))
         (bind ?response (read))
     )
@@ -246,7 +258,6 @@
     (progn$(?instance $?lista2)
             (bind $?enfermedades (insert$ $?enfermedades (+(length$ $?enfermedades) 1) (instanciar_Antecendente ?instance)))
     )
-
    
 
     (bind ?duracion_rutina (seleccion_sobre_rango "De cuanto dias desea la duracion de la rutina" 3 7) )
@@ -257,7 +268,6 @@
     ;(printout t "duracion rutina: " ?duracion_rutina crlf)
     ;(printout t "duracion sesion: " ?duracion_sesion crlf)
     (make-instance Paciente of Persona (Padece $?enfermedades)(IMC ?valueIMC)(Duracion_dias ?duracion_rutina)(Equilibrio ?equilibrio) (Flexibilidad ?flexibilidad)(Fuerza_Muscular ?fuerza) (Resistencia ?resistencia) (duracion_sesion ?duracion_sesion) (edad ?edad))
-
 )
 (deffunction MAIN::instanciar_ejercicio (?nombre_ejercicio ?objetivo ?zonacuerpo ?objeto ?corte $?intensidades_tiempos)
     (bind $?intensidades (subseq$ $?intensidades_tiempos 1 ?corte))
@@ -323,6 +333,7 @@
  (printout t "Ahora te haremos unas preguntas sobre ti para saber sobre ti." crlf)
  (printout t crlf)
  (instanciacion_persona)
+ (printout t "Pasamos a la fase de Descarte" crlf crlf)
  (focus descarte)
 )
 
@@ -365,7 +376,7 @@
 
 (defrule descarte::alta_intensidad_con_problemas_cardiovasculares "quita las acciones de intensidad alta si se padece de un problema cardiovascular"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a))
+    (object (is-a Enfermedad) (Afectacion ?a))
     ?inst <- (object (is-a Accion) (Intensidad ?i))
     (test (and (eq ?a Cardiovascular) (eq ?i Alta)))
     => (send ?inst delete)
@@ -373,7 +384,7 @@
 
 (defrule descarte::intensidad_con_problema_cardivascular_grave "quita las acciones de intensidad media si se padece de un problema cardiovascular grave"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a) (Nivel ?n))
+    (object (is-a Enfermedad) (Afectacion ?a) (Nivel ?n))
     ?inst <- (object (is-a Accion) (Intensidad ?i))
     (test (and (eq ?a Cardiovascular) (eq ?i Media) (eq ?n Avanzado)))
     => (send ?inst delete)
@@ -381,7 +392,7 @@
 
 (defrule descarte::duracion_con_problema_cardivascular_medio_grave "limita la duración de una actividad si se padece de un problema cardiovascular medio o grave y la intensidad no es baja"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a) (Nivel ?n))
+    (object (is-a Enfermedad) (Afectacion ?a) (Nivel ?n))
     ?inst <- (object (is-a Actividad) (Tiempo_Actividad ?t) (Intensidad ?i))
     (test (and (eq ?a Cardiovascular) (or (eq ?t 90) (eq ?t 60)) (or (eq ?n Medio) (eq ?n Avanzado)) (neq ?i Baja)))
     => (send ?inst delete)
@@ -389,7 +400,7 @@
 
 (defrule descarte::resistencia_fuera_alta_intensidad_con_problemas_respiratorios "quita las acciones de intensidad alta si se padece de problemas respiratorios"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a))
+    (object (is-a Enfermedad) (Afectacion ?a))
     ?inst <- (object (is-a Accion) (Intensidad ?i))
     (test (and (eq ?a Respiratoria) (eq ?i Alta)))
     => (send ?inst delete)
@@ -397,7 +408,7 @@
 
 (defrule descarte::problemas_respiratorios_graves "Límita las actividades de fuerza y resistencia a 60 minutos si se padece de una enfermedad respiratoria grave"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a) (Nivel ?n))
+    (object (is-a Enfermedad) (Afectacion ?a) (Nivel ?n))
     ?inst <- (object (is-a Actividad) (Tiempo_Actividad ?t) (Tipo_Objetivo ?o))
     (test (and (eq ?a Respiratoria) (eq 90 ?t) (eq ?n Avanzado) (or (eq ?o Fuerza) (eq ?o Resistencia))))
     => (send ?inst delete)
@@ -405,7 +416,7 @@
 
 (defrule descarte::problemas_respiratorios_medios "Límita las actividades de resistencia a 60 minutos si se padece de una enfermedad respiratorio media"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a) (Nivel ?n))
+    (object (is-a Enfermedad) (Afectacion ?a) (Nivel ?n))
     ?inst <- (object (is-a Actividad) (Tiempo_Actividad ?t) (Tipo_Objetivo ?o))
     (test (and (eq ?a Respiratoria) (eq 90 ?t) (eq ?n Avanzado) (eq ?o Resistencia)))
     => (send ?inst delete)
@@ -413,8 +424,8 @@
 
 (defrule descarte::enfermedades_cardiacas_graves_con_oseas_medias_graves "las personas con una enfermedad cardíaca grave y con problemas oseos medios o graves no pueden realizar deporte"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a1) (Nivel ?n1))
-    (object (is-a Enfermedad) (Afectación ?a2) (Nivel ?n2))
+    (object (is-a Enfermedad) (Afectacion ?a1) (Nivel ?n1))
+    (object (is-a Enfermedad) (Afectacion ?a2) (Nivel ?n2))
     ?inst <- (object (is-a Accion))
     (test (and (eq ?a1 Cardiovascular) (eq ?n1 Avanzado) (eq ?a2 Osea) (neq ?n2 Temprano)))
     => (send ?inst delete)
@@ -422,7 +433,7 @@
 
 (defrule descarte::limita_tiempo_enfermedad_osea "las personas con una enfermedad osea no deberían realizar actividades de más de 60 min"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a))
+    (object (is-a Enfermedad) (Afectacion ?a))
     ?inst <- (object (is-a Actividad) (Tiempo_Actividad ?t))
     (test (and (eq ?a Osea) (eq 90 ?t)))
     => (send ?inst delete)
@@ -430,7 +441,7 @@
 
 (defrule descarte::enfermedades_oseas_graves "las personas con enfermedades oseas graves no pueden realizar ejercicios de Fuerza de alta intensidad"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a))
+    (object (is-a Enfermedad) (Afectacion ?a))
     ?inst <- (object (is-a Accion) (Tipo_Objetivo ?o) (Intensidad ?i))
     (test (and (eq ?a Osea) (eq ?i Alta) (eq ?o Fuerza)))
     => (send ?inst delete)
@@ -438,7 +449,7 @@
 
 (defrule descarte::enfermedades_musculares_graves "quita las acciones que la gente con problemas musculares graves no puede realizar"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a) (Nivel ?n))
+    (object (is-a Enfermedad) (Afectacion ?a) (Nivel ?n))
     ?inst <- (object (is-a Accion) (Tipo_Objetivo ?o) (Intensidad ?i))
     (test (and (eq ?a Muscular) (eq ?n Avanzado) (or (eq ?o Equilibrio) (eq ?o Muscular)) (neq ?i Baja)))
     => (send ?inst delete)
@@ -446,7 +457,7 @@
 
 (defrule descarte::enfermedades_musculares_medias "quita las acciones que la gente con problemas musculares medios no puede realizar"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a) (Nivel ?n))
+    (object (is-a Enfermedad) (Afectacion ?a) (Nivel ?n))
     ?inst <- (object (is-a Accion) (Tipo_Objetivo ?o) (Intensidad ?i))
     (test (and (eq ?a Muscular) (eq ?n Medio) (or (eq ?o Equilibrio) (eq ?o Muscular)) (eq ?i Alta)))
     => (send ?inst delete)
@@ -454,7 +465,7 @@
 
 (defrule descarte::enfermedades_musculares_leves "quita las acciones de más de 60 min a las personas con problemas musculares leves"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a))
+    (object (is-a Enfermedad) (Afectacion ?a))
     ?inst <- (object (is-a Actividad) (Tiempo_Actividad ?t))
     (test (and (eq ?a Muscular) (eq 90 ?t)))
     => (send ?inst delete)
@@ -462,7 +473,7 @@
 
 (defrule descarte::enfermedades_hormonales "las personas con enfermedades hormonales no pueden hacer ejercicios de alta intensidad"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a))
+    (object (is-a Enfermedad) (Afectacion ?a))
     ?inst <- (object (is-a Accion) (Intensidad ?i))
     (test (and (eq ?a Hormonal) (eq ?i Alta)))
     => (send ?inst delete)
@@ -470,7 +481,7 @@
 
 (defrule descarte::enfermedades_nerviosas_graves "las personas con enfermedades nerviosas graves solo pueden hacer ejercicios con Tipo_Objetivo de flexibilidad"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a) (Nivel ?n))
+    (object (is-a Enfermedad) (Afectacion ?a) (Nivel ?n))
     ?inst <- (object (is-a Accion) (Tipo_Objetivo ?o))
     (test (and (eq ?a Nerviosa) (eq ?n Avanzado) (neq ?o Flexibilidad)))
     => (send ?inst delete)
@@ -478,7 +489,7 @@
 
 (defrule descarte::enfermedades_nerviosas_medias "las personas con enfermedades nerviosas medias solo pueden hacer ejercicios de media i baja intensidad"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a) (Nivel ?n))
+    (object (is-a Enfermedad) (Afectacion ?a) (Nivel ?n))
     ?inst <- (object (is-a Accion) (Intensidad ?i))
     (test (and (eq ?a Nerviosa) (eq ?n Medio) (eq ?i Alta)))
     => (send ?inst delete)
@@ -486,7 +497,7 @@
 
 (defrule descarte::enfermedades_nerviosas "las personas con enfermedades nerviosas si hacen acciones de equilibro solo pueden realizar las de baja intensidad"
     (declare (salience 10))
-    (object (is-a Enfermedad) (Afectación ?a))
+    (object (is-a Enfermedad) (Afectacion ?a))
     ?inst <- (object (is-a Accion) (Tipo_Objetivo ?o) (Intensidad ?i))
     (test (and (eq ?a Nerviosa) (eq ?o Equilibrio) (neq Intensidad Baja)))
     => (send ?inst delete)
@@ -519,7 +530,7 @@
 (defrule descarte::obesidad_morvida_y_problemas_cardiovasculares_o_respiratorios "las personas con obesidad morvida, problemas cardiovasculares o problemas respiratorios no pueden realizar deporte hasta que no adelgazen (dieta)"
     (declare (salience 10))
     (object (is-a Persona) (IMC ?x))
-    (object (is-a Enfermedad) (Afectación ?a))
+    (object (is-a Enfermedad) (Afectacion ?a))
     ?inst <- (object (is-a Accion))
     (test (and (eq ?x Morvido) (or (eq ?a Cardiovascular) (eq ?a Respiratoria))))
     => (send ?inst delete)
@@ -528,7 +539,7 @@
 (defrule descarte::obesidad_y_problemas_cardiovasculares_o_respiratorios "las personas con obesidad, problemas cardivasculares o respiratorios solo pueden realizar ejercicio de baja intensidad"
     (declare (salience 10))
     (object (is-a Persona) (IMC ?x))
-    (object (is-a Enfermedad) (Afectación ?a))
+    (object (is-a Enfermedad) (Afectacion ?a))
     ?inst <- (object (is-a Accion) (Intensidad ?i))
     (test (and (eq ?x Obeso) (or (eq ?a Cardiovascular) (eq ?a Respiratoria)) (neq ?i Baja)))
     => (send ?inst delete)
@@ -557,3 +568,184 @@
     (test (and (> ?e 70) (eq ?i Alta)))
     => (send ?inst delete)
 )
+
+
+;;; Modulo para construir la solución
+(defmodule sintesis
+	(import MAIN ?ALL)
+	(import input ?ALL)
+	(export ?ALL)
+)
+
+(deffunction sintesis::obtener_objetivos (?duracion_rutina $?enfermedades)
+	(bind ?nFuerza 0)
+	(bind ?nFlexibilidad 0)
+	(bind ?nResistencia 0)
+
+	(progn$ (?enfermedad $?enfermedades)
+		(bind ?tipo (send ?enfermedad get-Afectacion))
+		(switch ?tipo
+			(case Cardiovascular then (bind ?nFuerza (+ ?nFuerza 1)))
+			(case Osea then (bind ?nFlexibilidad (+ ?nFlexibilidad 1)))
+			(case Muscular then (bind ?nResistencia (+ ?nResistencia 1)))
+			(case Respiratoria then (bind ?nResistencia (+ ?nResistencia 1)))
+			(case Hormonal then (bind ?nFuerza (+ ?nFuerza 1)))
+			(case Nerviosa then (bind ?nFlexibilidad (+ ?nFlexibilidad 1)))
+		)
+	)
+		
+	;; Creamos una lista donde aparecerán los objetivos ordenados según su frecuencia
+	;; Por el momento solo lo haremos sin ordenar y con los objetivos con valor > 0
+	(bind ?objetivos (create$))
+	if (> ?nFuerza 0) then (bind ?objetivos (insert$ ?objetivos (+ (length$ ?objetivos) 1) Fuerza))
+	if (> ?nFlexibilidad 0) then (bind ?objetivos (insert$ ?objetivos (+ (length$ ?objetivos) 1) Flexibilidad))
+	if (> ?nResistencia 0) then (bind ?objetivos (insert$ ?objetivos (+ (length$ ?objetivos) 1) Resistencia))
+	
+	(printout t "Hemos encontrado " (length$ ?objetivos) " objetivos" crlf)
+	
+	;; Hacemos que para cada día haya un objetivo, de momento no nos preocupamos si tenemos más objetivos que días de rutina
+	(bind ?i 1)
+	(bind ?aux (length$ ?objetivos))
+	while (< (length$ ?objetivos) ?duracion_rutina) do
+		if (= ?i ?aux) then (bind ?i 1)
+		else (bind ?i (+ ?i 1))
+		(printout t "Una iteracion" crlf)
+		(bind ?objetivos (insert$ $?objetivos (+ (length$ ?objetivos) 1) (nth$ ?i ?objetivos)))
+	
+	(return ?objetivos)
+)
+
+(deffunction sintesis::es_repetido (?nombre ?lista)
+	(bind ?result FALSE)
+	(loop-for-count (?i 1 (length$ ?lista)) do
+		(bind ?aux (nth$ ?i ?lista))
+		(printout t "nombre " ?nombre " accion " (send ?aux get-nombre) crlf)
+		if (eq ?nombre (send ?aux get-nombre)) then (bind ?result TRUE)
+	)
+	(return ?result)
+)
+
+(deffunction sintesis::crear_sesion (?duracion_sesion ?objetivo)
+	(bind ?sesion (create$))
+	(bind ?tiempo_sesion 0)
+	(bind ?continue TRUE)
+	(printout t "Intentamos crear la sesión con duración " ?duracion_sesion " y objetivo " ?objetivo crlf)
+	
+	(while (and (< ?tiempo_sesion ?duracion_sesion) ?continue) do
+		;; De momento no nos preocupamos si repetimos el mismo ejercicio
+		(bind ?continue (any-instancep ((?ej Ejercicio)) (and (eq ?ej:Tipo_Objetivo ?objetivo) (not (es_repetido ?ej:nombre ?sesion)) (<= (+ ?tiempo_sesion ?ej:Tiempo_Ejercicio) ?duracion_sesion)))) ;; Hacerlo eficiente
+		(if (eq ?continue TRUE) then
+			(bind ?aux (find-instance ((?ej Ejercicio)) (and (eq ?ej:Tipo_Objetivo ?objetivo) (not (es_repetido ?ej:nombre ?sesion)) (<= (+ ?tiempo_sesion ?ej:Tiempo_Ejercicio) ?duracion_sesion))))
+			(bind ?aux (nth$ 1 ?aux))
+			(printout t "volvemos a imprimir aux " ?aux crlf)
+			(bind ?sesion (insert$ ?sesion (+ (length$ ?sesion) 1) ?aux))
+			(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux get-Tiempo_Ejercicio)))
+		;else
+		;	(bind ?continue (any-instancep ((?act Actividad)) (and (eq ?act:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?act:Tiempo_Actividad) ?duracion_sesion)))) ;; Hacerlo eficiente
+		;	if (eq ?continue TRUE) then
+		;	(bind ?aux (find-instance ((?act Actividad)) (<= (+ ?tiempo_sesion ?act:Tiempo_Actividad) ?duracion_sesion)))
+		;	(bind $?sesion (insert$ $?sesion (+ (length$ $?sesion) 1) ?aux))
+		;	(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux get-Tiempo_Actividad)))
+		)
+	)
+	
+	(printout t "hemos encontrado " (length$ ?sesion) " ejercicios" crlf)
+	
+	(progn$ (?acc ?sesion)
+		(printout t "He creado la sesión con el ejercicio" ?acc crlf)
+	)
+	
+	(make-instance (gensym) of Sesion (Es_un_conjunto_de ?sesion) (Tipo_Objetivo ?objetivo))
+)
+
+(deffunction sintesis::crear_rutina (?paciente)
+	(printout t "Empezamos la creacion de la rutina" crlf)
+	;; Obtenemos los parámetros de nuestro paciente
+	(bind ?duracion_rutina (send ?paciente get-Duracion_dias))
+	(bind ?duracion_sesion (send ?paciente get-duracion_sesion))
+	(bind $?padece (send ?paciente get-Padece))
+	
+	;; Obtenemos una lista con solo las enfermedades del paciente
+	(bind $?enfermedades (create$))
+	(progn$ (?aux $?padece)
+        ;(if (eq (class ?aux) Enfermedad)) then (bind $?enfermedades (insert$ $?enfermedades (+ (length$ $?enfermedades) 1) ?aux))
+        (bind $?enfermedades (insert$ $?enfermedades (+ (length$ $?enfermedades) 1) ?aux))
+    )
+	
+	;; Creamos una lista con los objetivos
+	(bind ?objetivos (obtener_objetivos ?duracion_rutina $?enfermedades))
+	
+	;; Creamos la rutina
+	(loop-for-count (?dia 1 ?duracion_rutina) do
+		(crear_sesion ?duracion_sesion (nth$ ?dia $?objetivos))
+	)
+)
+
+(defrule sintesis::start
+	(declare (salience 10))
+	?paciente <- (object (is-a Persona))
+	=>
+	(crear_rutina ?paciente)
+)
+
+(defrule descarte::cambio_sintesis "Pasamos de descarte a síntesis cuando ya no hay nada más que descartar"
+	(declare (salience -20)) ;; hay que poner en común los salience luego
+	=>
+	(printout t "Construyendo rutinas..." crlf)
+	(printout t crlf)
+	(focus sintesis)
+)
+
+
+(defrule sintesis::cambio_output "Pasamos de síntesis a output"
+	(declare (salience -20)) ;; hay que poner en común los salience luego
+	=>
+	(printout t "Escribiendo rutinas..." crlf)
+	(focus output)
+)
+
+(defmodule output
+    (import MAIN ?ALL)
+    (export ?ALL)
+)
+
+(deffunction output::printAccion (?accion)
+    (bind ?nombre (send ?accion get-nombre))
+    (bind ?objetivo (send ?accion get-Tipo_Objetivo))
+    (bind ?intensidad (send ?accion get-Intensidad))
+    (bind ?zonaCuerpo (send ?accion get-ZonaCuerpo))
+    (bind $?objetos (send ?accion get-objeto))
+    (printout t "Nombre: " ?nombre crlf)
+    (printout t "   Hacerlo con una intensidad " ?intensidad " y con el objetivo de conseguir " ?objetivo crlf)
+    (printout t "   Principalmente, estarás trabajando la zona de " ?zonaCuerpo)
+    (if (member$ "  Nada" $?objetos)then
+        (printout t "   No necesitarás ningún tipo de objeto para realizar este ejercicio" crlf)
+        else (printout t "  Para realizar el ejercicio necesitarás los siguientes objetos:" crlf)
+        (progn$ (?obj $?objetos)
+            (printout t "       " ?obj crlf)
+        )
+    )
+)
+
+(deffunction output::printEjercicio (?ejercicio)
+    (printAccion ?ejercicio)
+    (bind ?tiempo_ejercicio (send ?ejercicio get-Tiempo_Ejercicio))
+    (printout t "   Es recomendable hacer este ejercicio por un período de " ?tiempo_ejercicio " minutos" crlf)
+)
+
+(deffunction output::printSesion (?sesion)
+    (bind ?objetivo (send ?sesion get-Tipo_Objetivo))
+    (printout t "Harás esta sesion con el objetivo principal de conseguir "?objetivo crlf)
+    (bind $?acciones (send ?sesion get-Es_un_conjunto_de))
+    (progn$ (?accion $?acciones)
+        (printEjercicio ?accion)
+    )
+)
+
+(defrule output::mostrarSesion 
+    (declare (salience 10))
+    ?instancia <- (object (is-a Sesion))
+    =>
+    (printSesion ?instancia)
+)
+	

@@ -26,7 +26,7 @@
     (is-a Circunstancia)
     (role concrete)
     (pattern-match reactive)
-    (slot Afectación
+    (slot Afectacion
         (type SYMBOL)
         (create-accessor read-write))
     (slot Nivel
@@ -60,7 +60,7 @@
     (role concrete)
     (pattern-match reactive)
     (slot Tiempo_Actividad
-        (type SYMBOL)
+        (type INTEGER)
         (create-accessor read-write))
 )
 
@@ -69,7 +69,7 @@
     (role concrete)
     (pattern-match reactive)
     (slot Tiempo_Ejercicio
-        (type SYMBOL)
+        (type INTEGER)
         (create-accessor read-write))
 )
 
