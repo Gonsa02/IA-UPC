@@ -290,8 +290,8 @@
 
 (deffunction MAIN::setup ()
 
-    (bind $?tiempos_ejercicio (create$ Baja Media Alta 5 10 15))
-    (bind $?tiempos_actividad (create$ Baja Media Alta 30 60 90))
+    (bind $?tiempos_ejercicio (create$ Alta Media Baja 15 10 5))
+    (bind $?tiempos_actividad (create$ Alta Media Baja 90 60 30))
 
     (instanciar_ejercicio "Burpees" Resistencia Brazos "Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio "Escaleras" Resistencia Piernas "Nada" 3 $?tiempos_ejercicio)
@@ -596,66 +596,64 @@
 		
 	;; Creamos una lista donde aparecerán los objetivos ordenados según su frecuencia
 	;; Por el momento solo lo haremos sin ordenar y con los objetivos con valor > 0
-	(bind ?objetivos (create$))
-	if (> ?nFuerza 0) then (bind ?objetivos (insert$ ?objetivos (+ (length$ ?objetivos) 1) Fuerza))
-	if (> ?nFlexibilidad 0) then (bind ?objetivos (insert$ ?objetivos (+ (length$ ?objetivos) 1) Flexibilidad))
-	if (> ?nResistencia 0) then (bind ?objetivos (insert$ ?objetivos (+ (length$ ?objetivos) 1) Resistencia))
+	(bind $?objetivos (create$))
+	if (> ?nFuerza 0) then (bind $?objetivos (insert$ $?objetivos (+ (length$ $?objetivos) 1) Fuerza))
+	if (> ?nFlexibilidad 0) then (bind $?objetivos (insert$ $?objetivos (+ (length$ $?objetivos) 1) Flexibilidad))
+	if (> ?nResistencia 0) then (bind $?objetivos (insert$ $?objetivos (+ (length$ $?objetivos) 1) Resistencia))
 	
-	(printout t "Hemos encontrado " (length$ ?objetivos) " objetivos" crlf)
-	
-	;; Hacemos que para cada día haya un objetivo, de momento no nos preocupamos si tenemos más objetivos que días de rutina
+	;; Hacemos que para cada día haya un objetivo
+	;; Si en un momento llegamos a tener más de 4 objetivos hay que modificar esto para juntar ejercicios en el mismo día
 	(bind ?i 1)
-	(bind ?aux (length$ ?objetivos))
-	while (< (length$ ?objetivos) ?duracion_rutina) do
-		if (= ?i ?aux) then (bind ?i 1)
-		else (bind ?i (+ ?i 1))
-		(printout t "Una iteracion" crlf)
-		(bind ?objetivos (insert$ $?objetivos (+ (length$ ?objetivos) 1) (nth$ ?i ?objetivos)))
+	(while (< (length$ $?objetivos) ?duracion_rutina) do
+		(bind $?objetivos (insert$ $?objetivos (+ (length$ $?objetivos) 1) (nth$ ?i $?objetivos)))
+		(bind ?i (+ ?i 1))
+	)
 	
-	(return ?objetivos)
+	(return $?objetivos)
 )
 
-(deffunction sintesis::es_repetido (?nombre ?lista)
+(deffunction sintesis::es_repetido (?nombre $?lista)
 	(bind ?result FALSE)
-	(loop-for-count (?i 1 (length$ ?lista)) do
-		(bind ?aux (nth$ ?i ?lista))
-		(printout t "nombre " ?nombre " accion " (send ?aux get-nombre) crlf)
-		if (eq ?nombre (send ?aux get-nombre)) then (bind ?result TRUE)
+	(bind ?i 1)
+	
+	(while (and (<= ?i (length$ $?lista)) (eq ?result FALSE)) do
+		(bind ?nombre2 (nth$ ?i $?lista))
+		(if (eq ?nombre (send ?nombre2 get-nombre))
+			then (bind ?result TRUE)
+		)
+		(bind ?i (+ ?i 1))
 	)
+	
 	(return ?result)
 )
 
 (deffunction sintesis::crear_sesion (?duracion_sesion ?objetivo)
-	(bind ?sesion (create$))
+	(bind $?sesion (create$))
 	(bind ?tiempo_sesion 0)
 	(bind ?continue TRUE)
 	(printout t "Intentamos crear la sesión con duración " ?duracion_sesion " y objetivo " ?objetivo crlf)
 	
 	(while (and (< ?tiempo_sesion ?duracion_sesion) ?continue) do
-		;; De momento no nos preocupamos si repetimos el mismo ejercicio
-		(bind ?continue (any-instancep ((?ej Ejercicio)) (and (eq ?ej:Tipo_Objetivo ?objetivo) (not (es_repetido ?ej:nombre ?sesion)) (<= (+ ?tiempo_sesion ?ej:Tiempo_Ejercicio) ?duracion_sesion)))) ;; Hacerlo eficiente
+		(bind ?continue (any-instancep ((?ej Ejercicio)) (and (eq ?ej:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?ej:Tiempo_Ejercicio) ?duracion_sesion) (not (es_repetido ?ej:nombre $?sesion))))) ;; Hacerlo eficiente
 		(if (eq ?continue TRUE) then
-			(bind ?aux (find-instance ((?ej Ejercicio)) (and (eq ?ej:Tipo_Objetivo ?objetivo) (not (es_repetido ?ej:nombre ?sesion)) (<= (+ ?tiempo_sesion ?ej:Tiempo_Ejercicio) ?duracion_sesion))))
-			(bind ?aux (nth$ 1 ?aux))
-			(printout t "volvemos a imprimir aux " ?aux crlf)
-			(bind ?sesion (insert$ ?sesion (+ (length$ ?sesion) 1) ?aux))
-			(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux get-Tiempo_Ejercicio)))
+			(bind $?aux (find-instance ((?ej Ejercicio)) (and (eq ?ej:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?ej:Tiempo_Ejercicio) ?duracion_sesion) (not (es_repetido ?ej:nombre $?sesion)))))
+			(bind ?aux2 (nth$ 1 $?aux))
+			(bind $?sesion (insert$ $?sesion (+ (length$ $?sesion) 1) ?aux2))
+			(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux2 get-Tiempo_Ejercicio)))
 		;else
-		;	(bind ?continue (any-instancep ((?act Actividad)) (and (eq ?act:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?act:Tiempo_Actividad) ?duracion_sesion)))) ;; Hacerlo eficiente
+		;	(bind ?continue (any-instancep ((?act Actividad)) (and (eq ?act:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?act:Tiempo_Actividad) ?duracion_sesion) (not (es_repetido ?act:nombre $?sesion))))) ;; Hacerlo eficiente
 		;	if (eq ?continue TRUE) then
-		;	(bind ?aux (find-instance ((?act Actividad)) (<= (+ ?tiempo_sesion ?act:Tiempo_Actividad) ?duracion_sesion)))
+		;	(bind ?aux (find-instance ((?act Actividad)) (<= (+ ?tiempo_sesion ?act:Tiempo_Actividad) ?duracion_sesion) (not (es_repetido ?act:nombre $?sesion))))
 		;	(bind $?sesion (insert$ $?sesion (+ (length$ $?sesion) 1) ?aux))
 		;	(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux get-Tiempo_Actividad)))
 		)
 	)
 	
-	(printout t "hemos encontrado " (length$ ?sesion) " ejercicios" crlf)
-	
-	(progn$ (?acc ?sesion)
+	(progn$ (?acc $?sesion)
 		(printout t "He creado la sesión con el ejercicio" ?acc crlf)
 	)
 	
-	(make-instance (gensym) of Sesion (Es_un_conjunto_de ?sesion) (Tipo_Objetivo ?objetivo))
+	(make-instance (gensym) of Sesion (Es_un_conjunto_de $?sesion) (Tipo_Objetivo ?objetivo))
 )
 
 (deffunction sintesis::crear_rutina (?paciente)
@@ -673,7 +671,7 @@
     )
 	
 	;; Creamos una lista con los objetivos
-	(bind ?objetivos (obtener_objetivos ?duracion_rutina $?enfermedades))
+	(bind $?objetivos (obtener_objetivos ?duracion_rutina $?enfermedades))
 	
 	;; Creamos la rutina
 	(loop-for-count (?dia 1 ?duracion_rutina) do
@@ -716,28 +714,37 @@
     (bind ?zonaCuerpo (send ?accion get-ZonaCuerpo))
     (bind $?objetos (send ?accion get-objeto))
     (printout t "Nombre: " ?nombre crlf)
-    (printout t "   Hacerlo con una intensidad " ?intensidad " y con el objetivo de conseguir " ?objetivo crlf)
-    (printout t "   Principalmente, estarás trabajando la zona de " ?zonaCuerpo)
-    (if (member$ "  Nada" $?objetos)then
-        (printout t "   No necesitarás ningún tipo de objeto para realizar este ejercicio" crlf)
-        else (printout t "  Para realizar el ejercicio necesitarás los siguientes objetos:" crlf)
+    (printout t "   Hacerlo con una intensidad " ?intensidad "." crlf)
+    (printout t "   Principalmente, estarás trabajando la zona de " ?zonaCuerpo "." crlf)
+    (if (member$ "Nada" $?objetos) then
+        (printout t "   No necesitarás ningún tipo de objeto para realizar este ejercicio." crlf)
+        else (printout t "   Para realizar el ejercicio necesitarás los siguientes objetos:")
         (progn$ (?obj $?objetos)
-            (printout t "       " ?obj crlf)
+            (printout t " " ?obj)
         )
+        (printout t "." crlf)
     )
 )
 
 (deffunction output::printEjercicio (?ejercicio)
     (printAccion ?ejercicio)
     (bind ?tiempo_ejercicio (send ?ejercicio get-Tiempo_Ejercicio))
-    (printout t "   Es recomendable hacer este ejercicio por un período de " ?tiempo_ejercicio " minutos" crlf)
+    (printout t "   Es recomendable hacer este ejercicio por un período de " ?tiempo_ejercicio " minutos." crlf)
+)
+
+(deffunction output::printActividad (?actividad)
+    (printAccion ?actividad)
+    (bind ?tiempo_actividad (send ?actividad get-Tiempo_Actividad))
+    (printout t "   Es recomendable hacer este ejercicio por un período de " ?tiempo_actividad " minutos" crlf)
 )
 
 (deffunction output::printSesion (?sesion)
     (bind ?objetivo (send ?sesion get-Tipo_Objetivo))
-    (printout t "Harás esta sesion con el objetivo principal de conseguir "?objetivo crlf)
+    (printout t crlf) (printout t crlf)
+    (printout t "Harás esta sesion con el objetivo principal de conseguir "?objetivo "." crlf)
     (bind $?acciones (send ?sesion get-Es_un_conjunto_de))
     (progn$ (?accion $?acciones)
+    	(printout t crlf)
         (printEjercicio ?accion)
     )
 )
