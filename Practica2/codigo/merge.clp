@@ -9,9 +9,7 @@
         (type SYMBOL)
         (create-accessor read-write))
 )
-
-(defclass Circunstancia
-    (is-a USER)
+(defclass Circunstancia (is-a USER)
     (role concrete)
     (pattern-match reactive)
     (slot nombre
@@ -567,6 +565,22 @@
     (object (is-a Persona) (edad ?e))
     ?inst <- (object (is-a Accion) (Intensidad ?i))
     (test (and (> ?e 70) (eq ?i Alta)))
+    => (send ?inst delete)
+)
+
+(defrule descarte::duracion_maxima_80 "las personas entre 80 y 90 años ya no hacen ejercicios de 15 min"
+    (declare (salience 10))
+    (object (is-a Persona) (edad ?e))
+    ?inst <- (object (is-a Ejercicio) (Tiempo_Ejercicio ?t))
+    (test (and (> ?e 80) (eq ?t 15)))
+    => (send ?inst delete)
+)
+
+(defrule descarte::duracion_maxima_mas_de_90 "las personas con más de 90 años ya no hacen ejercicios de 10 min"
+    (declare (salience 10))
+    (object (is-a Persona) (edad ?e))
+    ?inst <- (object (is-a Ejercicio) (Tiempo_Ejercicio ?t))
+    (test (and (> ?e 90) (or (eq ?t 15) (eq ?t 10))))
     => (send ?inst delete)
 )
 
