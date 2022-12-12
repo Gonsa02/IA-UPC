@@ -8,8 +8,13 @@
     (slot Tipo_Objetivo
         (type SYMBOL)
         (create-accessor read-write))
+    (slot Tiempo
+        (type INTEGER)
+        (create-accessor read-write))
 )
-(defclass Circunstancia (is-a USER)
+
+(defclass Circunstancia
+    (is-a USER)
     (role concrete)
     (pattern-match reactive)
     (slot nombre
@@ -212,9 +217,9 @@
     (bind ?imc (/ ?peso (* ?altura ?altura)))
     (return ?imc)
 )
-(deffunction  input::inputfloat (?question)
+(deffunction  input::inputfloat (?question ?valor)
     (printout t ?question crlf)
-    (printout t "Introduce el dato con mínimo un decimal separando las unidades de las decimas con un punto (Ej 75.0) " crlf)
+    (printout t "Introduce el dato con mínimo un decimal separando las unidades de las decimas con un punto (Ej " ?valor ")." crlf)
     (bind ?response (read))
     (while (not (floatp ?response)) do
         (printout t "El valor introducido no es válido, porfavor introdúzcalo separando las unidades de las decimas con un punto" crlf)
@@ -222,6 +227,7 @@
     )
     (return ?response)
 )
+
 (deffunction input::valueOfIMC (?imc)
     (if (> ?imc 35.0) then (return Morvido))
     (if (and (<= ?imc 35.0) (> ?imc 30.0)) then (return Obeso))
@@ -229,19 +235,20 @@
     (if (and (<= ?imc 25.0) (> ?imc 18.5)) then (return Normal))
     (return Delgado)
 )
+
 (deffunction input::instanciacion_persona ()
     ; preguntamos edad
     (bind ?edad (obtener_edad))
-    (bind ?peso (inputfloat "¿Cuál es su peso en Kg?"))
-    (bind ?estatura (inputfloat "¿Cuál es su estatura en Metros?"))
+    (bind ?peso (inputfloat "¿Cuál es su peso en Kg?" 75.0))
+    (bind ?estatura (inputfloat "¿Cuál es su estatura en Metros?" 1.8))
     (bind ?IMC (getIMC ?peso ?estatura))
     (bind ?valueIMC (valueOfIMC ?IMC))
     ;preguntamos escalas
-    (bind ?fuerza (seleccion_una_opcion "¿Cómo describirías con estas opciones tu fuerza?" Baja Media Alta))
-    (bind ?equilibrio (seleccion_una_opcion "¿Cómo describirías con estas opciones tu equilibrio?" Baja Media Alta))
-    (bind ?resistencia (seleccion_una_opcion "¿Cómo describirías con estas opciones tu resistencia?" Baja Media Alta))
-    (bind ?flexibilidad (seleccion_una_opcion "¿Cómo describirías con estas opciones tu flexibilidad?" Baja Media Alta))
-    ;preguntamos si tiene algun tipo de enfermedad
+    (bind ?fuerza (seleccion_una_opcion "¿Cómo describirías con estas opciones tu fuerza? " Baja Media Alta))
+    (bind ?equilibrio (seleccion_una_opcion "¿Cómo describirías con estas opciones tu equilibrio? " Baja Media Alta))
+    (bind ?resistencia (seleccion_una_opcion "¿Cómo describirías con estas opciones tu resistencia? " Baja Media Alta))
+    (bind ?flexibilidad (seleccion_una_opcion "¿Cómo describirías con estas opciones tu flexibilidad? " Baja Media Alta))
+    ; Preguntamos si tiene algun tipo de enfermedad
     (bind $?lista (obtenir_tipo_enfermedad Cardiovascular Osea Muscular Respiratoria Hormonal Nerviosa))
     
     (bind $?enfermedades (create$))
@@ -568,22 +575,6 @@
     => (send ?inst delete)
 )
 
-(defrule descarte::duracion_maxima_80 "las personas entre 80 y 90 años ya no hacen ejercicios de 15 min"
-    (declare (salience 10))
-    (object (is-a Persona) (edad ?e))
-    ?inst <- (object (is-a Ejercicio) (Tiempo_Ejercicio ?t))
-    (test (and (> ?e 80) (eq ?t 15)))
-    => (send ?inst delete)
-)
-
-(defrule descarte::duracion_maxima_mas_de_90 "las personas con más de 90 años ya no hacen ejercicios de 10 min"
-    (declare (salience 10))
-    (object (is-a Persona) (edad ?e))
-    ?inst <- (object (is-a Ejercicio) (Tiempo_Ejercicio ?t))
-    (test (and (> ?e 90) (or (eq ?t 15) (eq ?t 10))))
-    => (send ?inst delete)
-)
-
 
 ;;; Modulo para construir la solución
 (defmodule sintesis
@@ -593,31 +584,47 @@
 )
 
 (deffunction sintesis::obtener_objetivos (?duracion_rutina $?enfermedades)
-	(bind ?nFuerza 0)
-	(bind ?nFlexibilidad 0)
-	(bind ?nResistencia 0)
-
-	(progn$ (?enfermedad $?enfermedades)
-		(bind ?tipo (send ?enfermedad get-Afectacion))
-		(switch ?tipo
-			(case Cardiovascular then (bind ?nFuerza (+ ?nFuerza 1)))
-			(case Osea then (bind ?nFlexibilidad (+ ?nFlexibilidad 1)))
-			(case Muscular then (bind ?nResistencia (+ ?nResistencia 1)))
-			(case Respiratoria then (bind ?nResistencia (+ ?nResistencia 1)))
-			(case Hormonal then (bind ?nFuerza (+ ?nFuerza 1)))
-			(case Nerviosa then (bind ?nFlexibilidad (+ ?nFlexibilidad 1)))
-		)
-	)
+	;; (1) Si el paciente tiene enfermedades calculamos sus objetivos con el método explicado a continuación
+	(if (> (length$ $?enfermedades) 0) then
+		;; Creamos un contador para cada objetivo
+		(bind ?nFuerza 0)
+		(bind ?nFlexibilidad 0)
+		(bind ?nResistencia 0)
+		(bind ?nEquilibrio 0)
 		
-	;; Creamos una lista donde aparecerán los objetivos ordenados según su frecuencia
-	;; Por el momento solo lo haremos sin ordenar y con los objetivos con valor > 0
-	(bind $?objetivos (create$))
-	if (> ?nFuerza 0) then (bind $?objetivos (insert$ $?objetivos (+ (length$ $?objetivos) 1) Fuerza))
-	if (> ?nFlexibilidad 0) then (bind $?objetivos (insert$ $?objetivos (+ (length$ $?objetivos) 1) Flexibilidad))
-	if (> ?nResistencia 0) then (bind $?objetivos (insert$ $?objetivos (+ (length$ $?objetivos) 1) Resistencia))
+		;; Según las enfermedades que tenga el paciente sumamos los valores de sus objetivos
+		(progn$ (?enfermedad $?enfermedades)
+			(bind ?tipo (send ?enfermedad get-Afectacion))
+			(switch ?tipo
+				(case Cardiovascular then (bind ?nFlexibilidad (+ ?nFlexibilidad 1)) (bind ?nEquilibrio (+ ?nEquilibrio 1)))
+				(case Osea then (bind ?nResistencia (+ ?nResistencia 1)) (bind ?nFlexibilidad (+ ?nFlexibilidad 1)) (bind ?nEquilibrio (+ ?nEquilibrio 1)))
+				(case Muscular then (bind ?nFlexibilidad (+ ?nFlexibilidad 1)))
+				(case Respiratoria then (bind ?nFuerza (+ ?nFuerza 1)) (bind ?nFlexibilidad (+ ?nFlexibilidad 1)) (bind ?nEquilibrio (+ ?nEquilibrio 1)))
+				(case Hormonal then (bind ?nFuerza (+ ?nFuerza 1)) (bind ?nResistencia (+ ?nResistencia 1)))
+				(case Nerviosa then (bind ?nEquilibrio (+ ?nEquilibrio 1)))
+			)
+		)
+			
+		;; Creamos una lista donde aparecerán los objetivos ordenados decrecientemente por su frecuencia
+		;; Por el momento solo lo haremos sin ordenar y con los objetivos con valor > 0
+		(bind $?objetivos (create$))
+		(loop-for-count 4 do
+			(if (and (> ?nFuerza 0)(>= ?nFuerza ?nFlexibilidad)(>= ?nFuerza ?nResistencia)(>= ?nFuerza ?nEquilibrio))
+				then (bind $?objetivos (insert$ $?objetivos (+ (length$ $?objetivos) 1) Fuerza)) (bind ?nFuerza -1))
+			(if (and (> ?nFlexibilidad 0)(>= ?nFlexibilidad ?nFuerza)(>= ?nFlexibilidad ?nResistencia)(>= ?nFlexibilidad ?nEquilibrio))
+				then (bind $?objetivos (insert$ $?objetivos (+ (length$ $?objetivos) 1) Flexibilidad)) (bind ?nFlexibilidad -1))
+			(if (and (> ?nResistencia 0)(>= ?nResistencia ?nFuerza)(>= ?nResistencia ?nFlexibilidad)(>= ?nResistencia ?nEquilibrio))
+				then (bind $?objetivos (insert$ $?objetivos (+ (length$ $?objetivos) 1) Resistencia)) (bind ?nResistencia -1))
+			(if (and (> ?nEquilibrio 0)(>= ?nEquilibrio ?nFuerza)(>= ?nEquilibrio ?nFlexibilidad)(>= ?nEquilibrio ?nResistencia))
+				then (bind $?objetivos (insert$ $?objetivos (+ (length$ $?objetivos) 1) Equilibrio)) (bind ?nEquilibrio -1))
+		)
+		
+		;; (2) Si no tiene enfermedades le añadimos todos los objetivos
+		else (bind $?objetivos (create$ Fuerza Resistencia Flexibilidad Equilibrio))
+	)
 	
-	;; Hacemos que para cada día haya un objetivo
-	;; Si en un momento llegamos a tener más de 4 objetivos hay que modificar esto para juntar ejercicios en el mismo día
+	;; Hacemos que para cada día de la rutina haya un objetivo fijado, repitiendo objetivos si hacen falta pero siguiendo su orden de frecuencia
+	;; En el peor caso tendremos 3 días y un objetivo (el de menos frecuencia) que se quedará fuera
 	(bind ?i 1)
 	(while (< (length$ $?objetivos) ?duracion_rutina) do
 		(bind $?objetivos (insert$ $?objetivos (+ (length$ $?objetivos) 1) (nth$ ?i $?objetivos)))
@@ -642,37 +649,56 @@
 	(return ?result)
 )
 
-(deffunction sintesis::crear_sesion (?duracion_sesion ?objetivo)
+(deffunction sintesis::crear_sesion_actividades (?duracion_sesion ?objetivo)
 	(bind $?sesion (create$))
 	(bind ?tiempo_sesion 0)
 	(bind ?continue TRUE)
 	(printout t "Intentamos crear la sesión con duración " ?duracion_sesion " y objetivo " ?objetivo crlf)
 	
-	(while (and (< ?tiempo_sesion ?duracion_sesion) ?continue) do
-		(bind ?continue (any-instancep ((?ej Ejercicio)) (and (eq ?ej:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?ej:Tiempo_Ejercicio) ?duracion_sesion) (not (es_repetido ?ej:nombre $?sesion))))) ;; Hacerlo eficiente
+	(while (and (< ?tiempo_sesion ?duracion_sesion) (eq ?continue TRUE)) do
+		(bind $?aux (find-instance ((?act Actividad)) (and (eq ?act:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?act:Tiempo_Actividad) ?duracion_sesion) (not (es_repetido ?act:nombre $?sesion)) (not (any-instancep ((?ses Sesion)) (eq TRUE (member$ ?act ?ses:Es_un_conjunto_de)))) )))
+		;; (not (any-instancep ((?ses Sesion)) (eq TRUE (member$ ?act ?ses:Es_un_conjunto_de))))
+		(bind ?continue (> (length$ $?aux) 0))
 		(if (eq ?continue TRUE) then
-			(bind $?aux (find-instance ((?ej Ejercicio)) (and (eq ?ej:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?ej:Tiempo_Ejercicio) ?duracion_sesion) (not (es_repetido ?ej:nombre $?sesion)))))
 			(bind ?aux2 (nth$ 1 $?aux))
 			(bind $?sesion (insert$ $?sesion (+ (length$ $?sesion) 1) ?aux2))
 			(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux2 get-Tiempo_Ejercicio)))
-		;else
-		;	(bind ?continue (any-instancep ((?act Actividad)) (and (eq ?act:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?act:Tiempo_Actividad) ?duracion_sesion) (not (es_repetido ?act:nombre $?sesion))))) ;; Hacerlo eficiente
-		;	if (eq ?continue TRUE) then
-		;	(bind ?aux (find-instance ((?act Actividad)) (<= (+ ?tiempo_sesion ?act:Tiempo_Actividad) ?duracion_sesion) (not (es_repetido ?act:nombre $?sesion))))
-		;	(bind $?sesion (insert$ $?sesion (+ (length$ $?sesion) 1) ?aux))
-		;	(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux get-Tiempo_Actividad)))
 		)
 	)
 	
 	(progn$ (?acc $?sesion)
-		(printout t "He creado la sesión con el ejercicio" ?acc crlf)
+		(printout t "He creado la sesión con la actividad " ?acc crlf)
 	)
 	
-	(make-instance (gensym) of Sesion (Es_un_conjunto_de $?sesion) (Tipo_Objetivo ?objetivo))
+	(make-instance (gensym) of Sesion (Es_un_conjunto_de $?sesion) (Tipo_Objetivo ?objetivo) (Tiempo ?tiempo_sesion))
+)
+
+(deffunction sintesis::crear_sesion_ejercicios (?duracion_sesion ?objetivo)
+	(bind $?sesion (create$))
+	(bind ?tiempo_sesion 0)
+	(bind ?continue TRUE)
+	(printout t "Intentamos crear la sesión con duración " ?duracion_sesion " y objetivo " ?objetivo crlf)
+	
+	(while (and (< ?tiempo_sesion ?duracion_sesion) (eq ?continue TRUE)) do
+		(bind $?aux (find-instance ((?ej Ejercicio)) (and (eq ?ej:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?ej:Tiempo_Ejercicio) ?duracion_sesion) (not (es_repetido ?ej:nombre $?sesion)) (not (any-instancep ((?ses Sesion)) (eq TRUE (member$ ?ej ?ses:Es_un_conjunto_de)))) )))
+		(bind ?continue (> (length$ $?aux) 0))
+		(if (eq ?continue TRUE) then 
+			(bind ?aux2 (nth$ 1 $?aux))
+			(bind $?sesion (insert$ $?sesion (+ (length$ $?sesion) 1) ?aux2))
+			(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux2 get-Tiempo_Ejercicio)))
+		)
+	)
+	
+	(progn$ (?acc $?sesion)
+		(printout t "He creado la sesión con el ejercicio " ?acc crlf)
+	)
+	
+	(make-instance (gensym) of Sesion (Es_un_conjunto_de $?sesion) (Tipo_Objetivo ?objetivo) (Tiempo ?tiempo_sesion))
 )
 
 (deffunction sintesis::crear_rutina (?paciente)
-	(printout t "Empezamos la creacion de la rutina" crlf)
+	(printout t "Empezamos la creacion de la rutina..." crlf)
+	
 	;; Obtenemos los parámetros de nuestro paciente
 	(bind ?duracion_rutina (send ?paciente get-Duracion_dias))
 	(bind ?duracion_sesion (send ?paciente get-duracion_sesion))
@@ -681,17 +707,18 @@
 	;; Obtenemos una lista con solo las enfermedades del paciente
 	(bind $?enfermedades (create$))
 	(progn$ (?aux $?padece)
-	 (printout t (type ?aux) crlf)
         (if (eq (type ?aux) Enfermedad) then (bind $?enfermedades (insert$ $?enfermedades (+ (length$ $?enfermedades) 1) ?aux)))
-        ;(bind $?enfermedades (insert$ $?enfermedades (+ (length$ $?enfermedades) 1) ?aux))
     )
-	
-	;; Creamos una lista con los objetivos
-	(bind $?objetivos (obtener_objetivos ?duracion_rutina $?enfermedades))
+    
+    ;; Creamos una lista con los objetivos de la rutina
+    (bind $?objetivos (obtener_objetivos ?duracion_rutina $?enfermedades))
 	
 	;; Creamos la rutina
 	(loop-for-count (?dia 1 ?duracion_rutina) do
-		(crear_sesion ?duracion_sesion (nth$ ?dia $?objetivos))
+		(if (= (mod (random) 2) 0)
+			then (crear_sesion_ejercicios ?duracion_sesion (nth$ ?dia $?objetivos))
+			else (crear_sesion_actividades ?duracion_sesion (nth$ ?dia $?objetivos))
+		)
 	)
 )
 
@@ -756,8 +783,11 @@
 
 (deffunction output::printSesion (?sesion)
     (bind ?objetivo (send ?sesion get-Tipo_Objetivo))
-    (printout t crlf) (printout t crlf)
-    (printout t "Harás esta sesion con el objetivo principal de conseguir "?objetivo "." crlf)
+    (bind ?tiempo (send ?sesion get-Tiempo))
+    
+    (printout t crlf) (printout t "-------------------------------------------------------------------------------------" crlf)
+    (printout t "Harás esta sesión con el objetivo principal de conseguir " ?objetivo ". (Tiempo: " ?tiempo " min)" crlf)
+    
     (bind $?acciones (send ?sesion get-Es_un_conjunto_de))
     (progn$ (?accion $?acciones)
     	(printout t crlf)
