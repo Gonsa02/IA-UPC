@@ -1,0 +1,40 @@
+A continuación dejamos una descripción de como funciona nuestro prototipo inicial, cabe destacar que al ser un prototipo
+tiene todas las funcionalidades excepto que las instancias de ejercicios y actividades solo son ejercicios por ahora, aunque
+para el prototipo final habrá tanto ejercicios como actividades.
+
+Fases de nuestro programa:
+    MAIN -> Input -> Descarte -> Síntesis -> Output
+
+
+Modulo MAIN:
+		Se encarga de instanciar toda la base de datos de ejercicios y actividades que utilizará el sistema
+		para hacer la rutina.
+
+Modulo input:
+		Este modulo se encarga de la obtención de los datos relacionados con el paciente.
+
+Modulo Descarte:	
+		Este módulo se encarga de descartar todas las actividades y ejercicios que el usuario no puede hacer
+		debido a sus circumstancias y enfermedades, por lo que digamos que hace una limpieza de las instancias
+		que són incompatibles con el usuario.
+
+Modulo Síntesis: 
+		Según las enfermedades que tiene el paciente se establecen una serie de objetivos que se intentarán practicar con las sesiones. 
+		Cada sesión tratará un objetivo en particular y añadirá ejercicios (en este prototipo inicial aún no añadimos actividades) hasta 
+		llegar al tiempo máximo de la sesión o hasta que no queden ejercicios que cumplan las condiciones para añadir.
+
+Modulo output:
+		Este modulo es el encargado de mostrar al usuario toda la rutina que el sistema la ha propuesto.
+		Dando información tanto, de la intensidad del ejercicio, duración, objetos necesarios, entre otros parametros.
+		que se enseña.
+
+Ficheros adjuntos:
+    
+    ontologia-12.clp: contine la ontologia creada en protegé.
+    input-module.clp: contiene los módulos MAIN e input.
+    delete-module.clp: contiene el módulo de descarte.
+    joan.clp: contiene el móduclo de síntesis.
+    output-module.clp: contiene el módulo de ouptut.
+    merge.clp: contiene todo el programa.
+
+Para ejecutar el programa se debe cargar el merge.clp con (load merge.clp) y posteriormente hacer un (run)

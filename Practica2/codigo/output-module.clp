@@ -97,4 +97,5 @@
     ?instancia <- (object (is-a Sesion))
     =>
     (printSesion ?instancia)
+    (printout t clrf)
 )

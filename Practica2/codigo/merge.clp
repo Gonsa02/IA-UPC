@@ -175,7 +175,7 @@
     (bind ?response (read))
     (bind $?return_list (create$))
     (while (not (eq ?response FIN))do
-        (printout t "Que nivel tienes de la enfermedad " ?response " tienes, estas son las opciones: " $?nivel crlf)
+        (printout t "Que nivel tienes de la enfermedad " ?response "? Estas son las opciones: " $?nivel crlf)
         (bind ?level (read))
         (while (not (member$ ?level $?nivel)) do
          (printout t "lo siento esta respuesta no es valida, vuelva a especificar el nivel" crlf)
@@ -183,6 +183,7 @@
         )
         (bind ?instancia (make-instance (gensym) of Enfermedad (nombre ?response)(Afectacion ?tipo) (Nivel ?level)))
         (bind $?return_list (insert$ $?return_list (+ (length$ $?return_list) 1) ?instancia))
+        (printout t "Introduce más enfermedades que puedas tener del tipo " ?tipo " o puedes parar escribiendo FIN" crlf)
         (bind ?response (read))
     )
     (return $?return_list)
@@ -215,10 +216,10 @@
 )
 (deffunction  input::inputfloat (?question)
     (printout t ?question crlf)
-    (printout t "Introducir el valor en formato de coma" crlf)
+    (printout t "Introduce el dato con mínimo un decimal separando las unidades de las decimas con un punto (Ej 75.0) " crlf)
     (bind ?response (read))
     (while (not (floatp ?response)) do
-        (printout t "El valor introducido no es valido, porfavor introduzcalo en el formato de coma" crlf)
+        (printout t "El valor introducido no es válido, porfavor introdúzcalo separando las unidades de las decimas con un punto" crlf)
         (bind ?response (read))
     )
     (return ?response)
@@ -233,15 +234,15 @@
 (deffunction input::instanciacion_persona ()
     ; preguntamos edad
     (bind ?edad (obtener_edad))
-    (bind ?peso (inputfloat "Cual es su peso en Kg?"))
-    (bind ?estatura (inputfloat "Cual es su estatura en Metros?"))
+    (bind ?peso (inputfloat "¿Cuál es su peso en Kg?"))
+    (bind ?estatura (inputfloat "¿Cuál es su estatura en Metros?"))
     (bind ?IMC (getIMC ?peso ?estatura))
     (bind ?valueIMC (valueOfIMC ?IMC))
     ;preguntamos escalas
-    (bind ?fuerza (seleccion_una_opcion "Como describirías con estas opciones tu fuerza" Baja Media Alta))
-    (bind ?equilibrio (seleccion_una_opcion "Como describirías con estas opciones tu equilibrio" Baja Media Alta))
-    (bind ?resistencia (seleccion_una_opcion "Como describirías con estas opciones tu resistencia" Baja Media Alta))
-    (bind ?flexibilidad (seleccion_una_opcion "Como describirías con estas opciones tu flexibilidad" Baja Media Alta))
+    (bind ?fuerza (seleccion_una_opcion "¿Cómo describirías con estas opciones tu fuerza?" Baja Media Alta))
+    (bind ?equilibrio (seleccion_una_opcion "¿Cómo describirías con estas opciones tu equilibrio?" Baja Media Alta))
+    (bind ?resistencia (seleccion_una_opcion "¿Cómo describirías con estas opciones tu resistencia?" Baja Media Alta))
+    (bind ?flexibilidad (seleccion_una_opcion "¿Cómo describirías con estas opciones tu flexibilidad?" Baja Media Alta))
     ;preguntamos si tiene algun tipo de enfermedad
     (bind $?lista (obtenir_tipo_enfermedad Cardiovascular Osea Muscular Respiratoria Hormonal Nerviosa))
     
@@ -260,8 +261,8 @@
     )
    
 
-    (bind ?duracion_rutina (seleccion_sobre_rango "De cuanto dias desea la duracion de la rutina" 3 7) )
-    (bind ?duracion_sesion (seleccion_una_opcion "De cuantos minutos desea la sesion de cada sesion que compone la rutina" 30 60 90))
+    (bind ?duracion_rutina (seleccion_sobre_rango "¿De cuanto dias desea la duracion de la rutina?" 3 7) )
+    (bind ?duracion_sesion (seleccion_una_opcion "¿De cuantos minutos desea la sesion de cada sesion que compone la rutina?" 30 60 90))
 
     ;(printout t "La edad es: " ?edad crlf)
     ;(printout t "instancias: " $?enfermedades crlf)
@@ -330,7 +331,7 @@
 )   
 (defrule input::creacion_persona
  (declare (salience 10)) => 
- (printout t "Ahora te haremos unas preguntas sobre ti para saber sobre ti." crlf)
+ (printout t "Ahora te haremos unas preguntas para poder generar la rutina que mejor se adapte a ti." crlf)
  (printout t crlf)
  (instanciacion_persona)
  (printout t "Pasamos a la fase de Descarte" crlf crlf)
@@ -666,8 +667,9 @@
 	;; Obtenemos una lista con solo las enfermedades del paciente
 	(bind $?enfermedades (create$))
 	(progn$ (?aux $?padece)
-        ;(if (eq (class ?aux) Enfermedad)) then (bind $?enfermedades (insert$ $?enfermedades (+ (length$ $?enfermedades) 1) ?aux))
-        (bind $?enfermedades (insert$ $?enfermedades (+ (length$ $?enfermedades) 1) ?aux))
+	 (printout t (type ?aux) crlf)
+        (if (eq (type ?aux) Enfermedad) then (bind $?enfermedades (insert$ $?enfermedades (+ (length$ $?enfermedades) 1) ?aux)))
+        ;(bind $?enfermedades (insert$ $?enfermedades (+ (length$ $?enfermedades) 1) ?aux))
     )
 	
 	;; Creamos una lista con los objetivos
@@ -754,5 +756,6 @@
     ?instancia <- (object (is-a Sesion))
     =>
     (printSesion ?instancia)
+    (printout t crlf)
 )
 	
