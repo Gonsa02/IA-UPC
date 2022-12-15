@@ -330,7 +330,18 @@
     (instanciar_ejercicio "Puente con pelota" Flexibilidad Tronco "Pelota medicinal" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio "Flexiones de bíceps" Flexibilidad Brazos "Bandas elásticas" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio "Patada de glúteos" Flexibilidad Piernas "Nada" 3 $?tiempos_ejercicio)
-
+    ; actividades
+    (instanciar_actividad "Caminar" Resistencia Piernas "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Aeróbic acúatico" Resistencia Brazos "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Pilates" Resistencia Tronco "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Ciclismo" Resistencia Piernas "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Surf" Equilibrio Tronco "Tabla de surf" 3 $?tiempos_actividad)
+    (instanciar_actividad "Natación" Resistencia Tronco "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Yoga" Flexibilidad Tronco "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Senderismo" Resistencia Piernas "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Petanca" Fuerza Brazos "Bolas de petanca" 3 $?tiempos_actividad)
+    (instanciar_actividad "Baile" Equilibrio Tronco "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Tai-chi" Flexibilidad Tronco "Nada" 3 $?tiempos_actividad)
 
     
 )   
@@ -672,13 +683,13 @@
 	(printout t "Intentamos crear la sesión con duración " ?duracion_sesion " y objetivo " ?objetivo crlf)
 	
 	(while (and (< ?tiempo_sesion ?duracion_sesion) (eq ?continue TRUE)) do
-		(bind $?aux (find-instance ((?act Actividad)) (and (eq ?act:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?act:Tiempo_Actividad) ?duracion_sesion) (not (es_repetido ?act:nombre $?sesion)) (not (any-instancep ((?ses Sesion)) (eq TRUE (member$ ?act ?ses:Es_un_conjunto_de)))) )))
+		(bind $?aux (find-instance ((?act Actividad)) (and (eq ?act:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?act:Tiempo_Actividad) ?duracion_sesion) (not (es_repetido ?act:nombre $?sesion)) (not (any-instancep ((?ses Sesion)) (eq TRUE (es_repetido ?act:nombre ?ses:Es_un_conjunto_de)))) )))
 		;; (not (any-instancep ((?ses Sesion)) (eq TRUE (member$ ?act ?ses:Es_un_conjunto_de))))
 		(bind ?continue (> (length$ $?aux) 0))
 		(if (eq ?continue TRUE) then
 			(bind ?aux2 (nth$ 1 $?aux))
 			(bind $?sesion (insert$ $?sesion (+ (length$ $?sesion) 1) ?aux2))
-			(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux2 get-Tiempo_Ejercicio)))
+			(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux2 get-Tiempo_Actividad)))
 		)
 	)
 	
@@ -696,7 +707,7 @@
 	(printout t "Intentamos crear la sesión con duración " ?duracion_sesion " y objetivo " ?objetivo crlf)
 	
 	(while (and (< ?tiempo_sesion ?duracion_sesion) (eq ?continue TRUE)) do
-		(bind $?aux (find-instance ((?ej Ejercicio)) (and (eq ?ej:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?ej:Tiempo_Ejercicio) ?duracion_sesion) (not (es_repetido ?ej:nombre $?sesion)) (not (any-instancep ((?ses Sesion)) (eq TRUE (member$ ?ej ?ses:Es_un_conjunto_de)))) )))
+		(bind $?aux (find-instance ((?ej Ejercicio)) (and (eq ?ej:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?ej:Tiempo_Ejercicio) ?duracion_sesion) (not (es_repetido ?ej:nombre $?sesion)) (not (any-instancep ((?ses Sesion)) (eq TRUE (es_repetido ?ej:nombre ?ses:Es_un_conjunto_de)))) )))
 		(bind ?continue (> (length$ $?aux) 0))
 		(if (eq ?continue TRUE) then 
 			(bind ?aux2 (nth$ 1 $?aux))
@@ -807,7 +818,9 @@
     (bind $?acciones (send ?sesion get-Es_un_conjunto_de))
     (progn$ (?accion $?acciones)
     	(printout t crlf)
-        (printEjercicio ?accion)
+        (if (eq (type ?accion) Ejercicio) then (printEjercicio ?accion)
+         else  (printActividad ?accion)
+        )
     )
 )
 
