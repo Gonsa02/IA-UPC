@@ -669,7 +669,7 @@
 	(bind $?sesion (create$))
 	(bind ?tiempo_sesion 0)
 	(bind ?continue TRUE)
-	(printout t "Intentamos crear la sesión con duración " ?duracion_sesion " y objetivo " ?objetivo crlf)
+	;;(printout t "Intentamos crear la sesión con duración " ?duracion_sesion " y objetivo " ?objetivo crlf)
 	
 	(while (and (< ?tiempo_sesion ?duracion_sesion) (eq ?continue TRUE)) do
 		(bind $?aux (find-instance ((?act Actividad)) (and (eq ?act:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?act:Tiempo_Actividad) ?duracion_sesion) (not (es_repetido ?act:nombre $?sesion)) (not (any-instancep ((?ses Sesion)) (eq TRUE (es_repetido ?act:nombre ?ses:Es_un_conjunto_de)))) )))
@@ -682,10 +682,6 @@
 		)
 	)
 	
-	(progn$ (?acc $?sesion)
-		(printout t "He creado la sesión con la actividad " ?acc crlf)
-	)
-	
 	(make-instance (gensym) of Sesion (Es_un_conjunto_de $?sesion) (Tipo_Objetivo ?objetivo) (Tiempo ?tiempo_sesion))
 )
 
@@ -693,7 +689,7 @@
 	(bind $?sesion (create$))
 	(bind ?tiempo_sesion 0)
 	(bind ?continue TRUE)
-	(printout t "Intentamos crear la sesión con duración " ?duracion_sesion " y objetivo " ?objetivo crlf)
+	;;(printout t "Intentamos crear la sesión con duración " ?duracion_sesion " y objetivo " ?objetivo crlf)
 	
 	(while (and (< ?tiempo_sesion ?duracion_sesion) (eq ?continue TRUE)) do
 		(bind $?aux (find-instance ((?ej Ejercicio)) (and (eq ?ej:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?ej:Tiempo_Ejercicio) ?duracion_sesion) (not (es_repetido ?ej:nombre $?sesion)) (not (any-instancep ((?ses Sesion)) (eq TRUE (es_repetido ?ej:nombre ?ses:Es_un_conjunto_de)))) )))
@@ -703,10 +699,6 @@
 			(bind $?sesion (insert$ $?sesion (+ (length$ $?sesion) 1) ?aux2))
 			(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux2 get-Tiempo_Ejercicio)))
 		)
-	)
-	
-	(progn$ (?acc $?sesion)
-		(printout t "He creado la sesión con el ejercicio " ?acc crlf)
 	)
 	
 	(make-instance (gensym) of Sesion (Es_un_conjunto_de $?sesion) (Tipo_Objetivo ?objetivo) (Tiempo ?tiempo_sesion))
