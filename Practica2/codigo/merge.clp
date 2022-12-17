@@ -813,7 +813,10 @@
     (printout t "   Es recomendable hacer este ejercicio por un período de " ?tiempo_actividad " minutos" crlf)
 )
 
-(deffunction output::printSesion (?sesion)
+(defrule output::mostrarSesion 
+    (declare (salience 10))
+    ?sesion <- (object (is-a Sesion))
+    =>
     (bind ?objetivo (send ?sesion get-Tipo_Objetivo))
     (bind ?tiempo (send ?sesion get-Tiempo))
     
@@ -827,13 +830,6 @@
          else  (printActividad ?accion)
         )
     )
-)
-
-(defrule output::mostrarSesion 
-    (declare (salience 10))
-    ?instancia <- (object (is-a Sesion))
-    =>
-    (printSesion ?instancia)
     (printout t crlf)
 )
 	
