@@ -118,14 +118,28 @@
 (defmodule MAIN
     (export ?ALL)
 )
+;; Módulo para extraer la información del usuario
 (defmodule input
     (import MAIN ?ALL)
     (export ?ALL)
 )
+;; Módulo para descartar ejercicios y actividades incompatibles con el paciente
 (defmodule descarte
     (import MAIN ?ALL)
     (export ?ALL)
 )
+;;; Modulo para construir la solución
+(defmodule sintesis
+	(import MAIN ?ALL)
+	(import input ?ALL)
+	(export ?ALL)
+)
+;; Módulo para imprimir la solución
+(defmodule output
+    (import MAIN ?ALL)
+    (export ?ALL)
+)
+
 (deffunction input::obtener_edad ()
     ;printeamos pregunta
     (printout  t "Que edad tienes?" crlf)
@@ -603,34 +617,9 @@
 )
 
 
-;;; Modulo para construir la solución
-(defmodule sintesis
-	(import MAIN ?ALL)
-	(import input ?ALL)
-	(export ?ALL)
-)
-
-(deffunction sintesis::obtener_objetivos (?duracion_rutina $?enfermedades)
-	;; (1) Si el paciente tiene enfermedades calculamos sus objetivos con el método explicado a continuación
-	(if (> (length$ $?enfermedades) 0) then
-		;; Creamos un contador para cada objetivo
-		(bind ?nFuerza 0)
-		(bind ?nFlexibilidad 0)
-		(bind ?nResistencia 0)
-		(bind ?nEquilibrio 0)
-		
-		;; Según las enfermedades que tenga el paciente sumamos los valores de sus objetivos
-		(progn$ (?enfermedad $?enfermedades)
-			(bind ?tipo (send ?enfermedad get-Afectacion))
-			(switch ?tipo
-				(case Cardiovascular then (bind ?nFlexibilidad (+ ?nFlexibilidad 1)) (bind ?nEquilibrio (+ ?nEquilibrio 1)))
-				(case Osea then (bind ?nResistencia (+ ?nResistencia 1)) (bind ?nFlexibilidad (+ ?nFlexibilidad 1)) (bind ?nEquilibrio (+ ?nEquilibrio 1)))
-				(case Muscular then (bind ?nFlexibilidad (+ ?nFlexibilidad 1)))
-				(case Respiratoria then (bind ?nFuerza (+ ?nFuerza 1)) (bind ?nFlexibilidad (+ ?nFlexibilidad 1)) (bind ?nEquilibrio (+ ?nEquilibrio 1)))
-				(case Hormonal then (bind ?nFuerza (+ ?nFuerza 1)) (bind ?nResistencia (+ ?nResistencia 1)))
-				(case Nerviosa then (bind ?nEquilibrio (+ ?nEquilibrio 1)))
-			)
-		)
+(deffunction sintesis::obtener_objetivos (?duracion_rutina ?nFuerza ?nFlexibilidad ?nResistencia ?nEquilibrio)
+	;; (1) Si el paciente tiene enfermedades (-> tiene almenos 1 objetivo > 0) calculamos sus objetivos con el siguiente método
+	(if (or (> ?nFuerza 0)(> ?nFlexibilidad 0)(> ?nResistencia 0)(> ?nEquilibrio 0)) then
 			
 		;; Creamos una lista donde aparecerán los objetivos ordenados decrecientemente por su frecuencia
 		;; Por el momento solo lo haremos sin ordenar y con los objetivos con valor > 0
@@ -646,7 +635,7 @@
 				then (bind $?objetivos (insert$ $?objetivos (+ (length$ $?objetivos) 1) Equilibrio)) (bind ?nEquilibrio -1))
 		)
 		
-		;; (2) Si no tiene enfermedades le añadimos todos los objetivos
+		;; (2) Si no tiene enfermedades (-> todos los objetivos == 0) le añadimos todos los objetivos
 		else (bind $?objetivos (create$ Fuerza Resistencia Flexibilidad Equilibrio))
 	)
 	
@@ -723,22 +712,50 @@
 	(make-instance (gensym) of Sesion (Es_un_conjunto_de $?sesion) (Tipo_Objetivo ?objetivo) (Tiempo ?tiempo_sesion))
 )
 
-(deffunction sintesis::crear_rutina (?paciente)
+(defrule sintesis::start
+	(declare (salience 30))
+	=>
+	(assert (nFuerza 0))
+	(assert (nFlexibilidad 0))
+	(assert (nResistencia 0))
+	(assert (nEquilibrio 0))
+)
+
+(defrule sintesis::tratar_enfermedad
+	(declare (salience 20))
+	(nFuerza ?nFuerza)
+	(nFlexibilidad ?nFlexibilidad)
+	(nResistencia ?nResistencia)
+	(nEquilibrio ?nEquilibrio)
+	?enfermedad <- (object (is-a Enfermedad))
+	=>
+	(bind ?tipo (send ?enfermedad get-Afectacion))
+	(switch ?tipo
+		(case Cardiovascular then (modify ?nFlexibilidad (+ ?nFlexibilidad 1)) (modify ?nEquilibrio (+ ?nEquilibrio 1)))
+		(case Osea then (modify ?nResistencia (+ ?nResistencia 1)) (modify ?nFlexibilidad (+ ?nFlexibilidad 1)) (modify ?nEquilibrio (+ ?nEquilibrio 1)))
+		(case Muscular then (modify ?nFlexibilidad (+ ?nFlexibilidad 1)))
+		(case Respiratoria then (modify ?nFuerza (+ ?nFuerza 1)) (modify ?nFlexibilidad (+ ?nFlexibilidad 1)) (modify ?nEquilibrio (+ ?nEquilibrio 1)))
+		(case Hormonal then (modify ?nFuerza (+ ?nFuerza 1)) (modify ?nResistencia (+ ?nResistencia 1)))
+		(case Nerviosa then (modify ?nEquilibrio (+ ?nEquilibrio 1)))
+	)
+)
+
+(defrule sintesis::crear_rutina
+	(declare (salience 10))
+	(nFuerza ?nFuerza)
+	(nFlexibilidad ?nFlexibilidad)
+	(nResistencia ?nResistencia)
+	(nEquilibrio ?nEquilibrio)
+	?paciente <- (object (is-a Persona))
+	=>
 	(printout t "Empezamos la creacion de la rutina..." crlf)
 	
 	;; Obtenemos los parámetros de nuestro paciente
 	(bind ?duracion_rutina (send ?paciente get-Duracion_dias))
 	(bind ?duracion_sesion (send ?paciente get-duracion_sesion))
-	(bind $?padece (send ?paciente get-Padece))
-	
-	;; Obtenemos una lista con solo las enfermedades del paciente
-	(bind $?enfermedades (create$))
-	(progn$ (?aux $?padece)
-        (if (eq (type ?aux) Enfermedad) then (bind $?enfermedades (insert$ $?enfermedades (+ (length$ $?enfermedades) 1) ?aux)))
-    )
     
     ;; Creamos una lista con los objetivos de la rutina
-    (bind $?objetivos (obtener_objetivos ?duracion_rutina $?enfermedades))
+    (bind $?objetivos (obtener_objetivos ?duracion_rutina ?nFuerza ?nFlexibilidad ?nResistencia ?nEquilibrio))
 	
 	;; Creamos la rutina
 	(loop-for-count (?dia 1 ?duracion_rutina) do
@@ -747,13 +764,6 @@
 			else (crear_sesion_actividades ?duracion_sesion (nth$ ?dia $?objetivos))
 		)
 	)
-)
-
-(defrule sintesis::start
-	(declare (salience 10))
-	?paciente <- (object (is-a Persona))
-	=>
-	(crear_rutina ?paciente)
 )
 
 (defrule descarte::cambio_sintesis "Pasamos de descarte a síntesis cuando ya no hay nada más que descartar"
@@ -770,11 +780,6 @@
 	=>
 	(printout t "Escribiendo rutinas..." crlf)
 	(focus output)
-)
-
-(defmodule output
-    (import MAIN ?ALL)
-    (export ?ALL)
 )
 
 (deffunction output::printAccion (?accion)
