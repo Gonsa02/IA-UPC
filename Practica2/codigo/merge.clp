@@ -246,7 +246,7 @@
 )
 
 (deffunction input::valueOfIMC (?imc)
-    (if (> ?imc 35.0) then (return Morvido))
+    (if (> ?imc 35.0) then (return Morbido))
     (if (and (<= ?imc 35.0) (> ?imc 30.0)) then (return Obeso))
     (if (and (<= ?imc 30.0) (> ?imc 25.0)) then (return Sobrepeso))
     (if (and (<= ?imc 25.0) (> ?imc 18.5)) then (return Normal))
@@ -533,7 +533,7 @@
     (declare (salience 10))
     (object (is-a Persona) (IMC ?x))
     ?inst <- (object (is-a Accion) (Intensidad ?i))
-    (test (and (eq ?x Morvido) (neq ?i Baja)))
+    (test (and (eq ?x Morbido) (neq ?i Baja)))
     => (send ?inst delete)
 )
 
@@ -558,7 +558,7 @@
     (object (is-a Persona) (IMC ?x))
     (object (is-a Enfermedad) (Afectacion ?a))
     ?inst <- (object (is-a Accion))
-    (test (and (eq ?x Morvido) (or (eq ?a Cardiovascular) (eq ?a Respiratoria))))
+    (test (and (eq ?x Morbido) (or (eq ?a Cardiovascular) (eq ?a Respiratoria))))
     => (send ?inst delete)
 )
 
