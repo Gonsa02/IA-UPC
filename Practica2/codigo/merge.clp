@@ -141,39 +141,41 @@
 )
 
 (deffunction input::obtener_edad ()
-    ;printeamos pregunta
-    (printout  t "Que edad tienes?" crlf)
-    (bind ?edat (read))
-    (while (< ?edat 0) do
-            (printout t "No es una edad valida porfavor introduzca una edad valida" crlf) 
-            (bind ?edat (read))
+    (printout t "Que edad tienes? ")
+    (bind ?edad (read))
+    (while (< ?edad 0) do
+            (printout t "La edad introducida no es válida. Por favor, introduzca una edad válida: ") 
+            (bind ?edad (read))
     )
-    ;devolvemos la edad
-    (return ?edat)
+    (printout t crlf)
+    (return ?edad)
 )
 
-(deffunction input::obtenir_tipo_enfermedad ($?list_values)
-    (printout t "Tienes algun tipo de enfermedad" crlf)
+(deffunction input::obtener_tipo_enfermedad ($?list_values)
+	(printout t crlf)
+    (printout t "Tienes algún tipo de Enfermedad?" crlf)
     (printout t "Estos son los tipos: " $?list_values crlf)
-    (printout t "Para acabar escribe  FIN" crlf)
+    (printout t "Para acabar escribe FIN." crlf)
     (bind ?response (read))
     (bind $?return_list (create$))
     (while (not (eq ?response FIN)) do
-        (if (and (member$ ?response $?list_values)(not(member$ ?response $?return_list)))then
+        (if (and (member$ ?response $?list_values)(not(member$ ?response $?return_list))) then
             (bind $?return_list (insert$ $?return_list (+ (length$ $?return_list) 1) ?response))
         )
         (bind ?response (read))
     )
+    (printout t crlf)
     (return $?return_list)
 )
-(deffunction input::obtenir_tipo_Antecentes ($?list_values)
-    (printout t "Tienes algun tipo de Antecente?" crlf)
+
+(deffunction input::obtener_tipo_Antecentes ($?list_values)
+    (printout t "Tienes algún tipo de Antecente?" crlf)
     (printout t "Estos son los tipos: " $?list_values crlf)
-    (printout t "Para acabar escribe  FIN" crlf)
+    (printout t "Para acabar escribe FIN." crlf)
     (bind ?response (read))
     (bind $?return_list (create$))
     (while (not (eq ?response FIN)) do
-        (if (and (member$ ?response $?list_values)(not(member$ ?response $?return_list)))then
+        (if (and (member$ ?response $?list_values)(not(member$ ?response $?return_list))) then
             (bind $?return_list (insert$ $?return_list (+ (length$ $?return_list) 1) ?response))
         )
         (bind ?response (read))
@@ -186,59 +188,60 @@
     (return ?instancia)
 )
 
-(deffunction input::obtenir_enfermetats_tipos(?tipo $?nivel)
-    (printout t "Que enfermedad del tipo " ?tipo " tienes" crlf)
-    (printout t "Para acabar escribe  FIN" crlf)
+(deffunction input::obtener_enfermedades_tipos(?tipo $?nivel)
+    (printout t "Qué enfermedad del tipo " ?tipo " tienes?" crlf)
+    (printout t "Para acabar escribe FIN." crlf)
     (bind ?response (read))
     (bind $?return_list (create$))
     (while (not (eq ?response FIN))do
-        (printout t "Que nivel tienes de la enfermedad " ?response "? Estas son las opciones: " $?nivel crlf)
+        (printout t "Qué nivel tienes de la enfermedad " ?response "? Estas son las opciones: " $?nivel crlf)
         (bind ?level (read))
         (while (not (member$ ?level $?nivel)) do
-         (printout t "lo siento esta respuesta no es valida, vuelva a especificar el nivel" crlf)
+         (printout t "El nivel introducido no es válido. Por favor, vuelva a introducir el nivel: ")
          (bind ?level (read))
         )
         (bind ?instancia (make-instance (gensym) of Enfermedad (nombre ?response)(Afectacion ?tipo) (Nivel ?level)))
         (bind $?return_list (insert$ $?return_list (+ (length$ $?return_list) 1) ?instancia))
-        (printout t "Introduce más enfermedades que puedas tener del tipo " ?tipo " o puedes parar escribiendo FIN" crlf)
+        (printout t "Introduce más enfermedades que puedas tener del tipo " ?tipo " o puedes parar escribiendo FIN. " crlf)
         (bind ?response (read))
     )
     (return $?return_list)
 )
 
-
 (deffunction input::seleccion_una_opcion (?question $?opcions)
-    (printout t ?question crlf)
-    (printout t "Las opciones son: " $?opcions)
+    (printout t ?question)
+    (printout t " Las opciones son: " $?opcions crlf)
     (bind ?response (read))
     (while (not (member$ ?response $?opcions)) do 
-        (printout t "No forma part de les opcions, porfavor eliga otra vez" crlf)
+        (printout t "La respuesta introducida no forma parte de las opciones. Por favor, elija otra vez." crlf)
         (bind ?response (read))
     )
     (return ?response)
 )
 (deffunction input::seleccion_sobre_rango (?question ?min ?max)
     (printout t ?question crlf)
-    (printout t "El valor tiene que ser mayor o igual a " ?min " y menor o igual a " ?max crlf)
+    (printout t "El valor tiene que ser mayor o igual a " ?min " y menor o igual a " ?max ": ")
     (bind ?response (read))
     (while (not (and (integerp ?response) (>= ?response ?min) (<= ?response ?max))) do
-        (printout t "Valor invalido, porfavor vuelva a introducir uno nuevo" crlf)
+        (printout t "El valor introducido no es válido. Por favor, vuelva a introducir el valor: ")
         (bind ?response (read))
     )
+    (printout t crlf)
     (return ?response)
 )
 (deffunction input::getIMC (?peso ?altura)
     (bind ?imc (/ ?peso (* ?altura ?altura)))
     (return ?imc)
 )
-(deffunction  input::inputfloat (?question ?valor)
+(deffunction input::inputfloat (?question ?valor)
     (printout t ?question crlf)
-    (printout t "Introduce el dato con mínimo un decimal separando las unidades de las decimas con un punto (Ej " ?valor ")." crlf)
+    (printout t "Introduce el dato con mínimo un decimal separando a los decimales con un punto (Ej " ?valor ")." crlf)
     (bind ?response (read))
     (while (not (floatp ?response)) do
-        (printout t "El valor introducido no es válido, porfavor introdúzcalo separando las unidades de las decimas con un punto" crlf)
+        (printout t "El valor introducido no es válido. Por favor, introduce el valor con el formato especificado." crlf)
         (bind ?response (read))
     )
+    (printout t crlf)
     (return ?response)
 )
 
@@ -258,30 +261,30 @@
     (bind ?IMC (getIMC ?peso ?estatura))
     (bind ?valueIMC (valueOfIMC ?IMC))
     ;preguntamos escalas
-    (bind ?fuerza (seleccion_una_opcion "¿Cómo describirías con estas opciones tu fuerza? " Baja Media Alta))
-    (bind ?equilibrio (seleccion_una_opcion "¿Cómo describirías con estas opciones tu equilibrio? " Baja Media Alta))
-    (bind ?resistencia (seleccion_una_opcion "¿Cómo describirías con estas opciones tu resistencia? " Baja Media Alta))
-    (bind ?flexibilidad (seleccion_una_opcion "¿Cómo describirías con estas opciones tu flexibilidad? " Baja Media Alta))
+    (bind ?fuerza (seleccion_una_opcion "¿Cómo describirías con estas opciones tu fuerza?" Baja Media Alta))
+    (bind ?equilibrio (seleccion_una_opcion "¿Cómo describirías con estas opciones tu equilibrio?" Baja Media Alta))
+    (bind ?resistencia (seleccion_una_opcion "¿Cómo describirías con estas opciones tu resistencia?" Baja Media Alta))
+    (bind ?flexibilidad (seleccion_una_opcion "¿Cómo describirías con estas opciones tu flexibilidad?" Baja Media Alta))
     ; Preguntamos si tiene algun tipo de enfermedad
-    (bind $?lista (obtenir_tipo_enfermedad Cardiovascular Osea Muscular Respiratoria Hormonal Nerviosa))
+    (bind $?lista (obtener_tipo_enfermedad Cardiovascular Osea Muscular Respiratoria Hormonal Nerviosa))
     
     (bind $?enfermedades (create$))
     (progn$ (?tipo $?lista)
         (bind $?list (create$))
-        (bind $?list (obtenir_enfermetats_tipos ?tipo Temprano Medio Avanzado))
+        (bind $?list (obtener_enfermedades_tipos ?tipo Temprano Medio Avanzado))
         (progn$(?instance $?list)
             (bind $?enfermedades (insert$ $?enfermedades (+(length$ $?enfermedades) 1) ?instance))
         )
     )
-    ;preguntamos los antecente
-    (bind $?lista2 (obtenir_tipo_Antecentes Brazos Piernas Cuello Cabeza Tronco))
+    ; Preguntamos los antecentes
+    (bind $?lista2 (obtener_tipo_Antecentes Brazos Piernas Cuello Cabeza Tronco))
     (progn$(?instance $?lista2)
             (bind $?enfermedades (insert$ $?enfermedades (+(length$ $?enfermedades) 1) (instanciar_Antecendente ?instance)))
     )
    
 
-    (bind ?duracion_rutina (seleccion_sobre_rango "¿De cuanto dias desea la duracion de la rutina?" 3 7) )
-    (bind ?duracion_sesion (seleccion_una_opcion "¿De cuantos minutos desea la sesion de cada sesion que compone la rutina?" 30 60 90))
+    (bind ?duracion_rutina (seleccion_sobre_rango "¿De cuántos días desea la duración de la rutina?" 3 7) )
+    (bind ?duracion_sesion (seleccion_una_opcion "¿De cuántos minutos desea la sesión de cada sesión que compone la rutina?" 30 60 90))
 
     ;(printout t "La edad es: " ?edad crlf)
     ;(printout t "instancias: " $?enfermedades crlf)
@@ -740,7 +743,7 @@
 	(nEquilibrio ?nEquilibrio)
 	?paciente <- (object (is-a Persona))
 	=>
-	(printout t "Empezamos la creacion de la rutina..." crlf)
+	(printout t "Empezamos la creación de la rutina..." crlf)
 	
 	;; Obtenemos los parámetros de nuestro paciente
 	(bind ?duracion_rutina (send ?paciente get-Duracion_dias))
@@ -784,8 +787,8 @@
     (printout t "   Hacerlo con una intensidad " ?intensidad "." crlf)
     (printout t "   Principalmente, estarás trabajando la zona de " ?zonaCuerpo "." crlf)
     (if (member$ "Nada" $?objetos) then
-        (printout t "   No necesitarás ningún tipo de objeto para realizar este ejercicio." crlf)
-        else (printout t "   Para realizar el ejercicio necesitarás los siguientes objetos:")
+        (printout t "   No necesitarás ningún tipo de objeto para realizar esta acción." crlf)
+        else (printout t "   Para realizar esta acción necesitarás los siguientes objetos:")
         (progn$ (?obj $?objetos)
             (printout t " " ?obj)
         )
@@ -802,7 +805,7 @@
 (deffunction output::printActividad (?actividad)
     (printAccion ?actividad)
     (bind ?tiempo_actividad (send ?actividad get-Tiempo_Actividad))
-    (printout t "   Es recomendable hacer este ejercicio por un período de " ?tiempo_actividad " minutos" crlf)
+    (printout t "   Es recomendable hacer esta actividad por un período de " ?tiempo_actividad " minutos." crlf)
 )
 
 (defrule output::mostrarSesion 
