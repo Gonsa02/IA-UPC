@@ -167,8 +167,8 @@
     (return $?return_list)
 )
 
-(deffunction input::obtener_tipo_Antecentes ($?list_values)
-    (printout t "¿Tiene algún tipo de Antecente?" crlf)
+(deffunction input::obtener_tipo_Antecedentes ($?list_values)
+    (printout t "¿Tiene algún tipo de Antecedente?" crlf)
     (printout t "Estos son los tipos: " $?list_values crlf)
     (printout t "Para acabar escriba FIN." crlf)
     (bind ?response (read))
@@ -275,8 +275,8 @@
             (bind $?enfermedades (insert$ $?enfermedades (+(length$ $?enfermedades) 1) ?instance))
         )
     )
-    ; Preguntamos los antecentes
-    (bind $?lista2 (obtener_tipo_Antecentes Brazos Piernas Cuello Cabeza Tronco))
+    ; Preguntamos los antecedentes
+    (bind $?lista2 (obtener_tipo_Antecedentes Brazos Piernas Cuello Cabeza Tronco))
     (progn$(?instance $?lista2)
             (bind $?enfermedades (insert$ $?enfermedades (+(length$ $?enfermedades) 1) (instanciar_Antecendente ?instance)))
     )
