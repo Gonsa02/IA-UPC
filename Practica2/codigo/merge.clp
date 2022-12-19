@@ -364,7 +364,6 @@
 	=> 
 	(printout t "Ahora te haremos unas preguntas para poder generar la rutina que mejor se adapte a ti." crlf crlf)
 	(instanciacion_persona)
-	(printout t "Pasamos a la fase de Descarte." crlf crlf)
 	(focus descarte)
 )
 
@@ -525,7 +524,7 @@
     (declare (salience 10))
     (object (is-a Enfermedad) (Afectacion ?a))
     ?inst <- (object (is-a Accion) (Tipo_Objetivo ?o) (Intensidad ?i))
-    (test (and (eq ?a Nerviosa) (eq ?o Equilibrio) (neq Intensidad Baja)))
+    (test (and (eq ?a Nerviosa) (eq ?o Equilibrio) (neq ?i Baja)))
     => (send ?inst delete)
 )
 
@@ -736,7 +735,7 @@
 	(bind $?sesion (create$))
 	(bind ?tiempo_sesion 0)
 	(bind ?continue TRUE)
-	
+	;; Intenta crear la sesión con ejercicios que no se repiten entre sesiones
 	(while (and (< ?tiempo_sesion ?duracion_sesion) (eq ?continue TRUE)) do
 		(bind $?aux (find-instance ((?ej Ejercicio)) (and (eq ?ej:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?ej:Tiempo_Ejercicio) ?duracion_sesion) (not (es_repetido ?ej:nombre $?sesion)) (not (any-instancep ((?ses Sesion)) (eq TRUE (es_repetido ?ej:nombre ?ses:Es_un_conjunto_de)))) )))
 		(bind ?continue (> (length$ $?aux) 0))
@@ -746,8 +745,22 @@
 			(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux2 get-Tiempo_Ejercicio)))
 		)
 	)
-	(if (> ?tiempo_sesion 0) then
-	(make-instance (gensym) of Sesion (Es_un_conjunto_de $?sesion) (Tipo_Objetivo ?objetivo) (Tiempo ?tiempo_sesion))
+	
+	(bind ?continue TRUE)
+	(if (> ?tiempo_sesion 29) then
+		(make-instance (gensym) of Sesion (Es_un_conjunto_de $?sesion) (Tipo_Objetivo ?objetivo) (Tiempo ?tiempo_sesion))
+	;; No hemos podido crear la sesión sin usar repetidos, así que ahora quitamos esta restricción
+	else
+		(while (and (< ?tiempo_sesion ?duracion_sesion) (eq ?continue TRUE)) do
+			(bind $?aux (find-instance ((?ej Ejercicio)) (and (eq ?ej:Tipo_Objetivo ?objetivo) (<= (+ ?tiempo_sesion ?ej:Tiempo_Ejercicio) ?duracion_sesion) (not (es_repetido ?ej:nombre $?sesion)))))
+			(bind ?continue (> (length$ $?aux) 0))
+			(if (eq ?continue TRUE) then 
+				(bind ?aux2 (nth$ 1 $?aux))
+				(bind $?sesion (insert$ $?sesion (+ (length$ $?sesion) 1) ?aux2))
+				(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux2 get-Tiempo_Ejercicio)))
+			)
+		)
+		(make-instance (gensym) of Sesion (Es_un_conjunto_de $?sesion) (Tipo_Objetivo ?objetivo) (Tiempo ?tiempo_sesion))
 	)
 )
 
@@ -791,7 +804,6 @@
 	?nEquilibrio <- (objetivo (nombre "Equilibrio")(value ?z))
 	?enfermedad <- (object (is-a Enfermedad) )
 	=>
-	(printout t "Aqui por cojones entra" crlf)
 	(bind ?tipo (send ?enfermedad get-Afectacion))
 	(switch ?tipo
 		(case Cardiovascular then (modify ?nFlexibilidad (value (+ ?x 1))) (modify ?nEquilibrio (value (+ ?z 1))))
