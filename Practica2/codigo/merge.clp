@@ -613,6 +613,70 @@
 )
 
 
+(defrule descarte::fuerza_intensidad_alta_con_base_media "Las personas que tienen un nivel medio de fuerza no pueden realizar ejercicios de alta intensidad de fuerza"
+    (declare (salience 10))
+    (object (is-a Persona) (Fuerza_Muscular ?f))
+    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
+    (test (and (eq ?f Media) (eq ?i Alta))
+    => (send ?inst delete)
+)
+
+(defrule descarte::fuerza_intensidad_alta_y_media_con_base_baja "Las personas que tienen un nivel bajo de fuerza no pueden realizar ejercicios de alta y media intensidad de fuerza"
+    (declare (salience 10))
+    (object (is-a Persona) (Fuerza_Muscular ?f))
+    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
+    (test (and (eq ?f Baja) (or (eq ?i Alta) (eq ?i Media))))
+    => (send ?inst delete)
+)
+
+(defrule descarte::resistencia_intensidad_alta_con_base_media "Las personas que tienen un nivel medio de resistencia no pueden realizar ejercicios de alta intensidad de resistencia"
+    (declare (salience 10))
+    (object (is-a Persona) (Resistencia ?f))
+    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
+    (test (and (eq ?f Media) (eq ?i Alta))
+    => (send ?inst delete)
+)
+
+(defrule descarte::resistencia_intensidad_alta_y_media_con_base_baja "Las personas que tienen un nivel bajo de resistencia no pueden realizar ejercicios de alta y media intensidad de resistencia"
+    (declare (salience 10))
+    (object (is-a Persona) (Resistencia ?f))
+    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
+    (test (and (eq ?f Baja) (or (eq ?i Alta) (eq ?i Media))))
+    => (send ?inst delete)
+)
+
+(defrule descarte::flexibilidad_intensidad_alta_con_base_media "Las personas que tienen un nivel medio de flexibilidad no pueden realizar ejercicios de alta intensidad de flexibilidad"
+    (declare (salience 10))
+    (object (is-a Persona) (Flexbilidad ?f))
+    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
+    (test (and (eq ?f Media) (eq ?i Alta))
+    => (send ?inst delete)
+)
+
+(defrule descarte::flexibilidad_intensidad_alta_y_media_con_base_baja "Las personas que tienen un nivel bajo de flexibilidad no pueden realizar ejercicios de alta y media intensidad de flexibilidad"
+    (declare (salience 10))
+    (object (is-a Persona) (Flexbilidad ?f))
+    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
+    (test (and (eq ?f Baja) (or (eq ?i Alta) (eq ?i Media))))
+    => (send ?inst delete)
+)
+
+(defrule descarte::equilibrio_intensidad_alta_con_base_media "Las personas que tienen un nivel medio de equilibrio no pueden realizar ejercicios de alta intensidad de equilibrio"
+    (declare (salience 10))
+    (object (is-a Persona) (Equilibrio ?f))
+    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
+    (test (and (eq ?f Media) (eq ?i Alta))
+    => (send ?inst delete)
+)
+
+(defrule descarte::equilibrio_intensidad_alta_y_media_con_base_baja "Las personas que tienen un nivel bajo de equilibrio no pueden realizar ejercicios de alta y media intensidad de equilibrio"
+    (declare (salience 10))
+    (object (is-a Persona) (Equilibrio ?f))
+    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
+    (test (and (eq ?f Baja) (or (eq ?i Alta) (eq ?i Media))))
+    => (send ?inst delete)
+)
+
 (defrule descarte::cambio_sintesis "Pasamos de descarte a síntesis cuando ya no hay nada más que descartar"
 	(declare (salience -20))
 	=>
