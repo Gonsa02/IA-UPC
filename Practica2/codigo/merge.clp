@@ -143,7 +143,7 @@
 (deffunction input::obtener_edad ()
     (printout t "Que edad tienes? ")
     (bind ?edad (read))
-    (while (< ?edad 0) do
+    (while (or (< ?edad 60)  (> ?edad 130)) do
             (printout t "La edad introducida no es válida. Por favor, introduzca una edad válida: ") 
             (bind ?edad (read))
     )
@@ -233,11 +233,11 @@
     (bind ?imc (/ ?peso (* ?altura ?altura)))
     (return ?imc)
 )
-(deffunction input::inputfloat (?question ?valor)
+(deffunction input::inputfloat (?question ?valor ?max)
     (printout t ?question crlf)
     (printout t "Introduce el dato con mínimo un decimal separando a los decimales con un punto (Ej " ?valor ")." crlf)
     (bind ?response (read))
-    (while (not (floatp ?response)) do
+    (while (or (not (floatp ?response)) (> ?response ?max)) do
         (printout t "El valor introducido no es válido. Por favor, introduce el valor con el formato especificado." crlf)
         (bind ?response (read))
     )
@@ -256,8 +256,8 @@
 (deffunction input::instanciacion_persona ()
     ; preguntamos edad
     (bind ?edad (obtener_edad))
-    (bind ?peso (inputfloat "¿Cuál es su peso en Kg?" 75.0))
-    (bind ?estatura (inputfloat "¿Cuál es su estatura en Metros?" 1.8))
+    (bind ?peso (inputfloat "¿Cuál es su peso en Kg?" 75.0 500.0))
+    (bind ?estatura (inputfloat "¿Cuál es su estatura en Metros?" 1.8 2.75))
     (bind ?IMC (getIMC ?peso ?estatura))
     (bind ?valueIMC (valueOfIMC ?IMC))
     ;preguntamos escalas
@@ -334,7 +334,7 @@
     (instanciar_ejercicio "Elevaciones boca abajo" Fuerza Cuello "Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio "Elevaciones boca arriba" Fuerza Cuello "Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio "Ejercicio isométrico hacia los lados" Fuerza Cuello "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Esfera de reloj" Equilibrio Brazos "Nada" 3 ?tiempos_ejercicio)
+    (instanciar_ejercicio "Esfera del reloj" Equilibrio Brazos "Nada" 3 ?tiempos_ejercicio)
     (instanciar_ejercicio "Levantamiento de brazo" Equilibrio Brazos "Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio "Estiramiento lumbar" Flexibilidad Tronco "Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio "Estiramiento isquiotibial" Flexibilidad Piernas "Nada" 3 $?tiempos_ejercicio)
@@ -346,17 +346,18 @@
     (instanciar_ejercicio "Patada de glúteos" Flexibilidad Piernas "Nada" 3 $?tiempos_ejercicio)
     
     ;; Instanciación de todas las actividades
-    (instanciar_actividad "Caminar" Resistencia Piernas "Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Aeróbic acúatico" Resistencia Brazos "Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Pilates" Resistencia Tronco "Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Ciclismo" Resistencia Piernas "Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Surf" Equilibrio Tronco "Tabla de surf" 3 $?tiempos_actividad)
-    (instanciar_actividad "Natación" Resistencia Tronco "Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Yoga" Flexibilidad Tronco "Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Senderismo" Resistencia Piernas "Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Petanca" Fuerza Brazos "Bolas de petanca" 3 $?tiempos_actividad)
-    (instanciar_actividad "Baile" Equilibrio Tronco "Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Tai-chi" Flexibilidad Tronco "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Caminar" 			Resistencia		Piernas	"Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Aeróbic acúatico" 	Resistencia 	Brazos 	"Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Pilates" 			Resistencia 	Tronco 	"Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Ciclismo" 			Resistencia 	Piernas "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Surf" 				Equilibrio 		Tronco 	"Tabla de surf" 3 $?tiempos_actividad)
+    (instanciar_actividad "Natación" 			Resistencia 	Tronco 	"Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Yoga" 				Flexibilidad 	Tronco 	"Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Senderismo" 			Resistencia 	Piernas "Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Petanca" 			Fuerza 			Brazos 	"Bolas de petanca" 3 $?tiempos_actividad)
+    (instanciar_actividad "Baile" 				Equilibrio 		Tronco 	"Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Tai-chi" 			Flexibilidad 	Tronco 	"Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad "Bolos"				Equilibrio		Tronco	"Nada" 3 $?tiempos_actividad)
 )
 
 (defrule input::creacion_persona
@@ -611,6 +612,7 @@
     => (send ?inst delete)
 )
 
+
 (defrule descarte::cambio_sintesis "Pasamos de descarte a síntesis cuando ya no hay nada más que descartar"
 	(declare (salience -20))
 	=>
@@ -681,8 +683,9 @@
 			(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux2 get-Tiempo_Ejercicio)))
 		)
 	)
-	
+	(if (> ?tiempo_sesion 0) then
 	(make-instance (gensym) of Sesion (Es_un_conjunto_de $?sesion) (Tipo_Objetivo ?objetivo) (Tiempo ?tiempo_sesion))
+	)
 )
 
 (deffunction sintesis::crear_sesion_actividades (?duracion_sesion ?objetivo)
@@ -716,13 +719,14 @@
 
 (defrule sintesis::tratar_enfermedad
 	(declare (salience 20))
-	(nFuerza ?nFuerza)
-	(nFlexibilidad ?nFlexibilidad)
-	(nResistencia ?nResistencia)
-	(nEquilibrio ?nEquilibrio)
+	?nFuerza <- (nFuerza)
+	?nFlexibilidad <- (nFlexibilidad)
+	?nResistencia <- (nResistencia)
+	?nEquilibrio <- (nEquilibrio)
 	?enfermedad <- (object (is-a Enfermedad))
 	=>
 	(bind ?tipo (send ?enfermedad get-Afectacion))
+	(printout t "HOLA" crlf)
 	(switch ?tipo
 		(case Cardiovascular then (modify ?nFlexibilidad (+ ?nFlexibilidad 1)) (modify ?nEquilibrio (+ ?nEquilibrio 1)))
 		(case Osea then (modify ?nResistencia (+ ?nResistencia 1)) (modify ?nFlexibilidad (+ ?nFlexibilidad 1)) (modify ?nEquilibrio (+ ?nEquilibrio 1)))
@@ -731,6 +735,7 @@
 		(case Hormonal then (modify ?nFuerza (+ ?nFuerza 1)) (modify ?nResistencia (+ ?nResistencia 1)))
 		(case Nerviosa then (modify ?nEquilibrio (+ ?nEquilibrio 1)))
 	)
+	(printout t "que grande messi" crlf)
 )
 
 (defrule sintesis::crear_rutina
@@ -799,12 +804,22 @@
     (printout t "   Es recomendable hacer esta actividad por un período de " ?tiempo_actividad " minutos." crlf)
 )
 
+(defrule output::noHaySesiones
+	(declare (salience 5))
+	(existenSesiones ?v)
+	(test (eq ?v FALSE))
+	=>
+	(printout t "ERROR: Debido a su condición física, no se ha podido generar un programa de ejericios." crlf)
+)
+
 (defrule output::mostrarSesion 
     (declare (salience 10))
+ 	?existenSesiones <- (existenSesiones)
     ?sesion <- (object (is-a Sesion))
     =>
     (bind ?objetivo (send ?sesion get-Tipo_Objetivo))
     (bind ?tiempo (send ?sesion get-Tiempo))
+    (modify ?existenSesiones (TRUE))
     
     (printout t crlf) (printout t "-------------------------------------------------------------------------------------" crlf)
     (printout t "Harás esta sesión con el objetivo principal de conseguir " ?objetivo ". (Tiempo: " ?tiempo " min)" crlf)
@@ -818,4 +833,9 @@
     )
     (printout t crlf)
 )
-	
+
+(defrule output::setup
+	(declare (salience 20))
+	=>
+	(assert (existenSesiones FALSE))
+)

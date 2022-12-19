@@ -202,6 +202,13 @@
                         ] .
 
 
+###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Tiempo
+:Tiempo rdf:type owl:DatatypeProperty ;
+        rdfs:subPropertyOf owl:topDataProperty ;
+        rdfs:domain :Sesion ;
+        rdfs:range xsd:int .
+
+
 ###  http://www.semanticweb.org/jeremy/ontologies/2022/10/ontologia-inicial#Tiempo_Actividad
 :Tiempo_Actividad rdf:type owl:DatatypeProperty ,
                            owl:FunctionalProperty ;
