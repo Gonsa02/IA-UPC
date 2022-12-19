@@ -615,15 +615,15 @@
 (defrule descarte::fuerza_intensidad_alta_con_base_media "Las personas que tienen un nivel medio de fuerza no pueden realizar ejercicios de alta intensidad de fuerza"
     (declare (salience 10))
     (object (is-a Persona) (Fuerza_Muscular ?f))
-    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
-    (test (and (eq ?f Media) (eq ?i Alta))
+    ?inst <- (object (is-a Ejercicio) (Intensidad ?i))
+    (test (and (eq ?f Media) (eq ?i Alta)))
     => (send ?inst delete)
 )
 
 (defrule descarte::fuerza_intensidad_alta_y_media_con_base_baja "Las personas que tienen un nivel bajo de fuerza no pueden realizar ejercicios de alta y media intensidad de fuerza"
     (declare (salience 10))
     (object (is-a Persona) (Fuerza_Muscular ?f))
-    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
+    ?inst <- (object (is-a Ejercicio) (Intensidad ?i))
     (test (and (eq ?f Baja) (or (eq ?i Alta) (eq ?i Media))))
     => (send ?inst delete)
 )
@@ -631,31 +631,31 @@
 (defrule descarte::resistencia_intensidad_alta_con_base_media "Las personas que tienen un nivel medio de resistencia no pueden realizar ejercicios de alta intensidad de resistencia"
     (declare (salience 10))
     (object (is-a Persona) (Resistencia ?f))
-    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
-    (test (and (eq ?f Media) (eq ?i Alta))
+    ?inst <- (object (is-a Ejercicio) (Intensidad ?i))
+    (test (and (eq ?f Media) (eq ?i Alta)))
     => (send ?inst delete)
 )
 
 (defrule descarte::resistencia_intensidad_alta_y_media_con_base_baja "Las personas que tienen un nivel bajo de resistencia no pueden realizar ejercicios de alta y media intensidad de resistencia"
     (declare (salience 10))
     (object (is-a Persona) (Resistencia ?f))
-    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
+    ?inst <- (object (is-a Ejercicio) (Intensidad ?i))
     (test (and (eq ?f Baja) (or (eq ?i Alta) (eq ?i Media))))
     => (send ?inst delete)
 )
 
 (defrule descarte::flexibilidad_intensidad_alta_con_base_media "Las personas que tienen un nivel medio de flexibilidad no pueden realizar ejercicios de alta intensidad de flexibilidad"
     (declare (salience 10))
-    (object (is-a Persona) (Flexbilidad ?f))
-    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
-    (test (and (eq ?f Media) (eq ?i Alta))
+    (object (is-a Persona) (Flexibilidad ?f))
+    ?inst <- (object (is-a Ejercicio) (Intensidad ?i))
+    (test (and (eq ?f Media) (eq ?i Alta)))
     => (send ?inst delete)
 )
 
 (defrule descarte::flexibilidad_intensidad_alta_y_media_con_base_baja "Las personas que tienen un nivel bajo de flexibilidad no pueden realizar ejercicios de alta y media intensidad de flexibilidad"
     (declare (salience 10))
-    (object (is-a Persona) (Flexbilidad ?f))
-    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
+    (object (is-a Persona) (Flexibilidad ?f))
+    ?inst <- (object (is-a Ejercicio) (Intensidad ?i))
     (test (and (eq ?f Baja) (or (eq ?i Alta) (eq ?i Media))))
     => (send ?inst delete)
 )
@@ -663,15 +663,15 @@
 (defrule descarte::equilibrio_intensidad_alta_con_base_media "Las personas que tienen un nivel medio de equilibrio no pueden realizar ejercicios de alta intensidad de equilibrio"
     (declare (salience 10))
     (object (is-a Persona) (Equilibrio ?f))
-    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
-    (test (and (eq ?f Media) (eq ?i Alta))
+    ?inst <- (object (is-a Ejercicio) (Intensidad ?i))
+    (test (and (eq ?f Media) (eq ?i Alta)))
     => (send ?inst delete)
 )
 
 (defrule descarte::equilibrio_intensidad_alta_y_media_con_base_baja "Las personas que tienen un nivel bajo de equilibrio no pueden realizar ejercicios de alta y media intensidad de equilibrio"
     (declare (salience 10))
     (object (is-a Persona) (Equilibrio ?f))
-    ?inst <- (object (is-a Ejercicio) (intensidad ?i))
+    ?inst <- (object (is-a Ejercicio) (Intensidad ?i))
     (test (and (eq ?f Baja) (or (eq ?i Alta) (eq ?i Media))))
     => (send ?inst delete)
 )
@@ -789,7 +789,6 @@
 	?enfermedad <- (object (is-a Enfermedad))
 	=>
 	(bind ?tipo (send ?enfermedad get-Afectacion))
-	(printout t "HOLA" crlf)
 	(switch ?tipo
 		(case Cardiovascular then (modify ?nFlexibilidad (+ ?nFlexibilidad 1)) (modify ?nEquilibrio (+ ?nEquilibrio 1)))
 		(case Osea then (modify ?nResistencia (+ ?nResistencia 1)) (modify ?nFlexibilidad (+ ?nFlexibilidad 1)) (modify ?nEquilibrio (+ ?nEquilibrio 1)))
@@ -798,7 +797,6 @@
 		(case Hormonal then (modify ?nFuerza (+ ?nFuerza 1)) (modify ?nResistencia (+ ?nResistencia 1)))
 		(case Nerviosa then (modify ?nEquilibrio (+ ?nEquilibrio 1)))
 	)
-	(printout t "que grande messi" crlf)
 )
 
 (defrule sintesis::crear_rutina
