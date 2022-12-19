@@ -131,7 +131,6 @@
 ;;; Modulo para construir la solución
 (defmodule sintesis
 	(import MAIN ?ALL)
-	(import input ?ALL)
 	(export ?ALL)
 )
 ;; Módulo para imprimir la solución
@@ -141,7 +140,7 @@
 )
 
 (deffunction input::obtener_edad ()
-    (printout t "Que edad tienes? ")
+    (printout t "¿Qué edad tiene? ")
     (bind ?edad (read))
     (while (or (< ?edad 60)  (> ?edad 130)) do
             (printout t "La edad introducida no es válida. Por favor, introduzca una edad válida: ") 
@@ -153,9 +152,9 @@
 
 (deffunction input::obtener_tipo_enfermedad ($?list_values)
 	(printout t crlf)
-    (printout t "Tienes algún tipo de Enfermedad?" crlf)
+    (printout t "¿Tiene algún tipo de Enfermedad?" crlf)
     (printout t "Estos son los tipos: " $?list_values crlf)
-    (printout t "Para acabar escribe FIN." crlf)
+    (printout t "Para acabar escriba FIN." crlf)
     (bind ?response (read))
     (bind $?return_list (create$))
     (while (not (eq ?response FIN)) do
@@ -169,9 +168,9 @@
 )
 
 (deffunction input::obtener_tipo_Antecentes ($?list_values)
-    (printout t "Tienes algún tipo de Antecente?" crlf)
+    (printout t "¿Tiene algún tipo de Antecente?" crlf)
     (printout t "Estos son los tipos: " $?list_values crlf)
-    (printout t "Para acabar escribe FIN." crlf)
+    (printout t "Para acabar escriba FIN." crlf)
     (bind ?response (read))
     (bind $?return_list (create$))
     (while (not (eq ?response FIN)) do
@@ -189,12 +188,12 @@
 )
 
 (deffunction input::obtener_enfermedades_tipos(?tipo $?nivel)
-    (printout t "Qué enfermedad del tipo " ?tipo " tienes?" crlf)
-    (printout t "Para acabar escribe FIN." crlf)
+    (printout t "¿Qué enfermedad del tipo " ?tipo " tiene?" crlf)
+    (printout t "Para acabar escriba FIN." crlf)
     (bind ?response (read))
     (bind $?return_list (create$))
     (while (not (eq ?response FIN))do
-        (printout t "Qué nivel tienes de la enfermedad " ?response "? Estas son las opciones: " $?nivel crlf)
+        (printout t "¿Qué nivel tiene de la enfermedad " ?response "? Estas son las opciones: " $?nivel crlf)
         (bind ?level (read))
         (while (not (member$ ?level $?nivel)) do
          (printout t "El nivel introducido no es válido. Por favor, vuelva a introducir el nivel: ")
@@ -202,7 +201,7 @@
         )
         (bind ?instancia (make-instance (gensym) of Enfermedad (nombre ?response)(Afectacion ?tipo) (Nivel ?level)))
         (bind $?return_list (insert$ $?return_list (+ (length$ $?return_list) 1) ?instancia))
-        (printout t "Introduce más enfermedades que puedas tener del tipo " ?tipo " o puedes parar escribiendo FIN. " crlf)
+        (printout t "Introduzca más enfermedades que pueda tener del tipo " ?tipo " o pare escribiendo FIN." crlf)
         (bind ?response (read))
     )
     (return $?return_list)
@@ -233,12 +232,12 @@
     (bind ?imc (/ ?peso (* ?altura ?altura)))
     (return ?imc)
 )
-(deffunction input::inputfloat (?question ?valor ?max)
+(deffunction input::inputfloat (?question ?valor ?min ?max)
     (printout t ?question crlf)
-    (printout t "Introduce el dato con mínimo un decimal separando a los decimales con un punto (Ej " ?valor ")." crlf)
+    (printout t "Introduzca el dato con mínimo un decimal separando a los decimales con un punto (Ej " ?valor ")." crlf)
     (bind ?response (read))
-    (while (or (not (floatp ?response)) (> ?response ?max)) do
-        (printout t "El valor introducido no es válido. Por favor, introduce el valor con el formato especificado." crlf)
+    (while (or (not (floatp ?response)) (> ?response ?max) (<= ?response ?min)) do
+        (printout t "El valor introducido no es válido. Por favor, introduzca el valor con el formato especificado." crlf)
         (bind ?response (read))
     )
     (printout t crlf)
@@ -256,15 +255,15 @@
 (deffunction input::instanciacion_persona ()
     ; preguntamos edad
     (bind ?edad (obtener_edad))
-    (bind ?peso (inputfloat "¿Cuál es su peso en Kg?" 75.0 500.0))
-    (bind ?estatura (inputfloat "¿Cuál es su estatura en Metros?" 1.8 2.75))
+    (bind ?peso (inputfloat "¿Cuál es su peso en Kg?" 75.0 0.0 500.0))
+    (bind ?estatura (inputfloat "¿Cuál es su estatura en Metros?" 1.8 0.0 2.75))
     (bind ?IMC (getIMC ?peso ?estatura))
     (bind ?valueIMC (valueOfIMC ?IMC))
     ;preguntamos escalas
-    (bind ?fuerza (seleccion_una_opcion "¿Cómo describirías con estas opciones tu fuerza?" Baja Media Alta))
-    (bind ?equilibrio (seleccion_una_opcion "¿Cómo describirías con estas opciones tu equilibrio?" Baja Media Alta))
-    (bind ?resistencia (seleccion_una_opcion "¿Cómo describirías con estas opciones tu resistencia?" Baja Media Alta))
-    (bind ?flexibilidad (seleccion_una_opcion "¿Cómo describirías con estas opciones tu flexibilidad?" Baja Media Alta))
+    (bind ?fuerza (seleccion_una_opcion "¿Cómo describiría con estas opciones su Fuerza?" Baja Media Alta))
+    (bind ?equilibrio (seleccion_una_opcion "¿Cómo describiría con estas opciones su Equilibrio?" Baja Media Alta))
+    (bind ?resistencia (seleccion_una_opcion "¿Cómo describiría con estas opciones su Resistencia?" Baja Media Alta))
+    (bind ?flexibilidad (seleccion_una_opcion "¿Cómo describiría con estas opciones su Flexibilidad?" Baja Media Alta))
     ; Preguntamos si tiene algun tipo de enfermedad
     (bind $?lista (obtener_tipo_enfermedad Cardiovascular Osea Muscular Respiratoria Hormonal Nerviosa))
     
@@ -284,7 +283,7 @@
    
 
     (bind ?duracion_rutina (seleccion_sobre_rango "¿De cuántos días desea la duración de la rutina?" 3 7) )
-    (bind ?duracion_sesion (seleccion_una_opcion "¿De cuántos minutos desea la sesión de cada sesión que compone la rutina?" 30 60 90))
+    (bind ?duracion_sesion (seleccion_una_opcion "¿De cuántos minutos desea la duración de cada sesión que compone la rutina?" 30 60 90))
 
     (make-instance Paciente of Persona (Padece $?enfermedades)(IMC ?valueIMC)(Duracion_dias ?duracion_rutina)(Equilibrio ?equilibrio) (Flexibilidad ?flexibilidad)(Fuerza_Muscular ?fuerza) (Resistencia ?resistencia) (duracion_sesion ?duracion_sesion) (edad ?edad))
 )
@@ -313,51 +312,51 @@
     (bind $?tiempos_actividad (create$ Alta Media Baja 90 60 30))
 	
 	;; Instanciación de todos los ejercicios
-    (instanciar_ejercicio "Burpees" Resistencia Brazos "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Escaleras" Resistencia Piernas "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Bicicleta" Resistencia Piernas "Bicicleta estatica" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Press Banca" Fuerza Brazos "Mancuernas" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Press con mancuernas" Fuerza Brazos "Mancuernas" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Press de hombros" Fuerza Brazos "Mancuernas" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Remo" Resistencia Tronco "Maquina de remo" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Saltar a la cuerda" Resistencia Piernas "Cuerda" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Sentadillas" Resistencia Brazos "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Zancada con salto" Resistencia Piernas "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Sentadillas goblet" Fuerza Piernas "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Peso muerto" Fuerza Piernas "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Flexiones sobre pared" Fuerza Tronco "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Sentadillas goblet" Fuerza Piernas "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Curl de martillo" Fuerza Brazos "Mancuernas" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Pata coja" Equilibrio Piernas "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Marcha en línea" Equilibrio Piernas "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Elevaciones laterales" Equilibrio Piernas "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Elevaciones boca abajo" Fuerza Cuello "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Elevaciones boca arriba" Fuerza Cuello "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Ejercicio isométrico hacia los lados" Fuerza Cuello "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Esfera del reloj" Equilibrio Brazos "Nada" 3 ?tiempos_ejercicio)
-    (instanciar_ejercicio "Levantamiento de brazo" Equilibrio Brazos "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Estiramiento lumbar" Flexibilidad Tronco "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Estiramiento isquiotibial" Flexibilidad Piernas "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Estiramiento frontal" Flexibilidad Piernas "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Zancada con rotación" Flexibilidad Tronco "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Postura del gato" Flexibilidad Tronco "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Puente con pelota" Flexibilidad Tronco "Pelota medicinal" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Flexiones de bíceps" Flexibilidad Brazos "Bandas elásticas" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio "Patada de glúteos" Flexibilidad Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Burpees" 								Resistencia 	Brazos 	"Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Escaleras" 							Resistencia 	Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Bicicleta" 							Resistencia 	Piernas "Bicicleta estatica" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Press Banca" 							Fuerza 			Brazos 	"Mancuernas" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Press con mancuernas" 					Fuerza 			Brazos 	"Mancuernas" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Press de hombros" 						Fuerza 			Brazos 	"Mancuernas" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Remo" 									Resistencia 	Tronco 	"Maquina de remo" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Saltar a la cuerda" 					Resistencia 	Piernas "Cuerda" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio	"Sentadillas" 							Resistencia 	Brazos 	"Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio	"Zancada con salto" 					Resistencia 	Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Sentadillas goblet" 					Fuerza 			Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Peso muerto" 							Fuerza 			Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Flexiones sobre pared" 				Fuerza 			Tronco 	"Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Sentadillas goblet" 					Fuerza 			Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Curl de martillo" 						Fuerza 			Brazos 	"Mancuernas" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Pata coja" 							Equilibrio 		Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Marcha en línea" 						Equilibrio 		Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Elevaciones laterales" 				Equilibrio 		Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Elevaciones boca abajo" 				Fuerza 			Cuello 	"Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Elevaciones boca arriba" 				Fuerza 			Cuello 	"Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Ejercicio isométrico hacia los lados" 	Fuerza 			Cuello 	"Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Esfera del reloj" 						Equilibrio 		Brazos 	"Nada" 3 ?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Levantamiento de brazo" 				Equilibrio 		Brazos 	"Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Estiramiento lumbar" 					Flexibilidad 	Tronco 	"Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Estiramiento isquiotibial"				Flexibilidad 	Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Estiramiento frontal" 					Flexibilidad 	Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Zancada con rotación" 					Flexibilidad 	Tronco 	"Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Postura del gato" 						Flexibilidad 	Tronco 	"Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Puente con pelota" 					Flexibilidad 	Tronco 	"Pelota medicinal" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Flexiones de bíceps" 					Flexibilidad 	Brazos 	"Bandas elásticas" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Patada de glúteos" 					Flexibilidad 	Piernas "Nada" 3 $?tiempos_ejercicio)
     
     ;; Instanciación de todas las actividades
-    (instanciar_actividad "Caminar" 			Resistencia		Piernas	"Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Aeróbic acúatico" 	Resistencia 	Brazos 	"Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Pilates" 			Resistencia 	Tronco 	"Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Ciclismo" 			Resistencia 	Piernas "Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Surf" 				Equilibrio 		Tronco 	"Tabla de surf" 3 $?tiempos_actividad)
-    (instanciar_actividad "Natación" 			Resistencia 	Tronco 	"Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Yoga" 				Flexibilidad 	Tronco 	"Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Senderismo" 			Resistencia 	Piernas "Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Petanca" 			Fuerza 			Brazos 	"Bolas de petanca" 3 $?tiempos_actividad)
-    (instanciar_actividad "Baile" 				Equilibrio 		Tronco 	"Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Tai-chi" 			Flexibilidad 	Tronco 	"Nada" 3 $?tiempos_actividad)
-    (instanciar_actividad "Bolos"				Equilibrio		Tronco	"Nada" 3 $?tiempos_actividad)
+    (instanciar_actividad 	"Caminar" 			Resistencia		Piernas	"Nada" 	3 	$?tiempos_actividad)
+    (instanciar_actividad 	"Aeróbic acúatico" 	Resistencia 	Brazos 	"Nada" 	3 	$?tiempos_actividad)
+    (instanciar_actividad 	"Pilates" 			Resistencia 	Tronco 	"Nada" 	3 	$?tiempos_actividad)
+    (instanciar_actividad 	"Ciclismo" 			Resistencia 	Piernas "Nada" 	3 	$?tiempos_actividad)
+    (instanciar_actividad 	"Surf" 				Equilibrio 		Tronco 	"Tabla de surf" 3 $?tiempos_actividad)
+    (instanciar_actividad 	"Natación" 			Resistencia 	Tronco 	"Nada" 	3 	$?tiempos_actividad)
+    (instanciar_actividad	"Yoga" 				Flexibilidad 	Tronco 	"Nada" 	3 	$?tiempos_actividad)
+    (instanciar_actividad	"Senderismo" 		Resistencia 	Piernas "Nada" 	3 	$?tiempos_actividad)
+    (instanciar_actividad	"Petanca" 			Fuerza 			Brazos 	"Bolas de petanca" 3 $?tiempos_actividad)
+    (instanciar_actividad	"Baile" 			Equilibrio 		Tronco 	"Nada" 	3 	$?tiempos_actividad)
+    (instanciar_actividad	"Tai-chi" 			Flexibilidad 	Tronco 	"Nada" 	3 	$?tiempos_actividad)
+    (instanciar_actividad 	"Bolos"				Equilibrio		Tronco	"Nada" 	3 	$?tiempos_actividad)
 )
 
 (defrule input::creacion_persona
@@ -765,7 +764,7 @@
 )
 
 (defrule sintesis::cambio_output "Pasamos de síntesis a output"
-	(declare (salience -20)) ;; hay que poner en común los salience luego
+	(declare (salience -20))
 	=>
 	(printout t "Escribiendo el programa de ejercicios..." crlf)
 	(focus output)
@@ -806,20 +805,17 @@
 
 (defrule output::noHaySesiones
 	(declare (salience 5))
-	(existenSesiones ?v)
-	(test (eq ?v FALSE))
+	(not (exists (object (is-a Sesion))))
 	=>
 	(printout t "ERROR: Debido a su condición física, no se ha podido generar un programa de ejericios." crlf)
 )
 
 (defrule output::mostrarSesion 
     (declare (salience 10))
- 	?existenSesiones <- (existenSesiones)
     ?sesion <- (object (is-a Sesion))
     =>
     (bind ?objetivo (send ?sesion get-Tipo_Objetivo))
     (bind ?tiempo (send ?sesion get-Tiempo))
-    (modify ?existenSesiones (TRUE))
     
     (printout t crlf) (printout t "-------------------------------------------------------------------------------------" crlf)
     (printout t "Harás esta sesión con el objetivo principal de conseguir " ?objetivo ". (Tiempo: " ?tiempo " min)" crlf)
@@ -834,8 +830,3 @@
     (printout t crlf)
 )
 
-(defrule output::setup
-	(declare (salience 20))
-	=>
-	(assert (existenSesiones FALSE))
-)
