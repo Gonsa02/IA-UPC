@@ -890,7 +890,7 @@
 	(declare (salience 5))
 	(not (exists (object (is-a Sesion))))
 	=>
-	(printout t "ERROR: Debido a su condición física, no se ha podido generar un programa de ejericios." crlf)
+	(printout t "ERROR: Debido a su condición física, no se ha podido generar un programa de ejercicios." crlf)
 )
 
 (defrule output::mostrarSesion 
