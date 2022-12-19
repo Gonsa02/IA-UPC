@@ -255,7 +255,7 @@
 (deffunction input::instanciacion_persona ()
     ; preguntamos edad
     (bind ?edad (obtener_edad))
-    (bind ?peso (inputfloat "¿Cuál es su peso en Kg?" 75.0 0.0 500.0))
+    (bind ?peso (inputfloat "¿Cuál es su peso en Kg?" 75.0 0.0 300.0))
     (bind ?estatura (inputfloat "¿Cuál es su estatura en Metros?" 1.8 0.0 2.75))
     (bind ?IMC (getIMC ?peso ?estatura))
     (bind ?valueIMC (valueOfIMC ?IMC))
