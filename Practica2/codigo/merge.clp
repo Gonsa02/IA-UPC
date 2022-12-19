@@ -683,6 +683,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(deftemplate sintesis::objetivo
+	(slot nombre (type STRING))
+	(slot value (type INTEGER) (default 0))	
+)
+
+(defrule sintesis::start
+	(declare (salience 30))
+	=>
+	(assert (objetivo (nombre "Fuerza")) )
+	(assert (objetivo (nombre "Resistencia")))
+	(assert (objetivo (nombre "Equilibrio")))
+	(assert (objetivo (nombre "Flexibilidad")))
+)
+
 (deffunction sintesis::obtener_objetivos (?duracion_rutina ?nFuerza ?nFlexibilidad ?nResistencia ?nEquilibrio)
 	;; (1) Si el paciente tiene enfermedades (-> tiene almenos 1 objetivo > 0) calculamos sus objetivos con el siguiente método
 	(if (or (> ?nFuerza 0)(> ?nFlexibilidad 0)(> ?nResistencia 0)(> ?nEquilibrio 0)) then
@@ -760,7 +774,9 @@
 				(bind ?tiempo_sesion (+ ?tiempo_sesion (send ?aux2 get-Tiempo_Ejercicio)))
 			)
 		)
-		(make-instance (gensym) of Sesion (Es_un_conjunto_de $?sesion) (Tipo_Objetivo ?objetivo) (Tiempo ?tiempo_sesion))
+		(if (> ?tiempo_sesion 0) then
+			(make-instance (gensym) of Sesion (Es_un_conjunto_de $?sesion) (Tipo_Objetivo ?objetivo) (Tiempo ?tiempo_sesion))
+		)
 	)
 )
 
@@ -782,18 +798,6 @@
 	(if (= ?tiempo_sesion 0) then (crear_sesion_ejercicios ?duracion_sesion ?objetivo)
 	else (make-instance (gensym) of Sesion (Es_un_conjunto_de $?sesion) (Tipo_Objetivo ?objetivo) (Tiempo ?tiempo_sesion))
 	)
-)
-(deftemplate objetivo
-	(slot nombre (type STRING))
-	(slot value (type INTEGER) (default 0))	
-)
-(defrule sintesis::start
-	(declare (salience 30))
-	=>
-	(assert (objetivo (nombre "Fuerza")) )
-	(assert (objetivo (nombre "Resistencia")))
-	(assert (objetivo (nombre "Equilibrio")))
-	(assert (objetivo (nombre "Flexibilidad")))
 )
 
 (defrule sintesis::tratar_enfermedad
@@ -886,7 +890,7 @@
 	(declare (salience 5))
 	(not (exists (object (is-a Sesion))))
 	=>
-	(printout t "ERROR: Debido a su condición física, no se ha podido generar un programa de ejericios." crlf)
+	(printout t "ERROR: Debido a su condición física, no se ha podido generar un programa de ejercicios." crlf)
 )
 
 (defrule output::mostrarSesion 

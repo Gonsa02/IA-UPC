@@ -26,14 +26,13 @@ Modulo Síntesis:
 Modulo output:
 		Este modulo es el encargado de mostrar al usuario toda la rutina que el sistema la ha propuesto.
 		Dando información tanto, de la intensidad del ejercicio, duración, objetos necesarios, entre otros parametros.
-		que se enseña.
 
 Ficheros adjuntos:
     
     ontologia-12.clp: contine la ontologia creada en protegé.
     input-module.clp: contiene los módulos MAIN e input.
     delete-module.clp: contiene el módulo de descarte.
-    joan.clp: contiene el móduclo de síntesis.
+    joan.clp: contiene el módulo de síntesis.
     output-module.clp: contiene el módulo de ouptut.
     merge.clp: contiene todo el programa.
 
