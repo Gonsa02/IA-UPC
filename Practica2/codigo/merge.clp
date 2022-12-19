@@ -143,7 +143,7 @@
 (deffunction input::obtener_edad ()
     (printout t "Que edad tienes? ")
     (bind ?edad (read))
-    (while (< ?edad 0) do
+    (while (or (< ?edad 60)  (> ?edad 130)) do
             (printout t "La edad introducida no es válida. Por favor, introduzca una edad válida: ") 
             (bind ?edad (read))
     )
@@ -233,11 +233,11 @@
     (bind ?imc (/ ?peso (* ?altura ?altura)))
     (return ?imc)
 )
-(deffunction input::inputfloat (?question ?valor)
+(deffunction input::inputfloat (?question ?valor ?max)
     (printout t ?question crlf)
     (printout t "Introduce el dato con mínimo un decimal separando a los decimales con un punto (Ej " ?valor ")." crlf)
     (bind ?response (read))
-    (while (not (floatp ?response)) do
+    (while (or (not (floatp ?response)) (> ?response ?max)) do
         (printout t "El valor introducido no es válido. Por favor, introduce el valor con el formato especificado." crlf)
         (bind ?response (read))
     )
@@ -256,8 +256,8 @@
 (deffunction input::instanciacion_persona ()
     ; preguntamos edad
     (bind ?edad (obtener_edad))
-    (bind ?peso (inputfloat "¿Cuál es su peso en Kg?" 75.0))
-    (bind ?estatura (inputfloat "¿Cuál es su estatura en Metros?" 1.8))
+    (bind ?peso (inputfloat "¿Cuál es su peso en Kg?" 75.0 500.0))
+    (bind ?estatura (inputfloat "¿Cuál es su estatura en Metros?" 1.8 2.75))
     (bind ?IMC (getIMC ?peso ?estatura))
     (bind ?valueIMC (valueOfIMC ?IMC))
     ;preguntamos escalas
