@@ -338,7 +338,7 @@
     (instanciar_ejercicio 	"Estiramiento lumbar" 					Flexibilidad 	Tronco 	"Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio 	"Estiramiento isquiotibial"				Flexibilidad 	Piernas "Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio 	"Estiramiento frontal" 					Flexibilidad 	Piernas "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio 	"Zancada con rotación" 					Flexibilidad 	Piernas "Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Zancada con rotación" 					Flexibilidad 	Tronco 	"Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio 	"Postura del gato" 						Flexibilidad 	Tronco 	"Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio 	"Puente con pelota" 					Flexibilidad 	Tronco 	"Pelota medicinal" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio 	"Flexiones de bíceps" 					Flexibilidad 	Brazos 	"Bandas elásticas" 3 $?tiempos_ejercicio)
