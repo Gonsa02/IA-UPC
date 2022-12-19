@@ -525,7 +525,7 @@
     (declare (salience 10))
     (object (is-a Enfermedad) (Afectacion ?a))
     ?inst <- (object (is-a Accion) (Tipo_Objetivo ?o) (Intensidad ?i))
-    (test (and (eq ?a Nerviosa) (eq ?o Equilibrio) (neq Intensidad Baja)))
+    (test (and (eq ?a Nerviosa) (eq ?o Equilibrio) (neq ?i Baja)))
     => (send ?inst delete)
 )
 
