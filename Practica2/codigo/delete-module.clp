@@ -143,7 +143,7 @@
     => (send ?inst delete)
 )
 
-(defrule obesidad_morvida "las personas con obesidad morvida solo pueden hacer acciones de baja intensidad"
+(defrule obesidad_mórbida "las personas con obesidad mórbida solo pueden hacer acciones de baja intensidad"
     (declare (salience 10))
     (object (is-a Persona) (IMC ?x))
     ?inst <- (object (is-a Accion) (Intensidad ?i))
@@ -167,7 +167,7 @@
     => (send ?inst delete)
 )
 
-(defrule obesidad_morvida_y_problemas_cardiovasculares_o_respiratorios "las personas con obesidad morvida, problemas cardiovasculares o problemas respiratorios no pueden realizar deporte hasta que no adelgazen (dieta)"
+(defrule obesidad_mórbida_y_problemas_cardiovasculares_o_respiratorios "las personas con obesidad mórbida, problemas cardiovasculares o problemas respiratorios no pueden realizar deporte hasta que no adelgazen (dieta)"
     (declare (salience 10))
     (object (is-a Persona) (IMC ?x))
     (object (is-a Enfermedad) (Afectación ?a))
