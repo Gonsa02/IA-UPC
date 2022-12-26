@@ -1,0 +1,22 @@
+Introduce el numero de rovers: 
+Introduce el numero de asentamientos: 
+Introduce el numero de almacenes: 
+Introduce el numero de suministros: 
+Introduce el numero de personal: 
+Introduce el numero de peticiones de suministro: 
+Introduce el numero de peticiones del personal: 
+(define (problem ext1)
+(:domain ext1)
+(:objects
+		r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 - Rover
+		as1 as2 as3 as4 as5 as6 as7 as8 as9 as10 - Asentamiento
+		al1 al2 al3 al4 al5 al6 al7 al8 al9 al10 - Almacen
+		s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 - Suministro
+		pers1 pers2 pers3 pers4 pers5 pers6 pers7 pers8 pers9 pers10 - Personal
+		ps1 ps2 ps3 ps4 ps5 ps6 ps7 ps8 ps9 ps10 - pSuministro
+		pp1 pp2 pp3 pp4 pp5 pp6 pp7 pp8 pp9 pp10 - pPersonal
+		
+)
+
+(:goal (forall (?p - Peticion) (servida ?p)))
+)
