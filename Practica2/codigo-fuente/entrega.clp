@@ -167,8 +167,8 @@
     (return $?return_list)
 )
 
-(deffunction input::obtener_tipo_Antecedentes ($?list_values)
-    (printout t "¿Tiene algún tipo de Antecedente?" crlf)
+(deffunction input::obtener_tipo_Antecentes ($?list_values)
+    (printout t "¿Tiene algún tipo de Antecente?" crlf)
     (printout t "Estos son los tipos: " $?list_values crlf)
     (printout t "Para acabar escriba FIN." crlf)
     (bind ?response (read))
@@ -275,8 +275,8 @@
             (bind $?enfermedades (insert$ $?enfermedades (+(length$ $?enfermedades) 1) ?instance))
         )
     )
-    ; Preguntamos los antecedentes
-    (bind $?lista2 (obtener_tipo_Antecedentes Brazos Piernas Cuello Cabeza Tronco))
+    ; Preguntamos los antecentes
+    (bind $?lista2 (obtener_tipo_Antecentes Brazos Piernas Cuello Cabeza Tronco))
     (progn$(?instance $?lista2)
             (bind $?enfermedades (insert$ $?enfermedades (+(length$ $?enfermedades) 1) (instanciar_Antecendente ?instance)))
     )
@@ -320,7 +320,7 @@
     (instanciar_ejercicio 	"Press de hombros" 						Fuerza 			Brazos 	"Mancuernas" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio 	"Remo" 									Resistencia 	Tronco 	"Maquina de remo" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio 	"Saltar a la cuerda" 					Resistencia 	Piernas "Cuerda" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio	"Sentadillas" 							Resistencia 	Piernas	"Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio	"Sentadillas" 							Resistencia 	Piernas "Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio	"Zancada con salto" 					Resistencia 	Piernas "Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio 	"Sentadillas goblet" 					Fuerza 			Piernas "Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio 	"Peso muerto" 							Fuerza 			Piernas "Nada" 3 $?tiempos_ejercicio)
@@ -338,7 +338,7 @@
     (instanciar_ejercicio 	"Estiramiento lumbar" 					Flexibilidad 	Tronco 	"Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio 	"Estiramiento isquiotibial"				Flexibilidad 	Piernas "Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio 	"Estiramiento frontal" 					Flexibilidad 	Piernas "Nada" 3 $?tiempos_ejercicio)
-    (instanciar_ejercicio 	"Zancada con rotación" 					Flexibilidad 	Tronco 	"Nada" 3 $?tiempos_ejercicio)
+    (instanciar_ejercicio 	"Zancada con rotación" 					Flexibilidad 	Tronco	"Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio 	"Postura del gato" 						Flexibilidad 	Tronco 	"Nada" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio 	"Puente con pelota" 					Flexibilidad 	Tronco 	"Pelota medicinal" 3 $?tiempos_ejercicio)
     (instanciar_ejercicio 	"Flexiones de bíceps" 					Flexibilidad 	Brazos 	"Bandas elásticas" 3 $?tiempos_ejercicio)
@@ -912,6 +912,4 @@
     )
     (printout t crlf)
 )
-
-
 
