@@ -5,17 +5,20 @@
 		 	al1 al2 al3 al4 al5 - Almacen
 		 	s1 s2 - Suministro
 		 	pers1 - Personal
-		 	p1 - pSuministro
+		 	p1 p3 p4 - pSuministro
 		 	p2 - pPersonal
-		 	p3 - pSuministro
 )
 
 (:init
 	(= (capacidad r1) 2)
 	(= (capacidad r2) 2)
-	(= (combustible r1) 3)
-	(= (combustible r2) 100)
-	(= (combustible-total) 0)
+	(= (combustible r1) 12)
+	(= (combustible r2) 3)
+	(= (prioridad p1) 6)
+	(= (prioridad p2) 6)
+	(= (prioridad p3) 1)
+	(= (prioridad p4) 15)
+	(= (prioridad-total) 0)
 	(aparcado r1 as1)
 	(aparcado r2 as1)
 	
@@ -32,15 +35,16 @@
 	(esta s1 al4)
 	(esta s2 al4)
 	
-	(libre p1) (libre p2) (libre p3)
+	(libre p1) (libre p2) (libre p3) (libre p4)
 	
 	(objetivo p1 as1)
 	(objetivo p2 as2)
 	(objetivo p3 as3)
+	(objetivo p4 as1)
 )
 
-(:goal (forall (?p - Peticion) (servida ?p)))
+(:goal TRUE)
 
-(:metric minimize (combustible-total))
+(:metric maximize (prioridad-total))
 
 )
