@@ -21,7 +21,7 @@ bool es_connex(const Matrix &M) {
 
 int main() {
     
-    int num_rovers, num_asentamientos, num_almacen, num_suministros, num_personal, num_pet_sum, num_pet_pers, semilla;
+    int num_rovers, num_asentamientos, num_almacen, num_suministros, num_personal, semilla;
     cout << "Introduce una semilla: ";
     cin >> semilla;
     srand(semilla);
@@ -35,11 +35,7 @@ int main() {
     cin >> num_suministros;
     cout << endl << "Introduce el numero de personal: ";
     cin >> num_personal;
-    cout << endl << "Introduce el numero de peticiones de suministro: ";
-    cin >> num_pet_sum;
-    cout << endl << "Introduce el numero de peticiones del personal: ";
-    cin >> num_pet_pers;
-    cout << endl;
+   
  
     //Vamos a generar el grafo del mapa
     Matrix M(num_almacen+num_asentamientos, vector<bool>(num_almacen+num_asentamientos, false));
@@ -121,12 +117,6 @@ int main() {
     for (int i = 0; i < num_personal; ++i) cout << "pers" << i+1 << " ";
     cout << "- Personal" << endl;
     cout << "		";
-    for (int i = 0; i < num_pet_sum; ++i) cout << "ps" << i+1 << " ";
-    cout << "- pSuministro" << endl;
-    cout << "		";
-    for (int i = 0; i < num_pet_pers; ++i) cout << "pp" << i+1 << " ";
-    cout << "- pPersonal" << endl;
-    cout << "		";
     cout << endl;
     cout << ")" << endl;
     cout << endl;
@@ -135,11 +125,7 @@ int main() {
     cout << "(:init" << endl;
     for (int i = 0; i < num_rovers; ++i) cout << "		" << "(= (capacidad r" << i+1 << ") 2)" << endl;
     cout << endl;
-    for (int i = 0; i < num_rovers; ++i) cout << "		" << "(= (combustible r" << i+1 << ") " << (rand()%(num_almacen+num_asentamientos))+1 << ")" << endl;
-    cout << endl;
-    for (int i = 0; i < num_pet_pers; ++i) cout << "		" << "(= (prioridad pp" << i+1 << ") " << (rand()%(3))+1 << ")" << endl;
-    cout << endl;
-    for (int i = 0; i < num_pet_sum; ++i) cout << "		" << "(= (prioridad ps" << i+1 << ") " << (rand()%(3))+1 << ")" << endl;
+    for (int i = 0; i < num_rovers; ++i) cout << "		" << "(= (combustible r" << i+1 << ") " << 2*(rand()%(num_personal+num_suministros))+500 << ")" << endl;
     cout << endl;
     cout << "		" << "(= (penalidad) 0)" << endl;
     cout << endl;
@@ -174,12 +160,19 @@ int main() {
     for (int i = 0; i < num_suministros; ++i) cout <<  "		" << "(esta s" << i+1 << " al" << (rand()%num_almacen)+1 << ")" << endl;
     cout << endl;
 	
-	for (int i = 0; i < num_pet_pers; ++i) cout << "		" << "(libre pp" << i+1 << ")" << endl;
-    for (int i = 0; i < num_pet_sum; ++i) cout << "		" << "(libre ps" << i+1 << ")" << endl;
-    cout << endl;
+	
     
-    for (int i = 0; i < num_pet_sum; ++i) cout << "		" << "(objetivo ps" << i+1 << " as" << (rand()%num_asentamientos)+1 << ")" << endl;
-    for (int i = 0; i < num_pet_pers; ++i) cout << "		" << "(objetivo pp" << i+1 << " as" << (rand()%num_asentamientos)+1 << ")" << endl;
+    for (int i = 0; i < num_suministros; ++i){
+        int a = (rand()%num_asentamientos)+1;
+        cout << "		" << "(objetivo s" << i+1 << " as" << a << ")" << endl;
+        cout << "       " << "(=(prioridad s"<<i+1 << " as" <<a << ") " <<(rand()%3)+1 << ")" << endl;
+    }
+    cout << endl; 
+    for (int i = 0; i < num_personal; ++i){
+        int a = (rand()%num_asentamientos)+1;
+        cout << "		" << "(objetivo pers" << i+1 << " as" << a << ")" << endl;
+        cout << "       " << "(=(prioridad pers"<<i+1 << " as" <<a << ") " <<(rand()%3)+1 << ")" << endl;
+    } 
     cout << endl;
 	
     cout << ")" << endl;
