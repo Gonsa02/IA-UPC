@@ -135,7 +135,11 @@ int main() {
     cout << "(:init" << endl;
     for (int i = 0; i < num_rovers; ++i) cout << "		" << "(= (capacidad r" << i+1 << ") 2)" << endl;
     cout << endl;
-    for (int i = 0; i < num_rovers; ++i) cout << "		" << "(= (combustible r" << i+1 << ") " << (rand()%num_almacen+num_asentamientos)+1 << ")" << endl;
+    for (int i = 0; i < num_rovers; ++i) cout << "		" << "(= (combustible r" << i+1 << ") " << (rand()%(num_almacen+num_asentamientos))+1 << ")" << endl;
+    cout << endl;
+    for (int i = 0; i < num_pet_pers; ++i) cout << "		" << "(= (prioridad pp" << i+1 << ") " << (rand()%(3))+1 << ")" << endl;
+    cout << endl;
+    for (int i = 0; i < num_pet_sum; ++i) cout << "		" << "(= (prioridad ps" << i+1 << ") " << (rand()%(3))+1 << ")" << endl;
     cout << endl;
     cout << "		" << "(= (prioridad-total) 0)" << endl;
     cout << endl;
@@ -168,17 +172,19 @@ int main() {
     for (int i = 0; i < num_suministros; ++i) cout <<  "		" << "(esta s" << i+1 << " al" << (rand()%num_almacen)+1 << ")" << endl;
     cout << endl;
 
-    for (int i = 0; i < num_personal; ++i) cout << "		" << "(libre p" << i+1 << ")" << endl;
+    for (int i = 0; i < num_pet_pers; ++i) cout << "		" << "(libre pp" << i+1 << ")" << endl;
+    for (int i = 0; i < num_pet_sum; ++i) cout << "		" << "(libre ps" << i+1 << ")" << endl;
     cout << endl;
 
-    for (int i = 0; i < num_pet_sum+num_pet_pers; ++i) cout << "		" << "(objetivo p" << i+1 << " as" << (rand()%num_asentamientos)+1 << ")" << endl;
+    for (int i = 0; i < num_pet_sum; ++i) cout << "		" << "(objetivo ps" << i+1 << " as" << (rand()%num_asentamientos)+1 << ")" << endl;
+    for (int i = 0; i < num_pet_pers; ++i) cout << "		" << "(objetivo pp" << i+1 << " as" << (rand()%num_asentamientos)+1 << ")" << endl;
     cout << endl;
 
     cout << ")" << endl;
     cout << endl;
 
     // GOAL
-    cout << "(:goal TRUE)" << endl;
+    cout << "(:goal (forall (?c - Carga) (entregada ?c)))" << endl;
     cout << endl;
 
     cout << "(:metric maximize (prioridad-total))" << endl;
