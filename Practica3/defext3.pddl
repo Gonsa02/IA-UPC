@@ -12,7 +12,7 @@
 (:init
 	(= (capacidad r1) 2)
 	(= (capacidad r2) 2)
-	(= (combustible r1) 5)
+	(= (combustible r1) 40)
 	(= (combustible r2) 2)
 	(= (prioridad p1) 6)
 	(= (prioridad p2) 6)
@@ -43,7 +43,7 @@
 	(objetivo p4 as1)
 )
 
-(:goal (servida p4))
+(:goal (forall (?s - Carga) (entregada ?s)))
 
 (:metric maximize (prioridad-total))
 
