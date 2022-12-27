@@ -50,8 +50,8 @@
 	:precondition (and (objetivo ?p ?l) (not (entregada ?c)) (not (servida ?p)))
 	:effect (and (entregada ?c) (servida ?p)
 	(forall (?p2 - pSuministro)
-		when (and (objetivo ?p2 ?l) (not (servida ?p2)) (> (prioridad ?p2) (prioridad ?p)))
-			(increase (penalidad) 1)
+		when (and (objetivo ?p2 ?l) (not (servida ?p2)) (> (prioridad ?p2) (prioridad ?p))
+			(increase (penalidad) 1))
 	))
 )
 
