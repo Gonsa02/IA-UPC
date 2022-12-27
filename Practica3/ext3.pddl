@@ -50,14 +50,14 @@
 ; y luego esa carga se entregase en otro Pedido distinto
 (:action entregarS
 	:parameters (?r - Rover ?c - Suministro ?l - Asentamiento ?p - pSuministro)
-	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (objetivo ?p ?l) (not (libre ?p)) (not (servida ?p)) (not (entregada ?c)))
-	:effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 2) (servida ?p) (increase (prioridad-total) (prioridad ?p)) (entregada ?c))
+	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (objetivo ?p ?l) (not (libre ?p))  (not (entregada ?c)))
+	:effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 2)  (increase (prioridad-total) (prioridad ?p)) (entregada ?c))
 )
 
 (:action entregarP
 	:parameters (?r - Rover ?c - Personal ?l - Asentamiento ?p - pPersonal)
-	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (objetivo ?p ?l) (not (libre ?p)) (not (servida ?p)) (not (entregada ?c)))
-	:effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 1) (servida ?p) (increase (prioridad-total) (prioridad ?p))(entregada ?c))
+	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (objetivo ?p ?l) (not (libre ?p)) (not (entregada ?c)))
+	:effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 1)  (increase (prioridad-total) (prioridad ?p))(entregada ?c))
 )
 
 (:action dejarS
