@@ -63,7 +63,7 @@
 (:action dejarS
  :parameters (?r - Rover ?c - Suministro ?l - Almacen ?p - pSuministro)
  :precondition (and (aparcado ?r ?l) (transportando ?r ?c) (not (entregada ?c)) (not (libre ?p)))
- :effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 1) (esta ?c ?l) (libre ?p))
+ :effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 2) (esta ?c ?l) (libre ?p))
 )
 
 (:action dejarP

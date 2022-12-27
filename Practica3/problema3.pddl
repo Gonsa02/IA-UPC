@@ -18,7 +18,7 @@
 	(= (prioridad p2) 2)
 	(= (prioridad p3) 1)
 	(= (prioridad p4) 3)
-	(= (prioridad-total) 0)
+	(= (penalidad) 0)
 	(aparcado r1 as1)
 	(aparcado r2 as1)
 	
@@ -35,8 +35,6 @@
 	(esta s1 al4)
 	(esta s2 al4)
 	
-	(libre p1) (libre p2) (libre p3) (libre p4)
-	
 	(objetivo p1 as1)
 	(objetivo p2 as2)
 	(objetivo p3 as3)
@@ -45,6 +43,6 @@
 
 (:goal (forall (?s - Carga) (entregada ?s)))
 
-(:metric maximize (prioridad-total))
+(:metric minimize (penalidad))
 
 )
