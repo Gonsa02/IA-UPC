@@ -32,7 +32,7 @@
 (:action mover ; Mueve al Rover de la Base l1 a la Base l2
 	:parameters (?r - Rover ?l1 - Base ?l2 - Base)
 	:precondition (and (aparcado ?r ?l1) (accesible ?l1 ?l2) (> (combustible ?r) 0))
-	:effect (and (not (aparcado ?r ?l1)) (aparcado ?r ?l2) (decrease (combustible ?r) 1)); (increase (combustible-total) 1))
+	:effect (and (not (aparcado ?r ?l1)) (aparcado ?r ?l2) (decrease (combustible ?r) 1) (increase (combustible-total) 1))
 )
 
 (:action recogerS ; El Rover recoge el Suministro del Almacén
@@ -49,25 +49,25 @@
 
 (:action entregarS
 	:parameters (?r - Rover ?c - Suministro ?l - Asentamiento ?p - pSuministro)
-	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (objetivo ?p ?l) (not (libre ?p)) (not (entregada ?c))) ; de momento dejamos que la carga no esté entregada
-	:effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 2) (increase (penalidad) (- 3 (prioridad ?p))) (entregada ?c))
+	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (objetivo ?p ?l) (not (libre ?p)) (not (entregada ?c)) (not (servida ?p)))
+	:effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 2) (increase (penalidad) (- 3 (prioridad ?p))) (entregada ?c) (servida ?p))
 )
 
 (:action entregarP
 	:parameters (?r - Rover ?c - Personal ?l - Asentamiento ?p - pPersonal)
-	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (objetivo ?p ?l) (not (libre ?p)) (not (entregada ?c)))
-	:effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 1) (increase (penalidad) (- 3 (prioridad ?p))) (entregada ?c))
+	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (objetivo ?p ?l) (not (libre ?p)) (not (entregada ?c)) (not (servida ?p)))
+	:effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 1) (increase (penalidad) (- 3 (prioridad ?p))) (entregada ?c) (servida ?p))
 )
 
 (:action dejarS ; El Rover deja el Suministro en el Almacén
  :parameters (?r - Rover ?c - Suministro ?l - Almacen ?p - pSuministro)
- :precondition (and (aparcado ?r ?l) (transportando ?r ?c) (not (libre ?p)))
+ :precondition (and (= (combustible ?r) 0) (aparcado ?r ?l) (transportando ?r ?c) (not (libre ?p)))
  :effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 2) (esta ?c ?l) (libre ?p))
 )
 
 (:action dejarP ; El Rover deja el Personal en el Asentamiento
  :parameters (?r - Rover ?c - Personal ?l - Asentamiento ?p - pPersonal)
- :precondition (and (aparcado ?r ?l) (transportando ?r ?c) (not (libre ?p)))
+ :precondition (and (= (combustible ?r) 0) (aparcado ?r ?l) (transportando ?r ?c) (not (libre ?p)))
  :effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 1) (esta ?c ?l) (libre ?p))
 )
 )
