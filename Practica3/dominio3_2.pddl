@@ -23,15 +23,15 @@
 	(capacidad ?r - Rover)
 	(combustible ?r - Rover) ; necesario
 	(prioridad ?p - Peticion)
+	(combustible-total)
 	(penalidad)
-	(combustible-total) ; para probar
 )
 
 
 (:action mover ; Mueve al Rover de la Base l1 a la Base l2
 	:parameters (?r - Rover ?l1 - Base ?l2 - Base)
 	:precondition (and (aparcado ?r ?l1) (accesible ?l1 ?l2) (> (combustible ?r) 0))
-	:effect (and (not (aparcado ?r ?l1)) (aparcado ?r ?l2) (decrease (combustible ?r) 1))
+	:effect (and (not (aparcado ?r ?l1)) (aparcado ?r ?l2) (decrease (combustible ?r) 1) (increase (combustible-total) 1))
 )
 
 (:action recogerS ; El Rover recoge el Suministro del Almacén
@@ -47,9 +47,9 @@
 )
 
 (:action entregarS
-	:parameters (?c - Suministro ?l - Asentamiento ?p - pSuministro)
-	:precondition (and (esta ?c ?l) (objetivo ?p ?l) (not (entregada ?c)) (not (servida ?p)))
-	:effect (and (entregada ?c) (servida ?p)
+	:parameters (?r - Rover ?c - Suministro ?l - Asentamiento ?p - pSuministro)
+	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (esta ?c ?l) (objetivo ?p ?l) (not (entregada ?c)) (not (servida ?p)))
+	:effect (and (entregada ?c) (servida ?p) (not (transportando ?r ?c)) (increase (capacidad ?r) 2)
 	(forall (?p2 - pSuministro)
 		(when (and (objetivo ?p2 ?l) (not (servida ?p2)) (> (prioridad ?p2) (prioridad ?p)))
 			(increase (penalidad) 1))
@@ -57,9 +57,9 @@
 )
 
 (:action entregarP
-	:parameters (?c - Personal ?l - Asentamiento ?p - pPersonal)
-	:precondition (and (esta ?c ?l) (objetivo ?p ?l) (not (entregada ?c)) (not (servida ?p)))
-	:effect (and (entregada ?c) (servida ?p)
+	:parameters (?r - Rover ?c - Personal ?l - Asentamiento ?p - pPersonal)
+	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (esta ?c ?l) (objetivo ?p ?l) (not (entregada ?c)) (not (servida ?p)))
+	:effect (and (entregada ?c) (servida ?p) (not (transportando ?r ?c)) (increase (capacidad ?r) 1)
 	(forall (?p2 - pPersonal)
 		(when (and (objetivo ?p2 ?l) (not (servida ?p2)) (> (prioridad ?p2) (prioridad ?p)))
 			(increase (penalidad) 1))
