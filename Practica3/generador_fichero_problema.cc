@@ -141,7 +141,9 @@ int main() {
     cout << endl;
     for (int i = 0; i < num_pet_sum; ++i) cout << "		" << "(= (prioridad ps" << i+1 << ") " << (rand()%(3))+1 << ")" << endl;
     cout << endl;
-    cout << "		" << "(= (prioridad-total) 0)" << endl;
+    cout << "		" << "(= (penalidad) 0)" << endl;
+    cout << endl;
+    cout << "		" << "(= (combustible-total) 0)" << endl;
     cout << endl;
 
     for (int i = 0; i < num_rovers; ++i) {
@@ -171,15 +173,15 @@ int main() {
     for (int i = 0; i < num_personal; ++i) cout << "		" << "(esta pers" << i+1 << " as" << (rand()%num_asentamientos)+1 << ")" << endl;
     for (int i = 0; i < num_suministros; ++i) cout <<  "		" << "(esta s" << i+1 << " al" << (rand()%num_almacen)+1 << ")" << endl;
     cout << endl;
-
-    for (int i = 0; i < num_pet_pers; ++i) cout << "		" << "(libre pp" << i+1 << ")" << endl;
+	
+	for (int i = 0; i < num_pet_pers; ++i) cout << "		" << "(libre pp" << i+1 << ")" << endl;
     for (int i = 0; i < num_pet_sum; ++i) cout << "		" << "(libre ps" << i+1 << ")" << endl;
     cout << endl;
-
+    
     for (int i = 0; i < num_pet_sum; ++i) cout << "		" << "(objetivo ps" << i+1 << " as" << (rand()%num_asentamientos)+1 << ")" << endl;
     for (int i = 0; i < num_pet_pers; ++i) cout << "		" << "(objetivo pp" << i+1 << " as" << (rand()%num_asentamientos)+1 << ")" << endl;
     cout << endl;
-
+	
     cout << ")" << endl;
     cout << endl;
 
@@ -187,7 +189,7 @@ int main() {
     cout << "(:goal (forall (?c - Carga) (entregada ?c)))" << endl;
     cout << endl;
 
-    cout << "(:metric maximize (prioridad-total))" << endl;
+    cout << "(:metric minimize (+ (penalidad) (combustible-total)))" << endl;
     cout << endl;
     cout << ")" << endl;
 }
