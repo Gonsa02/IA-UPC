@@ -1,6 +1,5 @@
 (define (domain ext1)
 	(:requirements :adl :typing :fluents)
-	(:types Base Asentamiento Almacen Rover)
 
 
 (:types Base Rover Carga Peticion - object
@@ -17,6 +16,7 @@
 	(transportando ?r - Rover ?c - Carga)
 	(objetivo ?p - Peticion ?l - Asentamiento)
 	(servida ?p - Peticion)
+	(entregada ?c - Carga)
 )
 
 (:functions
@@ -43,14 +43,14 @@
 
 (:action entregarS
 	:parameters (?r - Rover ?c - Suministro ?l - Asentamiento ?p - pSuministro)
-	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (objetivo ?p ?l) (not (libre ?p)) (not (servida ?p)))
-	:effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 2) (servida ?p))
+	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (objetivo ?p ?l) (not (libre ?p)) (not (servida ?p)) (not (entregada ?c)))
+	:effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 2) (servida ?p) (entregada ?c))
 )
 
 (:action entregarP
 	:parameters (?r - Rover ?c - Personal ?l - Asentamiento ?p - pPersonal)
-	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (objetivo ?p ?l) (not (libre ?p)) (not (servida ?p)))
-	:effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 1) (servida ?p))
+	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (objetivo ?p ?l) (not (libre ?p)) (not (servida ?p)) (not (entregada ?c)))
+	:effect (and (not (transportando ?r ?c)) (increase (capacidad ?r) 1) (servida ?p) (entregada ?c))
 )
 
 )

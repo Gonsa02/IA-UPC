@@ -73,7 +73,7 @@ int main() {
     for (int i = 0; i < num_almacen+num_asentamientos; ++i) {
 	for (int j = 0; j < num_almacen+num_asentamientos; ++j) {
 	    if (i != j) {
-		if (rand()%100 <= 50) {
+		if (rand()%100 <= 0) {
 		    M[i][j] = false;
 		    M[j][i] = false;
 		}

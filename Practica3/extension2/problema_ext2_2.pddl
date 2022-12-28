@@ -1,31 +1,27 @@
 (define (problem ext1)
 (:domain ext1)
 (:objects
-		r1 r2 r3 - Rover
+		r1 r2  - Rover
 		as1 as2 as3 - Asentamiento
 		al1 al2 al3 al4 - Almacen
 		s1 s2 s3 - Suministro
 		pers1 pers2 pers3 pers4 - Personal
-		
+		ps1 ps2 ps3 - pSuministro
+		pp1 pp2 pp3 pp4 - pPersonal 
 		
 )
 
 (:init
 		(= (capacidad r1) 2)
 		(= (capacidad r2) 2)
-
-		(= (combustible r1) 20)
-		(= (combustible r2) 20)
-		(= (combustible r3) 10)
-
-
-		(= (penalidad) 0)
-
-		(= (combustible-total) 0)
-
+	
+		(=(combustible r1) 20)
+		(=(combustible r2) 20)
+	
+		(=(combustible-total) 0)
 		(aparcado r1 al1)
 		(aparcado r2 as1)
-		(aparcado r3 as3)
+	
 
 		(accesible as1 as2)
 		(accesible as1 as3)
@@ -60,29 +56,33 @@
 		(esta s2 al3)
 		(esta s3 al2)
 		
+		(libre ps1)
+		(libre ps2)
+		(libre ps3)
+		(libre pp1)
+		(libre pp2)
+		(libre pp3)
+		(libre pp4)
+	
+		(objetivo ps1 as3)
 		
-		(objetivo s1 as3)
-		(= (prioridad s1 as3) 1)
-		(objetivo s1 as2)
-		(= (prioridad s1 as2) 3)
-		(objetivo s2 as3)
-		(= (prioridad s2 as3) 1)
-		(objetivo s3 as3)
-		(= (prioridad s3 as3) 1)
-		(objetivo pers1 as3)
-		(= (prioridad pers1 as3) 1)
-		(objetivo pers2 as3)
-		(= (prioridad pers2 as3) 1)
-		(objetivo pers3 as3)
-		(= (prioridad pers3 as3) 1)
-		(objetivo pers4 as3)
-		(= (prioridad pers4 as3) 1)
+		(objetivo ps2 as3)
+		
+		(objetivo ps3 as3)
+		
+		(objetivo pp1 as3)
+		
+		(objetivo pp2 as3)
+		
+		(objetivo pp3 as3)
+		
+		(objetivo pp4 as3)
+		
 		
 
 )
 
 (:goal (forall (?c - Carga) (entregada ?c)))
-
-(:metric minimize (+ (penalidad) (combustible-total)))
+(:metric minimize (combustible-total))
 
 )

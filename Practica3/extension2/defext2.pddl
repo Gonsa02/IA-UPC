@@ -13,8 +13,8 @@
 (:init
 	(= (capacidad r1) 2)
 	(= (capacidad r2) 2)
-	(= (combustible r1) 3)
-	(= (combustible r2) 100)
+	(= (combustible r1) 20)
+	(= (combustible r2) 20)
 	(= (combustible-total) 0)
 	(aparcado r1 as1)
 	(aparcado r2 as1)
@@ -39,8 +39,7 @@
 	(objetivo p3 as3)
 )
 
-(:goal (forall (?p - Peticion) (servida ?p)))
+(:goal (forall (?c - Carga) (entregada ?c)))
 
-(:metric minimize (combustible-total))
 
 )
