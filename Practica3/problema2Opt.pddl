@@ -1,5 +1,5 @@
-(define (problem problema2)
-(:domain dominio2)
+(define (problem problema2Opt)
+(:domain dominio2Opt)
 
 (:objects	r1 r2 - Rover
 		 	as1 as2 as3 as4 - Asentamiento
@@ -15,6 +15,7 @@
 	(= (capacidad r2) 2)
 	(= (combustible r1) 7)
 	(= (combustible r2) 20)
+	(= (combustible-total) 0)
 	(aparcado r1 as1)
 	(aparcado r2 as1)
 	
@@ -37,4 +38,6 @@
 )
 
 (:goal (forall (?s - Carga) (entregada ?s)))
+
+(:metric minimize (combustible-total))
 )

@@ -1,5 +1,6 @@
 (define (problem ext1)
 (:domain ext1)
+
 (:objects	r1 r2 - Rover
 		 	as1 as2 as3 as4 - Asentamiento
 		 	al1 al2 al3 al4 al5 - Almacen
