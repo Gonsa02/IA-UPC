@@ -1,4 +1,4 @@
-(define (domain ext1)
+(define (domain dominio2)
 (:requirements :adl :typing :fluents)
 
 

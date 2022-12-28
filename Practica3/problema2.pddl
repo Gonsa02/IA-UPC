@@ -1,15 +1,17 @@
-(define (problem ext1)
-(:domain ext1)
-(:objects
-		r1 r2 r3 r4 r5 r6 - Rover
-		as1 as2 as3 as4 as5 as6 - Asentamiento
-		al1 al2 al3 al4 al5 al6 - Almacen
-		s1 s2 s3 s4 s5 s6 - Suministro
-		pers1 pers2 pers3 pers4 pers5 pers6 - Personal
-		
+(define (problem problema2)
+(:domain dominio2)
+
+(:objects	r1 r2 - Rover
+		 	as1 as2 as3 as4 - Asentamiento
+		 	al1 al2 al3 al4 al5 - Almacen
+		 	s1 s2 - Suministro
+		 	pers1 - Personal
+		 	p1 p3 p4 - pSuministro
+		 	p2 - pPersonal
 )
 
 (:init
+<<<<<<< HEAD
 		(= (capacidad r1) 2)
 		(= (capacidad r2) 2)
 		(= (capacidad r3) 2)
@@ -165,11 +167,32 @@
 		(objetivo pers6 as1)
        (=(prioridad pers6 as1) 1)
 
+=======
+	(= (capacidad r1) 2)
+	(= (capacidad r2) 2)
+	(= (combustible r1) 7)
+	(= (combustible r2) 20)
+	(aparcado r1 as1)
+	(aparcado r2 as1)
+	
+	(accesible as1 al3) (accesible al3 as1)
+	(accesible al3 as4) (accesible as4 al3)
+	(accesible as4 al4) (accesible al4 as4)
+	(accesible al3 al5) (accesible al5 al3)
+	(accesible al3 as3) (accesible as3 al3)
+	(accesible as3 al1) (accesible al1 as3)
+	(accesible al1 as2) (accesible as2 al1)
+	(accesible as3 al2) (accesible al2 as3)
+	
+	(esta pers1 as3)
+	(esta s1 al4)
+	(esta s2 al4)
+	
+	(objetivo p1 as1)
+	(objetivo p2 as2)
+	(objetivo p3 as3)
+>>>>>>> e6a291055f27e6148e310e1ea20af511e8c11c8a
 )
 
-(:goal (forall (?c - Carga) (entregada ?c)))
-
-(:metric minimize (+ (penalidad) (combustible-total)))
-
+(:goal (forall (?s - Carga) (entregada ?s)))
 )
-

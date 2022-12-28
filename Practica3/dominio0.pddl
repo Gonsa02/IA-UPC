@@ -1,5 +1,5 @@
-(define (domain ext1)
-(:requirements :adl :typing :fluents)
+(define (domain dominio0)
+(:requirements :adl :typing)
 
 
 (:types Base Rover Carga Peticion - object
@@ -20,40 +20,34 @@
 )
 
 
-(:functions
-	(capacidad ?r - Rover)
-	(combustible ?r - Rover)
-)
-
-
 (:action mover
 	:parameters (?r - Rover ?l1 - Base ?l2 - Base)
-	:precondition (and (aparcado ?r ?l1) (accesible ?l1 ?l2) (> (combustible ?r) 0))
-	:effect (and (not (aparcado ?r ?l1)) (aparcado ?r ?l2) (decrease (combustible ?r) 1))
+	:precondition (and (aparcado ?r ?l1) (accesible ?l1 ?l2))
+	:effect (and (not (aparcado ?r ?l1)) (aparcado ?r ?l2))
 )
 
 (:action recogerS
 	:parameters (?r - Rover ?c - Suministro ?l - Almacen)
-	:precondition (and (aparcado ?r ?l) (esta ?c ?l) (= (capacidad ?r) 2))
-	:effect (and (transportando ?r ?c) (not (esta ?c ?l)) (decrease (capacidad ?r) 2))
+	:precondition (and (aparcado ?r ?l) (esta ?c ?l))
+	:effect (and (transportando ?r ?c) (not (esta ?c ?l)))
 )
 
 (:action recogerP
 	:parameters (?r - Rover ?c - Personal ?l - Asentamiento)
-	:precondition (and (aparcado ?r ?l) (esta ?c ?l) (>= (capacidad ?r) 1))
-	:effect (and (transportando ?r ?c) (not (esta ?c ?l)) (decrease (capacidad ?r) 1))
+	:precondition (and (aparcado ?r ?l) (esta ?c ?l))
+	:effect (and (transportando ?r ?c) (not (esta ?c ?l)))
 )
 
 (:action entregarS
 	:parameters (?r - Rover ?c - Suministro ?l - Asentamiento ?p - pSuministro)
 	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (objetivo ?p ?l) (not (servida ?p)))
-	:effect (and (not (transportando ?r ?c)) (servida ?p) (entregada ?c) (increase (capacidad ?r) 2))
+	:effect (and (not (transportando ?r ?c)) (servida ?p) (entregada ?c))
 )
 
 (:action entregarP
 	:parameters (?r - Rover ?c - Personal ?l - Asentamiento ?p - pPersonal)
 	:precondition (and (aparcado ?r ?l) (transportando ?r ?c) (objetivo ?p ?l) (not (servida ?p)))
-	:effect (and (not (transportando ?r ?c)) (servida ?p) (entregada ?c) (increase (capacidad ?r) 1))
+	:effect (and (not (transportando ?r ?c)) (servida ?p) (entregada ?c))
 )
 
 )
