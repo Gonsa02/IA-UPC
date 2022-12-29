@@ -8,6 +8,7 @@
 		 	p1 - pSuministro
 		 	p2 - pPersonal
 		 	p3 - pSuministro
+		 	p4 - pSuministro
 )
 
 (:init
@@ -32,14 +33,16 @@
 	(esta s1 al4)
 	(esta s2 al4)
 	
-	(libre p1) (libre p2) (libre p3)
+	(libre p1) (libre p2) (libre p3) (libre p4)
 	
 	(objetivo p1 as1)
 	(objetivo p2 as2)
 	(objetivo p3 as3)
+	(objetivo p4 as4)
 )
 
 (:goal (forall (?c - Carga) (entregada ?c)))
 
+(:metric minimize (combustible-total))
 
 )

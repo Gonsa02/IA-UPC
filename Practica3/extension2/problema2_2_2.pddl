@@ -1,12 +1,12 @@
 (define (problem ext1)
 (:domain ext1)
 (:objects
-		r1 r2 - Rover
+		r1 r2  - Rover
 		as1 as2 as3 - Asentamiento
 		al1 al2 al3 al4 - Almacen
 		s1 s2 s3 - Suministro
 		pers1 pers2 pers3 pers4 - Personal
-		ps1 ps2 ps3 - pSuministro
+		ps1 ps2 ps3 ps4 - pSuministro
 		pp1 pp2 pp3 pp4 - pPersonal 
 		
 )
@@ -14,14 +14,14 @@
 (:init
 		(= (capacidad r1) 2)
 		(= (capacidad r2) 2)
-		
+	
 		(=(combustible r1) 20)
 		(=(combustible r2) 20)
-		
+	
 		(=(combustible-total) 0)
 		(aparcado r1 al1)
 		(aparcado r2 as1)
-		
+	
 
 		(accesible as1 as2)
 		(accesible as1 as3)
@@ -59,6 +59,7 @@
 		(libre ps1)
 		(libre ps2)
 		(libre ps3)
+		(libre ps4)
 		(libre pp1)
 		(libre pp2)
 		(libre pp3)
@@ -69,6 +70,8 @@
 		(objetivo ps2 as3)
 		
 		(objetivo ps3 as3)
+		
+		(objetivo ps4 as1)
 		
 		(objetivo pp1 as3)
 		
@@ -83,5 +86,6 @@
 )
 
 (:goal (forall (?c - Carga) (entregada ?c)))
+(:metric minimize (combustible-total))
 
 )
