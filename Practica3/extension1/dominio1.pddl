@@ -16,7 +16,7 @@
 	(objetivo ?p - Peticion ?l - Asentamiento)
 	(servida ?p - Peticion)
 	(entregada ?c - Carga) ; Comprueba que la carga no se haya entregado ya, nos servirá para el GOAL
-
+)
 
 (:functions
 	(capacidad ?r - Rover)
