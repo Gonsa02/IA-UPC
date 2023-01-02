@@ -1,4 +1,4 @@
-(define (domain ext1)
+(define (domain dominio2)
 (:requirements :adl :typing :fluents)
 
 
@@ -23,13 +23,14 @@
 (:functions
 	(capacidad ?r - Rover)
 	(combustible ?r - Rover)
+	(combustible-total)
 )
 
 
 (:action mover
 	:parameters (?r - Rover ?l1 - Base ?l2 - Base)
 	:precondition (and (aparcado ?r ?l1) (accesible ?l1 ?l2) (> (combustible ?r) 0))
-	:effect (and (not (aparcado ?r ?l1)) (aparcado ?r ?l2) (decrease (combustible ?r) 1))
+	:effect (and (not (aparcado ?r ?l1)) (aparcado ?r ?l2) (decrease (combustible ?r) 1) (increase (combustible-total) 1))
 )
 
 (:action recogerS
