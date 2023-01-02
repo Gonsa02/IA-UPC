@@ -19,6 +19,7 @@
 		(=(combustible r2) 20)
 	
 		(=(combustible-total) 0)
+		(=(penalidad) 0)
 		(aparcado r1 al1)
 		(aparcado r2 as1)
 	
@@ -56,33 +57,28 @@
 		(esta s2 al3)
 		(esta s3 al2)
 		
-		(libre ps1)
-		(libre ps2)
-		(libre ps3)
-		(libre pp1)
-		(libre pp2)
-		(libre pp3)
-		(libre pp4)
-	
-		(objetivo ps1 as3)
 		
-		(objetivo ps2 as3)
-		
-		(objetivo ps3 as3)
-		
-		(objetivo pp1 as3)
-		
-		(objetivo pp2 as3)
-		
-		(objetivo pp3 as3)
-		
-		(objetivo pp4 as3)
-		
+		(objetivo s1 as1)
+		(= (prioridad s1 as1) 1)
+		(objetivo s1 as3)
+		(= (prioridad s1 as3) 3)
+		(objetivo s2 as3)
+		(= (prioridad s2 as3) 2)
+		(objetivo s3 as3)
+		(= (prioridad s3 as3) 2)
+		(objetivo pers1 as3)
+		(= (prioridad pers1 as3) 3)
+		(objetivo pers2 as3)
+		(= (prioridad pers2 as3) 2)
+		(objetivo pers3 as3)
+		(= (prioridad pers3 as3) 3)
+		(objetivo pers4 as3)
+		(= (prioridad pers4 as3) 2)
 		
 
 )
 
 (:goal (forall (?c - Carga) (entregada ?c)))
-(:metric minimize (combustible-total))
+(:metric minimize (+(combustible-total) (penalidad)))
 
 )

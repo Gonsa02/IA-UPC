@@ -1,5 +1,5 @@
-(define (problem problema2)
-(:domain dominio2)
+(define (problem problema1)
+(:domain ext1)
 
 (:objects	r1 r2 - Rover
 		 	as1 as2 as3 as4 - Asentamiento
@@ -13,8 +13,6 @@
 (:init
 	(= (capacidad r1) 2)
 	(= (capacidad r2) 2)
-	(= (combustible r1) 20)
-	(= (combustible r2) 20)
 	(aparcado r1 as1)
 	(aparcado r2 as1)
 	
@@ -32,9 +30,9 @@
 	(esta s2 al4)
 	
 	(objetivo p1 as1)
+	(objetivo p4 as4)
 	(objetivo p2 as2)
 	(objetivo p3 as3)
-	(objetivo p4 as1)
 )
 
 (:goal (forall (?s - Carga) (entregada ?s)))

@@ -1,13 +1,10 @@
-(define (problem problema2)
-(:domain dominio2)
-
+(define (problem ext1)
+(:domain ext1)
 (:objects	r1 r2 - Rover
 		 	as1 as2 as3 as4 - Asentamiento
 		 	al1 al2 al3 al4 al5 - Almacen
 		 	s1 s2 - Suministro
 		 	pers1 - Personal
-		 	p1 p3 p4 - pSuministro
-		 	p2 - pPersonal
 )
 
 (:init
@@ -15,6 +12,8 @@
 	(= (capacidad r2) 2)
 	(= (combustible r1) 20)
 	(= (combustible r2) 20)
+	(= (combustible-total) 0)
+	(=(penalidad) 0)
 	(aparcado r1 as1)
 	(aparcado r2 as1)
 	
@@ -31,11 +30,19 @@
 	(esta s1 al4)
 	(esta s2 al4)
 	
-	(objetivo p1 as1)
-	(objetivo p2 as2)
-	(objetivo p3 as3)
-	(objetivo p4 as1)
+	
+	(objetivo s1 as4)
+	(=(prioridad s1 as4) 1)
+	(objetivo s1 as1)
+	(=(prioridad s1 as1) 3)
+	(objetivo pers1 as2)
+	(=(prioridad pers1 as2) 2)
+	(objetivo s2 as3)
+	(=(prioridad s2 as3) 2)
 )
 
-(:goal (forall (?s - Carga) (entregada ?s)))
+(:goal (forall (?c - Carga) (entregada ?c)))
+
+(:metric minimize (penalidad))
+
 )

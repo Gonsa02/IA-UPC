@@ -32,6 +32,7 @@
 	(objetivo p1 as1)
 	(objetivo p2 as2)
 	(objetivo p3 as3)
+	(objetivo p4 as1)
 )
 
 (:goal (forall (?s - Carga) (entregada ?s)))
