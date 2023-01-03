@@ -6,8 +6,7 @@
 		al1 al2 al3 al4 - Almacen
 		s1 s2 s3 - Suministro
 		pers1 pers2 pers3 pers4 - Personal
-		ps1 ps2 ps3 - pSuministro
-		pp1 pp2 pp3 pp4 - pPersonal 
+
 		
 )
 
