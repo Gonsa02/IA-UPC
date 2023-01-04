@@ -72,9 +72,9 @@ step    0: RECOGERS R3 S1 AL3
      
 
 time spent:    0.00 seconds instantiating 23900 easy, 0 hard action templates
-               0.01 seconds reachability analysis, yielding 1580 facts and 19400 actions
-               0.01 seconds creating final representation with 1580 relevant facts, 100 relevant fluents
-               0.12 seconds computing LNF
-               0.06 seconds building connectivity graph
-              23.10 seconds searching, evaluating 58205 states, to a max depth of 0
-              23.30 seconds total time
+               0.00 seconds reachability analysis, yielding 1580 facts and 19400 actions
+               0.00 seconds creating final representation with 1580 relevant facts, 100 relevant fluents
+               0.07 seconds computing LNF
+               0.05 seconds building connectivity graph
+              12.64 seconds searching, evaluating 58205 states, to a max depth of 0
+              12.76 seconds total time
