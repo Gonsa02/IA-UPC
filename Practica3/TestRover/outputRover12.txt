@@ -1,0 +1,91 @@
+ff: parsing domain file
+domain 'DOMINIO1' defined
+ ... done.
+ff: parsing problem file
+problem 'PROBLEMAROVER12' defined
+ ... done.
+
+
+no metric specified. plan length assumed.
+
+checking for cyclic := effects --- OK.
+
+ff: search configuration is  best-first on 1*g(s) + 5*h(s) where
+    metric is  plan length
+
+advancing to distance:   30
+                         28
+                         27
+                         26
+                         25
+                         24
+                         23
+                         22
+                         21
+                         20
+                         19
+                         18
+                         17
+                         16
+                         15
+                         14
+                         13
+                         12
+                         11
+                         10
+                          9
+                          8
+                          7
+                          6
+                          5
+                          4
+                          3
+                          2
+                          1
+                          0
+
+ff: found legal plan as follows
+
+step    0: MOVER R2 AS10 AS1
+        1: RECOGERS R12 S4 AL9
+        2: RECOGERP R1 PERS4 AS9
+        3: RECOGERP R2 PERS1 AS1
+        4: ENTREGARP R2 PERS1 AS1 P23
+        5: ENTREGARP R1 PERS4 AS9 P27
+        6: MOVER R1 AS9 AS6
+        7: RECOGERP R1 PERS3 AS6
+        8: ENTREGARP R1 PERS3 AS6 P29
+        9: MOVER R3 AL3 AS4
+       10: RECOGERP R3 PERS5 AS4
+       11: ENTREGARP R3 PERS5 AS4 P26
+       12: MOVER R12 AL9 AS9
+       13: ENTREGARS R12 S4 AS9 P7
+       14: MOVER R12 AS9 AL1
+       15: RECOGERS R12 S3 AL1
+       16: MOVER R12 AL1 AS9
+       17: ENTREGARS R12 S3 AS9 P10
+       18: MOVER R12 AS9 AS8
+       19: RECOGERP R12 PERS2 AS8
+       20: MOVER R12 AS8 AS7
+       21: ENTREGARP R12 PERS2 AS7 P30
+       22: MOVER R12 AS7 AL10
+       23: RECOGERS R12 S2 AL10
+       24: MOVER R12 AL10 AS8
+       25: ENTREGARS R12 S2 AS8 P5
+       26: MOVER R12 AS8 AL5
+       27: RECOGERS R12 S1 AL5
+       28: MOVER R12 AL5 AS8
+       29: ENTREGARS R12 S1 AS8 P14
+       30: MOVER R12 AS8 AL2
+       31: RECOGERS R12 S5 AL2
+       32: MOVER R12 AL2 AS3
+       33: ENTREGARS R12 S5 AS3 P11
+     
+
+time spent:    0.00 seconds instantiating 5736 easy, 0 hard action templates
+               0.00 seconds reachability analysis, yielding 440 facts and 4656 actions
+               0.00 seconds creating final representation with 440 relevant facts, 24 relevant fluents
+               0.01 seconds computing LNF
+               0.00 seconds building connectivity graph
+               0.61 seconds searching, evaluating 6678 states, to a max depth of 0
+               0.62 seconds total time

@@ -1,6 +1,5 @@
-(define (domain ext1)
-	(:requirements :adl :typing :fluents)
-
+(define (domain dominio1)
+(:requirements :adl :typing :fluents)
 
 (:types Base Rover Carga Peticion - object
 		Asentamiento Almacen - Base
@@ -18,7 +17,6 @@
 	(servida ?p - Peticion)
 	(entregada ?c - Carga) ; Comprueba que la carga no se haya entregado ya, nos servirá para el GOAL
 )
-
 
 (:functions
 	(capacidad ?r - Rover)

@@ -22,30 +22,35 @@ bool es_connex(const Matrix &M) {
 int main() {
     
     int num_rovers, num_asentamientos, num_almacen, num_suministros, num_personal, semilla;
+    int num_psuministro, num_ppersonal;
     cout << "Introduce una semilla: ";
     cin >> semilla;
     srand(semilla);
-    cout << "Introduce el numero de rovers: ";
+    cout << "Introduce el número de rovers: ";
     cin >> num_rovers;
-    cout << endl << "Introduce el numero de asentamientos: ";
+    cout << "Introduce el número de asentamientos: ";
     cin >> num_asentamientos;
-    cout << endl << "Introduce el numero de almacenes: ";
+    cout << "Introduce el número de almacenes: ";
     cin >> num_almacen;
-    cout << endl << "Introduce el numero de suministros: ";
+    cout << "Introduce el número de suministros: ";
     cin >> num_suministros;
-    cout << endl << "Introduce el numero de personal: ";
+    cout << "Introduce el número de personal: ";
     cin >> num_personal;
+    cout << "Introduce el número de peticiones de suministro: ";
+    cin >> num_psuministro;
+    cout << "Introduce el número de peticiones de personal: ";
+    cin >> num_ppersonal;
    
  
-    //Vamos a generar el grafo del mapa
+    // Vamos a generar el grafo del mapa
     Matrix M(num_almacen+num_asentamientos, vector<bool>(num_almacen+num_asentamientos, false));
     
     //Primero vamos a asegurarnos de que el grafo es conexo
     for (int i = 0; i < num_almacen+num_asentamientos; ++i) {
-	for (int j = 0; j < num_almacen+num_asentamientos; ++j) {
-	    if (i == j-1 and j-1 >= 0) M[i][j] = true;
-	    if (i == j+1 and j+1 < M.size()) M[i][j] = true;
-	}
+		for (int j = 0; j < num_almacen+num_asentamientos; ++j) {
+	    	if (i == j-1 and j-1 >= 0) M[i][j] = true;
+	    	if (i == j+1 and j+1 < M.size()) M[i][j] = true;
+		}
     }
 
     //Escribo grafo
@@ -96,8 +101,8 @@ int main() {
     cout << endl;
     */
 
-    cout << "(define (problem ext1)" << endl;
-    cout << "(:domain ext1)" << endl;
+    cout << "(define (problem problema1)" << endl;
+    cout << "(:domain dominio1)" << endl << endl;
 
     // OBJECTS
     cout << "(:objects" << endl;
@@ -117,7 +122,11 @@ int main() {
     for (int i = 0; i < num_personal; ++i) cout << "pers" << i+1 << " ";
     cout << "- Personal" << endl;
     cout << "		";
-    cout << endl;
+    for (int i = 0; i < num_psuministro; ++i) cout << "p" << i + 1 << " ";
+    cout << "- pSuministro" << endl;
+    cout << "		";
+    for (int i = 0; i < num_ppersonal; ++i) cout << "p" << num_psuministro + i + 1 << " ";
+    cout << "- pPersonal" << endl;
     cout << ")" << endl;
     cout << endl;
 
@@ -125,34 +134,30 @@ int main() {
     cout << "(:init" << endl;
     for (int i = 0; i < num_rovers; ++i) cout << "		" << "(= (capacidad r" << i+1 << ") 2)" << endl;
     cout << endl;
-    for (int i = 0; i < num_rovers; ++i) cout << "		" << "(= (combustible r" << i+1 << ") " << 2*(rand()%(num_personal+num_suministros))+500 << ")" << endl;
-    cout << endl;
-    cout << "		" << "(= (penalidad) 0)" << endl;
-    cout << endl;
-    cout << "		" << "(= (combustible-total) 0)" << endl;
-    cout << endl;
 
     for (int i = 0; i < num_rovers; ++i) {
-	cout << "		" << "(aparcado r" << i+1 << " ";
-	int aux = rand()%M.size();
-	if (aux < num_asentamientos) cout << "as" << aux+1;
-	else cout << "al" << aux-num_asentamientos+1;
-	cout << ")" << endl;
+		cout << "		" << "(aparcado r" << i+1 << " ";
+		int aux = rand()%M.size();
+		if (aux < num_asentamientos) cout << "as" << aux+1;
+		else cout << "al" << aux-num_asentamientos+1;
+		cout << ")" << endl;
     }
     cout << endl;
 
     for (int i = 0; i < num_almacen+num_asentamientos; ++i) {
-	for (int j = 0; j < num_almacen+num_asentamientos; ++j) {
-	    if (M[i][j]) {
-		cout << "		" << "(accesible ";
-		if (i < num_asentamientos) cout << "as" << i+1;
-		else cout << "al" << i-num_asentamientos+1;
-		cout << " ";
-		if (j < num_asentamientos) cout << "as" << j+1;
-		else cout << "al" << j-num_asentamientos+1;
-		cout << ")" << endl;
-	    }
-	}
+    	cout << "		";
+		for (int j = 0; j < num_almacen+num_asentamientos; ++j) {
+			if (M[i][j]) {
+				cout << "(accesible ";
+				if (i < num_asentamientos) cout << "as" << i+1;
+				else cout << "al" << i-num_asentamientos+1;
+				cout << " ";
+				if (j < num_asentamientos) cout << "as" << j+1;
+				else cout << "al" << j-num_asentamientos+1;
+				cout << ") ";
+			}
+		}
+		cout << endl;
     }
     cout << endl;
 
@@ -162,27 +167,15 @@ int main() {
 	
 	
     
-    for (int i = 0; i < num_suministros; ++i){
-        int a = (rand()%num_asentamientos)+1;
-        cout << "		" << "(objetivo s" << i+1 << " as" << a << ")" << endl;
-        cout << "       " << "(=(prioridad s"<<i+1 << " as" <<a << ") " <<(rand()%3)+1 << ")" << endl;
+    for (int i = 0; i < num_psuministro + num_ppersonal; ++i) {
+        int a = (rand()%num_asentamientos) + 1;
+        if (i % 2 == 0) cout << "		";
+        cout << "(objetivo p" << i + 1 << " as" << a << ") ";
+        if (i % 2 != 0) cout << endl;
     }
-    cout << endl; 
-    for (int i = 0; i < num_personal; ++i){
-        int a = (rand()%num_asentamientos)+1;
-        cout << "		" << "(objetivo pers" << i+1 << " as" << a << ")" << endl;
-        cout << "       " << "(=(prioridad pers"<<i+1 << " as" <<a << ") " <<(rand()%3)+1 << ")" << endl;
-    } 
-    cout << endl;
-	
-    cout << ")" << endl;
-    cout << endl;
+    cout << endl << ")" << endl << endl;
 
     // GOAL
     cout << "(:goal (forall (?c - Carga) (entregada ?c)))" << endl;
-    cout << endl;
-
-    cout << "(:metric minimize (+ (penalidad) (combustible-total)))" << endl;
-    cout << endl;
-    cout << ")" << endl;
+    cout << endl << ')' << endl;
 }

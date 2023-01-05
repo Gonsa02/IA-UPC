@@ -1,6 +1,5 @@
-(define (domain ext1)
+(define (domain dominio1)
 (:requirements :adl :typing :fluents)
-
 
 (:types Base Rover Carga Peticion - object
 		Asentamiento Almacen - Base
@@ -19,17 +18,15 @@
 	(entregada ?c - Carga) ; Comprueba que la carga no se haya entregado ya, nos servirá para el GOAL
 )
 
-
 (:functions
 	(capacidad ?r - Rover)
-	(combustible ?r - Rover)
 )
 
 
 (:action mover
 	:parameters (?r - Rover ?l1 - Base ?l2 - Base)
-	:precondition (and (aparcado ?r ?l1) (accesible ?l1 ?l2) (> (combustible ?r) 0))
-	:effect (and (not (aparcado ?r ?l1)) (aparcado ?r ?l2) (decrease (combustible ?r) 1))
+	:precondition (and (aparcado ?r ?l1) (accesible ?l1 ?l2))
+	:effect (and (not (aparcado ?r ?l1)) (aparcado ?r ?l2))
 )
 
 (:action recogerS
