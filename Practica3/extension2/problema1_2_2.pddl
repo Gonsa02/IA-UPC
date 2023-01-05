@@ -8,11 +8,7 @@
 		 	pers1 - Personal
 		 	p1 p3 p4 - pSuministro
 		 	p2 - pPersonal
-<<<<<<<< HEAD:Practica3/extension2/problema2Opt.pddl
-========
-		 	p3 - pSuministro
-		 	p4 - pSuministro
->>>>>>>> origin:Practica3/extension2/problema1_2_2.pddl
+
 )
 
 (:init
@@ -37,11 +33,10 @@
 	(esta s1 al4)
 	(esta s2 al4)
 	
-<<<<<<<< HEAD:Practica3/extension2/problema2Opt.pddl
-========
+
 	(libre p1) (libre p2) (libre p3) (libre p4)
 	
->>>>>>>> origin:Practica3/extension2/problema1_2_2.pddl
+
 	(objetivo p1 as1)
 	(objetivo p2 as2)
 	(objetivo p3 as3)
