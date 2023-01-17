@@ -1,4 +1,4 @@
-# IA-UPC
+# Inteligencia Artificial - FIB
 Prácticas de la asignatura de [Inteligencia Artificial](https://www.fib.upc.edu/es/estudios/grados/grado-en-ingenieria-informatica/plan-de-estudios/asignaturas/IA) en la [FIB](https://www.fib.upc.edu/es) curso 2022-2023 Q1.
 
 ### Avaluación
