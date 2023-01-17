@@ -1,0 +1,9 @@
+Para poder ejecutar la práctica primero que todo se deberán vincular las librerías necesarias para ella,
+en este caso el AIMA.jar y CentralEnergia.jar.
+
+Para la facilitación de la ejecución de estos experimentos hemos creado un main con diferentes
+funciones que ejecutan algunos de los experimentos con lo que solo con descomentarlos se van a ejecutar.
+
+También, para la facilitación hay comentarios explicativos en el main de cómo ejecutar el código y los
+diferentes parámetros que hay. Si se quieren hacer experimentos adicionales solo se requiere de
+modificar el main con el ProgramaPrincipal y ejecutarlo.
